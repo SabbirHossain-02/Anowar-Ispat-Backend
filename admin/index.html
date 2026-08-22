@@ -4,6 +4,10 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>ANWAR ISPAT — COMMAND CENTER</title>
+<link rel="icon" type="image/png" href="favicon.png" />
+<link rel="apple-touch-icon" href="favicon.png" />
+<meta name="theme-color" content="#0a0a0a" />
+<meta name="robots" content="noindex, nofollow" />
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
 <style>
   :root {
@@ -378,25 +382,29 @@
     <aside class="sidebar">
       <div class="sidebar-section">
         <div class="sidebar-section-title">// NAVIGATION</div>
-        <div class="nav-item active" onclick="showPage('dashboard')">
+        <div class="nav-item active" onclick="showPage('dashboard',this)">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
           Dashboard
         </div>
       </div>
       <div class="sidebar-section">
         <div class="sidebar-section-title">// CONTENT</div>
-        <div class="nav-item" onclick="showPage('products')">
+        <div class="nav-item" onclick="showPage('products',this)">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
           Products
         </div>
-        <div class="nav-item" onclick="showPage('media')">
+        <div class="nav-item" onclick="showPage('media',this)">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
           Media & Events
+        </div>
+        <div class="nav-item" onclick="showPage('hero',this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><polygon points="10 8 15 10.5 10 13"/><line x1="8" y1="21" x2="16" y2="21"/></svg>
+          Hero Banner
         </div>
       </div>
       <div class="sidebar-section">
         <div class="sidebar-section-title">// ORDERS</div>
-        <div class="nav-item" onclick="showPage('quotations')">
+        <div class="nav-item" onclick="showPage('quotations',this)">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
           Quotations
           <span class="nav-badge" id="pending-count">0</span>
@@ -505,6 +513,31 @@
         </div>
       </div>
 
+      <!-- HERO BANNER -->
+      <div class="page" id="page-hero">
+        <div class="page-header">
+          <div class="page-header-top">
+            <div>
+              <div class="page-title">HERO <span>BANNER</span></div>
+              <div class="page-subtitle">// HOMEPAGE SLIDER — VIDEO OR IMAGE</div>
+            </div>
+            <button class="btn-primary" onclick="openHeroModal()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              ADD SLIDE
+            </button>
+          </div>
+        </div>
+        <div class="data-grid">
+          <div class="data-grid-header">
+            <div class="data-grid-title">All Slides</div>
+          </div>
+          <table>
+            <thead><tr><th>PREVIEW</th><th>TITLE</th><th>SUBTITLE</th><th>TYPE</th><th>ORDER</th><th>ACTIONS</th></tr></thead>
+            <tbody id="hero-body"><tr><td colspan="6"><div class="loading"><div class="spinner"></div> Loading...</div></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
       <!-- QUOTATIONS -->
       <div class="page" id="page-quotations">
         <div class="page-header">
@@ -549,6 +582,61 @@
 </div>
 
 <!-- PRODUCT MODAL -->
+<div class="modal-overlay" id="hero-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">HERO <span>SLIDE</span></div>
+      <button class="modal-close" onclick="closeModal('hero-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="hero-id" />
+      <div class="form-group">
+        <label class="form-label">TITLE — WHITE PART</label>
+        <input class="form-input" id="hero-prefix" placeholder="e.g. ENGINEERED FOR" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">TITLE — RED PART</label>
+        <input class="form-input" id="hero-accent" placeholder="e.g. ENDURANCE" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">SUBTITLE</label>
+        <textarea class="form-textarea" id="hero-subtitle" placeholder="Short line below the title..."></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">SLIDE ORDER (1 = first)</label>
+        <input class="form-input" id="hero-order" type="number" min="0" value="0" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">BACKGROUND — VIDEO OR IMAGE (max 200MB)</label>
+        <div class="file-upload-area" onclick="document.getElementById('hero-file').click()">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="opacity:0.4"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <p id="hero-file-label">CLICK TO UPLOAD VIDEO OR IMAGE</p>
+        </div>
+        <input type="file" id="hero-file" accept="video/*,image/*" style="display:none" onchange="heroFilePicked(this)" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">POSTER IMAGE — shown while video loads (optional)</label>
+        <div class="file-upload-area" onclick="document.getElementById('hero-poster').click()">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="opacity:0.4"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          <p>CLICK TO UPLOAD POSTER</p>
+        </div>
+        <input type="file" id="hero-poster" accept="image/*" style="display:none" onchange="previewFile(this,'hero-poster-preview')" />
+        <img id="hero-poster-preview" class="file-preview" style="display:none" />
+      </div>
+      <div id="hero-progress" style="display:none;margin-top:0.5rem">
+        <div style="height:6px;background:var(--bg3);border:1px solid var(--border)">
+          <div id="hero-progress-bar" style="height:100%;width:0;background:var(--accent);transition:width 0.2s"></div>
+        </div>
+        <div id="hero-progress-text" style="font-family:var(--font-mono);font-size:0.7rem;color:var(--subtext);margin-top:0.4rem">UPLOADING… 0%</div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-ghost" onclick="closeModal('hero-modal')">CANCEL</button>
+      <button class="btn-primary" id="hero-save-btn" onclick="saveHero()">SAVE SLIDE</button>
+    </div>
+  </div>
+</div>
+
 <div class="modal-overlay" id="product-modal">
   <div class="modal">
     <div class="modal-header">
@@ -712,6 +800,7 @@ function showPage(name, el) {
   if(name === 'products') loadProducts();
   if(name === 'media') loadMedia();
   if(name === 'quotations') loadQuotations();
+  if(name === 'hero') loadHero();
   if(name === 'settings') loadCurrentTheme();
 }
 function showPage_OLD(name) {
@@ -729,6 +818,7 @@ async function loadAll() {
   loadProducts();
   loadMedia();
   loadQuotations();
+  loadHero();
 }
 
 // DASHBOARD
@@ -890,6 +980,140 @@ async function deleteMedia(id) {
   if(!confirm('Delete this event?')) return;
   await fetch(`${API}/media/${id}`, {method:'DELETE', headers:{Authorization:`Bearer ${token}`}});
   loadMedia(); loadDashboard(); showToast('Event deleted');
+}
+
+// HERO BANNER
+// টেবিলে বসানোর আগে HTML escape — নইলে ডেটার ভেতরের ট্যাগ স্ক্রিপ্ট হিসেবে চলে যেতে পারে
+function esc(v) {
+  return String(v ?? '').replace(/[&<>"']/g, c => (
+    { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]
+  ));
+}
+
+let heroList = [];
+
+async function loadHero() {
+  const tbody = document.getElementById('hero-body');
+  try {
+    const data = await fetch(`${API}/hero`).then(r=>r.json());
+    heroList = data;
+    if(data.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><div class="empty-state-icon">🎬</div><p>NO SLIDES YET — ADD YOUR FIRST HERO SLIDE</p></div></td></tr>';
+      return;
+    }
+    tbody.innerHTML = data.map(h => `
+      <tr>
+        <td>${h.media_type === 'video'
+              ? `<video class="td-img" src="${esc(h.media_url)}" muted preload="metadata"></video>`
+              : `<img class="td-img" src="${esc(h.media_url)}" />`}</td>
+        <td style="font-weight:600">${esc(h.title_prefix)} <span style="color:var(--accent)">${esc(h.title_accent)}</span></td>
+        <td style="color:var(--subtext);max-width:280px;font-size:0.8rem">${esc(h.subtitle) || '—'}</td>
+        <td><span class="badge badge-${h.media_type === 'video' ? 'reviewing' : 'completed'}">${esc(h.media_type).toUpperCase()}</span></td>
+        <td style="font-family:var(--font-mono);font-size:0.8rem">${esc(h.sort_order)}</td>
+        <td>
+          <div style="display:flex;gap:0.5rem">
+            <button class="btn-ghost" onclick="editHero(${Number(h.id)})">EDIT</button>
+            <button class="btn-danger" onclick="deleteHero(${Number(h.id)})">DELETE</button>
+          </div>
+        </td>
+      </tr>`).join('');
+  } catch(e) { tbody.innerHTML = '<tr><td colspan="6" style="color:var(--accent);font-family:var(--font-mono);font-size:0.75rem;padding:2rem">ERROR LOADING DATA</td></tr>'; }
+}
+
+function heroFilePicked(input) {
+  const f = input.files[0];
+  document.getElementById('hero-file-label').textContent =
+    f ? `${f.name} (${(f.size/1024/1024).toFixed(1)} MB)` : 'CLICK TO UPLOAD VIDEO OR IMAGE';
+}
+
+function openHeroModal(h) {
+  document.getElementById('hero-id').value       = h ? h.id : '';
+  document.getElementById('hero-prefix').value   = h ? (h.title_prefix || '') : '';
+  document.getElementById('hero-accent').value   = h ? (h.title_accent || '') : '';
+  document.getElementById('hero-subtitle').value = h ? (h.subtitle || '') : '';
+  document.getElementById('hero-order').value    = h ? h.sort_order : (heroList.length + 1);
+  document.getElementById('hero-file').value     = '';
+  document.getElementById('hero-poster').value   = '';
+  document.getElementById('hero-file-label').textContent =
+    h ? 'CLICK TO REPLACE VIDEO OR IMAGE (optional)' : 'CLICK TO UPLOAD VIDEO OR IMAGE';
+  const prev = document.getElementById('hero-poster-preview');
+  if(h && h.poster_url) { prev.src = h.poster_url; prev.style.display = 'block'; }
+  else { prev.style.display = 'none'; }
+  document.getElementById('hero-progress').style.display = 'none';
+  document.getElementById('hero-modal').classList.add('open');
+}
+
+function editHero(id) {
+  const h = heroList.find(x => x.id === id);
+  if(h) openHeroModal(h);
+}
+
+function saveHero() {
+  const id       = document.getElementById('hero-id').value;
+  const file     = document.getElementById('hero-file').files[0];
+  const poster   = document.getElementById('hero-poster').files[0];
+  if(!id && !file) return showToast('A video or image is required', true);
+
+  const fd = new FormData();
+  fd.append('title_prefix', document.getElementById('hero-prefix').value.trim());
+  fd.append('title_accent', document.getElementById('hero-accent').value.trim());
+  fd.append('subtitle',     document.getElementById('hero-subtitle').value.trim());
+  fd.append('sort_order',   document.getElementById('hero-order').value || 0);
+  if(file)   fd.append('media',  file);
+  if(poster) fd.append('poster', poster);
+
+  // ভিডিও বড় হয় — তাই fetch এর বদলে XHR, যাতে প্রগ্রেস দেখানো যায়
+  const xhr = new XMLHttpRequest();
+  xhr.open(id ? 'PUT' : 'POST', id ? `${API}/hero/${id}` : `${API}/hero`);
+  xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+
+  const box = document.getElementById('hero-progress');
+  const bar = document.getElementById('hero-progress-bar');
+  const txt = document.getElementById('hero-progress-text');
+  const btn = document.getElementById('hero-save-btn');
+  box.style.display = 'block';
+  btn.disabled = true;
+  btn.textContent = 'UPLOADING…';
+
+  xhr.upload.onprogress = (e) => {
+    if(!e.lengthComputable) return;
+    const pct = Math.round(e.loaded / e.total * 100);
+    bar.style.width = pct + '%';
+    txt.textContent = `UPLOADING… ${pct}%`;
+  };
+
+  xhr.onload = () => {
+    btn.disabled = false;
+    btn.textContent = 'SAVE SLIDE';
+    box.style.display = 'none';
+    bar.style.width = '0';
+    if(xhr.status >= 200 && xhr.status < 300) {
+      closeModal('hero-modal');
+      loadHero();
+      showToast(id ? 'Slide updated' : 'Slide added');
+    } else {
+      let msg = 'Error saving slide';
+      try { msg = JSON.parse(xhr.responseText).error || msg; } catch(e) {}
+      showToast(msg, true);
+    }
+  };
+
+  xhr.onerror = () => {
+    btn.disabled = false;
+    btn.textContent = 'SAVE SLIDE';
+    box.style.display = 'none';
+    showToast('Upload failed — check your connection', true);
+  };
+
+  xhr.send(fd);
+}
+
+async function deleteHero(id) {
+  if(!confirm('Delete this hero slide?')) return;
+  const res = await fetch(`${API}/hero/${id}`, {method:'DELETE', headers:{Authorization:`Bearer ${token}`}});
+  if(!res.ok) return showToast('Error deleting slide', true);
+  loadHero();
+  showToast('Slide deleted');
 }
 
 // QUOTATIONS
