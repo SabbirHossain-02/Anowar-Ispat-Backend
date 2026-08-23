@@ -2,17 +2,11 @@ const router = require('express').Router();
 const pool = require('../db');
 const multer = require('multer');
 const jwt = require('jsonwebtoken');
-const path = require('path');
-const fs = require('fs');
+const { uploadToR2, deleteFromR2 } = require('../r2');
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, 'uploads/'),
-  filename: (req, file, cb) => cb(null, Date.now() + '-' + Math.round(Math.random() * 1e6) + path.extname(file.originalname))
-});
-
-// হিরো ব্যানার ভিডিও বড় হয় — তাই সীমা ২০০MB
+// ফাইল আর ডিস্কে রাখি না — সরাসরি R2 তে যায়
 const upload = multer({
-  storage,
+  storage: multer.memoryStorage(),
   limits: { fileSize: 200 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
     const ok = file.fieldname === 'poster'
@@ -41,11 +35,6 @@ const uploadFields = (req, res, next) => fields(req, res, (err) => {
   res.status(400).json({ error: tooBig ? 'File too large (max 200MB)' : err.message });
 });
 
-const removeUpload = (url) => {
-  if (!url || !url.startsWith('/uploads/')) return;
-  fs.unlink(path.join(__dirname, '..', url), () => {});
-};
-
 router.get('/', async (req, res) => {
   const result = await pool.query(
     'SELECT * FROM hero_banners WHERE is_active = true ORDER BY sort_order, id'
@@ -59,8 +48,10 @@ router.post('/', auth, uploadFields, async (req, res) => {
   if (!media) return res.status(400).json({ error: 'Media file is required' });
 
   const media_type = /^video\//.test(media.mimetype) ? 'video' : 'image';
-  const media_url = `/uploads/${media.filename}`;
-  const poster_url = req.files?.poster?.[0] ? `/uploads/${req.files.poster[0].filename}` : null;
+  const media_url = await uploadToR2(media, 'hero');
+  const poster_url = req.files?.poster?.[0]
+    ? await uploadToR2(req.files.poster[0], 'hero/posters')
+    : null;
 
   const result = await pool.query(
     `INSERT INTO hero_banners (media_type, media_url, poster_url, title_prefix, title_accent, subtitle, sort_order)
@@ -79,8 +70,8 @@ router.put('/:id', auth, uploadFields, async (req, res) => {
   const media = req.files?.media?.[0];
   const poster = req.files?.poster?.[0];
   const media_type = media ? (/^video\//.test(media.mimetype) ? 'video' : 'image') : row.media_type;
-  const media_url = media ? `/uploads/${media.filename}` : row.media_url;
-  const poster_url = poster ? `/uploads/${poster.filename}` : row.poster_url;
+  const media_url = media ? await uploadToR2(media, 'hero') : row.media_url;
+  const poster_url = poster ? await uploadToR2(poster, 'hero/posters') : row.poster_url;
 
   const result = await pool.query(
     `UPDATE hero_banners
@@ -91,9 +82,9 @@ router.put('/:id', auth, uploadFields, async (req, res) => {
      parseInt(sort_order, 10) || 0, req.params.id]
   );
 
-  // বদলে ফেলা পুরোনো ফাইল ডিস্ক থেকে সরাই
-  if (media) removeUpload(row.media_url);
-  if (poster) removeUpload(row.poster_url);
+  // বদলে ফেলা পুরোনো ফাইল R2 থেকে সরাই, নইলে জায়গা দখল করে থাকবে
+  if (media) await deleteFromR2(row.media_url);
+  if (poster) await deleteFromR2(row.poster_url);
 
   res.json(result.rows[0]);
 });
