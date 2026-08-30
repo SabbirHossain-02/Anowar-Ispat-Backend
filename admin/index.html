@@ -401,6 +401,10 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><polygon points="10 8 15 10.5 10 13"/><line x1="8" y1="21" x2="16" y2="21"/></svg>
           Hero Banner
         </div>
+        <div class="nav-item" onclick="showPage('jobs',this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+          Open Positions
+        </div>
       </div>
       <div class="sidebar-section">
         <div class="sidebar-section-title">// ORDERS</div>
@@ -534,6 +538,31 @@
           <table>
             <thead><tr><th>PREVIEW</th><th>TITLE</th><th>SUBTITLE</th><th>TYPE</th><th>ORDER</th><th>ACTIONS</th></tr></thead>
             <tbody id="hero-body"><tr><td colspan="6"><div class="loading"><div class="spinner"></div> Loading...</div></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- OPEN POSITIONS -->
+      <div class="page" id="page-jobs">
+        <div class="page-header">
+          <div class="page-header-top">
+            <div>
+              <div class="page-title">OPEN <span>POSITIONS</span></div>
+              <div class="page-subtitle">// CAREERS PAGE — LIVE VACANCIES</div>
+            </div>
+            <button class="btn-primary" onclick="openJobModal()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              POST VACANCY
+            </button>
+          </div>
+        </div>
+        <div class="data-grid">
+          <div class="data-grid-header">
+            <div class="data-grid-title">All Vacancies</div>
+          </div>
+          <table>
+            <thead><tr><th>POSITION</th><th>DEPARTMENT</th><th>LOCATION</th><th>TYPE</th><th>DEADLINE</th><th>ACTIONS</th></tr></thead>
+            <tbody id="jobs-body"><tr><td colspan="6"><div class="loading"><div class="spinner"></div> Loading...</div></td></tr></tbody>
           </table>
         </div>
       </div>
@@ -718,6 +747,73 @@
   </div>
 </div>
 
+<!-- OPEN POSITION MODAL -->
+<div class="modal-overlay" id="job-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="job-modal-title">POST <span>VACANCY</span></div>
+      <button class="modal-close" onclick="closeModal('job-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">POSITION TITLE *</label>
+        <input class="form-input" id="job-title" placeholder="e.g. Production Engineer" />
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">DEPARTMENT</label>
+          <select class="form-select" id="job-department">
+            <option value="Engineering">Engineering</option>
+            <option value="Production">Production</option>
+            <option value="Quality control">Quality control</option>
+            <option value="Operations">Operations</option>
+            <option value="Sales">Sales</option>
+            <option value="Finance">Finance</option>
+            <option value="Human resources">Human resources</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">LOCATION</label>
+          <input class="form-input" id="job-location" placeholder="e.g. Narayanganj" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">EMPLOYMENT TYPE</label>
+          <select class="form-select" id="job-type">
+            <option value="Full-time">Full-time</option>
+            <option value="Part-time">Part-time</option>
+            <option value="Contract">Contract</option>
+            <option value="Internship">Internship</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">EXPERIENCE</label>
+          <input class="form-input" id="job-experience" placeholder="e.g. 3+ years" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">EDUCATION</label>
+          <input class="form-input" id="job-education" placeholder="e.g. B.Sc. in Mechanical Engineering" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">APPLICATION DEADLINE</label>
+          <input class="form-input" id="job-deadline" placeholder="e.g. 30 Sep 2026" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">DESCRIPTION</label>
+        <textarea class="form-textarea" id="job-description" placeholder="What the role involves..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-ghost" onclick="closeModal('job-modal')">CANCEL</button>
+      <button class="btn-primary" id="job-save-btn" onclick="saveJob()">PUBLISH VACANCY</button>
+    </div>
+  </div>
+</div>
+
 <!-- QUOTATION DETAIL MODAL -->
 <div class="modal-overlay" id="quote-modal">
   <div class="modal" style="max-width:700px">
@@ -801,6 +897,7 @@ function showPage(name, el) {
   if(name === 'media') loadMedia();
   if(name === 'quotations') loadQuotations();
   if(name === 'hero') loadHero();
+  if(name === 'jobs') loadJobs();
   if(name === 'settings') loadCurrentTheme();
 }
 function showPage_OLD(name) {
@@ -980,6 +1077,100 @@ async function deleteMedia(id) {
   if(!confirm('Delete this event?')) return;
   await fetch(`${API}/media/${id}`, {method:'DELETE', headers:{Authorization:`Bearer ${token}`}});
   loadMedia(); loadDashboard(); showToast('Event deleted');
+}
+
+// OPEN POSITIONS
+// সম্পাদনার সময় কোন পদটি খোলা আছে; নতুন পোস্টের সময় null
+let editingJobId = null;
+
+async function loadJobs() {
+  const tbody = document.getElementById('jobs-body');
+  try {
+    const data = await fetch(`${API}/jobs`).then(r=>r.json());
+    if(!Array.isArray(data) || data.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><div class="empty-state-icon">📋</div><p>NO VACANCIES POSTED — THE CAREERS PAGE INVITES OPEN APPLICATIONS UNTIL YOU ADD ONE</p></div></td></tr>';
+      return;
+    }
+    tbody.innerHTML = data.map(j => `
+      <tr>
+        <td style="font-weight:600;max-width:240px">${esc(j.title)}</td>
+        <td>${j.department ? `<span class="badge badge-completed">${esc(j.department)}</span>` : '—'}</td>
+        <td style="color:var(--subtext)">${esc(j.location) || '—'}</td>
+        <td style="color:var(--subtext)">${esc(j.employment_type) || '—'}</td>
+        <td style="font-family:var(--font-mono);font-size:0.75rem;color:var(--subtext)">${esc(j.deadline) || '—'}</td>
+        <td style="white-space:nowrap">
+          <button class="btn-ghost" onclick="editJob(${j.id})">EDIT</button>
+          <button class="btn-danger" onclick="deleteJob(${j.id})">DELETE</button>
+        </td>
+      </tr>`).join('');
+  } catch(e) {
+    tbody.innerHTML = '<tr><td colspan="6" style="color:var(--accent);font-family:var(--font-mono);font-size:0.75rem;padding:2rem">ERROR LOADING DATA</td></tr>';
+  }
+}
+
+const jobFieldIds = {
+  title:'job-title', department:'job-department', location:'job-location',
+  employment_type:'job-type', experience:'job-experience',
+  education:'job-education', description:'job-description', deadline:'job-deadline'
+};
+
+function fillJobForm(j) {
+  for(const [field, id] of Object.entries(jobFieldIds)) {
+    document.getElementById(id).value = (j && j[field]) || '';
+  }
+}
+
+function openJobModal() {
+  editingJobId = null;
+  fillJobForm(null);
+  document.getElementById('job-modal-title').innerHTML = 'POST <span>VACANCY</span>';
+  document.getElementById('job-save-btn').textContent = 'PUBLISH VACANCY';
+  document.getElementById('job-modal').classList.add('open');
+}
+
+async function editJob(id) {
+  try {
+    const data = await fetch(`${API}/jobs`).then(r=>r.json());
+    const job = data.find(j => j.id === id);
+    if(!job) return showToast('That vacancy is no longer listed', true);
+    editingJobId = id;
+    fillJobForm(job);
+    document.getElementById('job-modal-title').innerHTML = 'EDIT <span>VACANCY</span>';
+    document.getElementById('job-save-btn').textContent = 'SAVE CHANGES';
+    document.getElementById('job-modal').classList.add('open');
+  } catch(e) { showToast('Could not open that vacancy', true); }
+}
+
+async function saveJob() {
+  const body = {};
+  for(const [field, id] of Object.entries(jobFieldIds)) {
+    body[field] = document.getElementById(id).value.trim();
+  }
+  if(!body.title) return showToast('Position title is required', true);
+
+  const editing = editingJobId !== null;
+  try {
+    const res = await fetch(`${API}/jobs${editing ? '/' + editingJobId : ''}`, {
+      method: editing ? 'PUT' : 'POST',
+      headers: { 'Content-Type':'application/json', Authorization:`Bearer ${token}` },
+      body: JSON.stringify(body)
+    });
+    if(!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      return showToast(err.error || 'Could not save the vacancy', true);
+    }
+    closeModal('job-modal');
+    loadJobs();
+    showToast(editing ? 'Vacancy updated' : 'Vacancy published');
+  } catch(e) { showToast('Could not save the vacancy', true); }
+}
+
+async function deleteJob(id) {
+  if(!confirm('Remove this vacancy from the careers page?')) return;
+  try {
+    await fetch(`${API}/jobs/${id}`, {method:'DELETE', headers:{Authorization:`Bearer ${token}`}});
+    loadJobs(); showToast('Vacancy removed');
+  } catch(e) { showToast('Could not remove the vacancy', true); }
 }
 
 // HERO BANNER
