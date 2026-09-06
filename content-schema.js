@@ -361,6 +361,133 @@ const PAGES = [
             },
         ],
     },
+    {
+        // হোমপেজের সেকশনগুলি। পণ্য, খবর ও হিরো ব্যানার নিজ নিজ
+        // সেকশন থেকেই আসে — এখানে কেবল স্থায়ী লেখাগুলি।
+        key: 'home',
+        label: 'Home page',
+        group: 'Home',
+        url: '/',
+        fields: [
+            { key: 'about.aTitle', label: 'About block 1 — heading', type: 'text', now: 'BUILDING A LEGACY OF' },
+            { key: 'about.aAccent', label: 'About block 1 — the words in red', type: 'text', now: 'STEEL.' },
+            {
+                key: 'about.aQuote', label: 'About block 1 — quotation', type: 'textarea',
+                now: "Our foundation isn't just laid in concrete; it's forged in unwavering commitment and intense heat. We started with a vision to build the unbuildable.",
+            },
+            { key: 'about.bTitle', label: 'About block 2 — heading', type: 'text', now: 'ENGINEERING THE NEXT' },
+            { key: 'about.bAccent', label: 'About block 2 — the words in red', type: 'text', now: 'CENTURY.' },
+            {
+                key: 'about.bQuote', label: 'About block 2 — quotation', type: 'textarea',
+                now: "We don't just supply materials; we engineer the resilience required to propel Bangladesh into the forefront of monumental construction.",
+            },
+            { key: 'why.eyebrow', label: 'Why Choose Us — small label', type: 'text', now: 'THE FORGED PATH' },
+            { key: 'why.title', label: 'Why Choose Us — heading', type: 'text', now: 'WHY CHOOSE US?' },
+            {
+                key: 'why.items', label: 'Why Choose Us — the milestones', type: 'list',
+                now: '190+ Years · European Technology · Pioneer · Earthquake Resistant · Precision Quality · Nation Builder',
+                item: [
+                    { key: 'title', label: 'Title', type: 'text' },
+                    { key: 'desc', label: 'Description', type: 'textarea' },
+                ],
+            },
+            { key: 'projects.title', label: 'Projects section — heading', type: 'text', now: 'MEGA' },
+            { key: 'projects.accent', label: 'Projects section — the words in red', type: 'text', now: 'PROJECTS' },
+            { key: 'media.title', label: 'News section — heading', type: 'text', now: 'NEWS DESK' },
+            { key: 'blog.title', label: 'Insights section — heading', type: 'text', now: 'INSIGHTS & INNOVATIONS' },
+            {
+                key: 'footer.tagline', label: 'Footer — line under the logo', type: 'textarea',
+                now: "Unrelenting strength. Uncompromising quality. The structural backbone of tomorrow's infrastructure.",
+            },
+        ],
+    },
+    {
+        key: 'projects',
+        label: 'Project Gallery',
+        group: 'Landmarks',
+        url: '/projects',
+        fields: [
+            ...banner('PROJECT GALLERY', 'Built with', 'Anwar Ispat', '/gallery-banner.jpg'),
+            { key: 'eyebrow', label: 'Small label', type: 'text', now: 'PROJECT GALLERY' },
+            { key: 'title', label: 'Heading', type: 'text', now: 'Twelve structures the country depends on' },
+            {
+                key: 'lead', label: 'Paragraph under the heading', type: 'textarea',
+                now: 'Bridges, expressways, ports and power — each one carrying rebar rolled at our mill. Select any project to see it full size.',
+            },
+            {
+                key: 'items', label: 'Projects', type: 'list',
+                now: 'Twelve landmarks',
+                item: [
+                    { key: 'img', label: 'Photograph', type: 'image-url' },
+                    { key: 'name', label: 'Name', type: 'text' },
+                    { key: 'kind', label: 'Kind, e.g. Bridge or Expressway', type: 'text' },
+                ],
+            },
+        ],
+    },
+    {
+        // খবরগুলো Media & Events সেকশন থেকে আসে — এখানে কেবল
+        // পাতার স্থায়ী লেখাগুলি
+        key: 'media-news',
+        label: 'News & Articles',
+        group: 'Media Center',
+        url: '/media/news',
+        fields: [
+            ...banner('MEDIA CENTER', 'Latest', 'News', '/latest-news-banner.jpg'),
+            { key: 'lead', label: 'Label above the main story', type: 'text', now: 'LEAD STORY' },
+            { key: 'more', label: 'Label above the other stories', type: 'text', now: 'MORE STORIES' },
+            { key: 'ticker', label: 'Label on the scrolling headline strip', type: 'text', now: 'LATEST' },
+            {
+                key: 'empty', label: 'Shown when nothing has been published', type: 'text',
+                now: 'No stories have been published in this section yet.',
+            },
+        ],
+    },
+    {
+        key: 'media-press',
+        label: 'Press Releases',
+        group: 'Media Center',
+        url: '/media/press',
+        fields: [
+            { key: 'hero.tag', label: 'Small label above the title', type: 'text', now: 'Official Statements' },
+            { key: 'hero.title', label: 'Title', type: 'text', now: 'Press' },
+            { key: 'hero.accent', label: 'The words in red', type: 'text', now: 'Releases' },
+            {
+                key: 'releases',
+                label: 'Press releases — these are statements in the company\'s name, so publish only what has actually been issued',
+                type: 'list',
+                now: 'Four releases',
+                item: [
+                    { key: 'pr', label: 'Reference, e.g. PR-2026-001', type: 'text' },
+                    { key: 'cat', label: 'Category', type: 'text' },
+                    { key: 'title', label: 'Headline', type: 'text' },
+                    { key: 'date', label: 'Date', type: 'text' },
+                    { key: 'read', label: 'Reading time', type: 'text' },
+                ],
+            },
+        ],
+    },
+    {
+        key: 'media-events',
+        label: 'Event Gallery',
+        group: 'Media Center',
+        url: '/media/events',
+        fields: [
+            { key: 'hero.tag', label: 'Small label above the title', type: 'text', now: 'Visual Stories' },
+            { key: 'hero.title', label: 'Title', type: 'text', now: 'Event' },
+            { key: 'hero.accent', label: 'The words in red', type: 'text', now: 'Gallery' },
+            {
+                key: 'events', label: 'Events', type: 'list',
+                now: 'Six events',
+                item: [
+                    { key: 'cat', label: 'Category', type: 'text' },
+                    { key: 'title', label: 'Name', type: 'text' },
+                    { key: 'date', label: 'Date', type: 'text' },
+                    { key: 'photos', label: 'Number of photographs', type: 'text' },
+                ],
+            },
+        ],
+    },
     // এই পাতাগুলিতে PageBanner নেই — নিজের কেন্দ্রীভূত শিরোনাম আছে,
     // তাই ব্যানারের বদলে hero.* ঘরগুলি
     {
