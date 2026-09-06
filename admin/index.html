@@ -405,6 +405,13 @@
         <div class="topbar-tag">Site administration</div>
       </div>
       <div class="topbar-right">
+        <!-- .layout ১০০vh, স্ক্রল হয় শুধু .main — তাই এই বোতাম দুটি
+             ফর্ম যত লম্বাই হোক সবসময় হাতের কাছে থাকে -->
+        <div id="page-actions" style="display:none;align-items:center;gap:0.6rem">
+          <span id="page-actions-name" style="font-size:0.78rem;color:var(--subtext)"></span>
+          <button class="btn-ghost" style="padding:0.45rem 1rem;font-size:0.75rem" onclick="cancelPage()">CANCEL</button>
+          <button class="btn-primary" style="padding:0.45rem 1.2rem;font-size:0.75rem" onclick="savePage()">SAVE</button>
+        </div>
         <button class="theme-btn" onclick="toggleAdminTheme()" title="Switch light and dark" aria-label="Switch light and dark">
           <svg id="theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"></svg>
         </button>
@@ -992,6 +999,18 @@ function showPage(name, el) {
   if(name === 'jobs') loadJobs();
   if(name === 'pages') loadPages();
   if(name === 'settings') loadCurrentTheme();
+  // Save ও Cancel কেবল Page Text এ অর্থবহ — অন্য সেকশনগুলো
+  // নিজের নিজের মোডাল থেকে সংরক্ষণ করে
+  if(name !== 'pages') showPageActions(null);
+}
+
+// টপ বারের Save/Cancel — কোন পেজ খোলা আছে তা সহ
+function showPageActions(label) {
+  const box = document.getElementById('page-actions');
+  if(!box) return;
+  box.style.display = label ? 'flex' : 'none';
+  const name = document.getElementById('page-actions-name');
+  if(name) name.textContent = label || '';
 }
 function showPage_OLD(name) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -1375,6 +1394,15 @@ function openPage(key) {
     <button class="btn-primary" onclick="savePage()">SAVE CHANGES</button>
   </div>`;
   box.innerHTML = html;
+  showPageActions(page.label);
+}
+
+// সংরক্ষণ না করা বদলগুলো ফেলে দিয়ে ফর্মটি আবার আঁকে
+function cancelPage() {
+  if(!currentPageKey) return;
+  if(!confirm('Discard the changes you have not saved on this page?')) return;
+  openPage(currentPageKey);
+  showToast('Changes discarded');
 }
 
 function cssId(k) { return k.replace(/[^a-zA-Z0-9]/g, '_'); }
