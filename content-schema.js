@@ -476,6 +476,7 @@ const PAGES = [
 
             { type: 'section', label: "Insights", note: "The three articles near the bottom" },
             { key: 'blog.eyebrow', label: 'Insights section — small line', type: 'text', now: '[ SYSTEM.ARCHIVES.OPEN ]' },
+            { key: 'blog.cta', label: 'Insights section — the button on each card', type: 'text', now: 'INITIATE FEED' },
             { key: 'blog.title', label: 'Insights section — heading', type: 'text', now: 'INSIGHTS & INNOVATIONS' },
             {
                 key: 'blog.items', label: 'Insights section — the articles', type: 'list',
