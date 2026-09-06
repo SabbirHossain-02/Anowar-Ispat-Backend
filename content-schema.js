@@ -391,13 +391,69 @@ const PAGES = [
                     { key: 'desc', label: 'Description', type: 'textarea' },
                 ],
             },
+            { key: 'ps.specLabel', label: 'Product panel — specifications heading', type: 'text', now: 'KEY SPECIFICATIONS' },
+            {
+                key: 'ps.specs', label: 'Product panel — specification points, one per line', type: 'lines',
+                now: 'Excellent Weldability and Bendability · Earthquake Resistant Properties · Advanced Rib Design',
+            },
+            { key: 'ps.loading', label: 'Product panel — while loading', type: 'text', now: 'Loading products...' },
+            { key: 'ps.empty', label: 'Product panel — when none added', type: 'text', now: 'No products published yet.' },
+
+            { key: 'strengths.heading', label: 'Orbit — small line above the name', type: 'text', now: 'WHY CHOOSE' },
+            { key: 'strengths.brand', label: 'Orbit — the name', type: 'text', now: 'ANWAR' },
+            { key: 'strengths.brandAccent', label: 'Orbit — the part in red', type: 'text', now: 'ISPAT' },
+            { key: 'strengths.tail', label: 'Orbit — line under the name', type: 'text', now: 'THE BEST?' },
+            {
+                key: 'strengths.items', label: 'Orbit — the labels going round', type: 'lines',
+                now: 'SUPERIOR STRENGTH · EXCELLENT DUCTILITY · EASY WELDABILITY · IMPROVED RIB DESIGN · TMT TECHNOLOGY · PRECISE STANDARDS · CONTROLLED MICROSTRUCTURE',
+            },
+
             { key: 'projects.title', label: 'Projects section — heading', type: 'text', now: 'MEGA' },
             { key: 'projects.accent', label: 'Projects section — the words in red', type: 'text', now: 'PROJECTS' },
+            {
+                key: 'projects.items',
+                label: 'Projects section — the eight videos. Every video link is currently dead, so replace or delete these',
+                type: 'list',
+                now: 'Padma Bridge · Rooppur · Mayor Hanif Flyover · Purbachal · Airport T3 · Shahjalal Fertilizer · Hotel Intercontinental · City Center',
+                item: [
+                    { key: 'title', label: 'Name', type: 'text' },
+                    { key: 'desc', label: 'Description', type: 'textarea' },
+                    { key: 'video', label: 'Video link', type: 'text' },
+                    { key: 'poster', label: 'Still shown before the video plays', type: 'image-url' },
+                ],
+            },
+
             { key: 'media.title', label: 'News section — heading', type: 'text', now: 'NEWS DESK' },
+            { key: 'media.cta', label: 'News section — button', type: 'text', now: 'INITIATE FEED' },
+            { key: 'media.loading', label: 'News section — while loading', type: 'text', now: 'Loading media posts...' },
+            { key: 'media.empty', label: 'News section — when none added', type: 'text', now: 'No media posts yet.' },
+
+            { key: 'blog.eyebrow', label: 'Insights section — small line', type: 'text', now: '[ SYSTEM.ARCHIVES.OPEN ]' },
             { key: 'blog.title', label: 'Insights section — heading', type: 'text', now: 'INSIGHTS & INNOVATIONS' },
+            {
+                key: 'blog.items', label: 'Insights section — the articles', type: 'list',
+                now: 'Three articles',
+                item: [
+                    { key: 'title', label: 'Headline', type: 'text' },
+                    { key: 'cat', label: 'Category', type: 'text' },
+                    { key: 'date', label: 'Date', type: 'text' },
+                ],
+            },
+
             {
                 key: 'footer.tagline', label: 'Footer — line under the logo', type: 'textarea',
                 now: "Unrelenting strength. Uncompromising quality. The structural backbone of tomorrow's infrastructure.",
+            },
+            { key: 'footer.quickTitle', label: 'Footer — first column heading', type: 'text', now: 'QUICK LINKS' },
+            { key: 'footer.legalTitle', label: 'Footer — second column heading', type: 'text', now: 'LEGAL' },
+            { key: 'footer.contactBtn', label: 'Footer — button', type: 'text', now: 'CONTACT US' },
+            {
+                key: 'footer.quick', label: 'Footer — first column links, one per line as  Label | #anchor', type: 'lines',
+                now: 'Product & Service · Better Tomorrow · Career · Media & Events',
+            },
+            {
+                key: 'footer.legal', label: 'Footer — second column links, one per line as  Label | link', type: 'lines',
+                now: 'Privacy Policy · Terms of Service',
             },
         ],
     },
