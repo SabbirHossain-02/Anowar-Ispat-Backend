@@ -361,6 +361,145 @@ const PAGES = [
             },
         ],
     },
+    // এই পাতাগুলিতে PageBanner নেই — নিজের কেন্দ্রীভূত শিরোনাম আছে,
+    // তাই ব্যানারের বদলে hero.* ঘরগুলি
+    {
+        key: 'careers-experience',
+        label: 'Employee Experience',
+        group: 'Careers',
+        url: '/careers/experience',
+        fields: [
+            { key: 'hero.tag', label: 'Small label above the title', type: 'text', now: 'Life at Anwar Ispat' },
+            { key: 'hero.title', label: 'Title', type: 'text', now: 'Employee' },
+            { key: 'hero.accent', label: 'The words in red', type: 'text', now: 'Experience' },
+            {
+                key: 'values', label: 'Values', type: 'list',
+                now: 'Integrity · Teamwork · Excellence',
+                item: [
+                    { key: 'title', label: 'Name', type: 'text' },
+                    { key: 'text', label: 'Description', type: 'textarea' },
+                ],
+            },
+            {
+                key: 'perks', label: 'Benefits', type: 'list',
+                now: 'Competitive Salary · Healthcare Coverage · Career Growth · Transport · Provident Fund · Leave',
+                item: [
+                    { key: 'title', label: 'Name', type: 'text' },
+                    { key: 'text', label: 'Description', type: 'text' },
+                ],
+            },
+            {
+                key: 'stories',
+                label: 'Employee stories — these are quotes attributed to named people, so only publish what they have actually said',
+                type: 'list',
+                now: 'Four stories',
+                item: [
+                    { key: 'img', label: 'Photograph', type: 'image-url' },
+                    { key: 'name', label: 'Name', type: 'text' },
+                    { key: 'role', label: 'Position', type: 'text' },
+                    { key: 'years', label: 'Years at the company', type: 'text' },
+                    { key: 'quote', label: 'What they said', type: 'textarea' },
+                ],
+            },
+        ],
+    },
+    {
+        key: 'contact-form',
+        label: 'Contact Form',
+        group: 'Contact',
+        url: '/contact/form',
+        fields: [
+            { key: 'hero.tag', label: 'Small label above the title', type: 'text', now: 'Get In Touch' },
+            { key: 'hero.title', label: 'Title', type: 'text', now: 'Contact' },
+            { key: 'hero.accent', label: 'The words in red', type: 'text', now: 'Form' },
+            { key: 'hero.promise', label: 'Promise shown on the right', type: 'text', now: 'Within 24 Hours' },
+            { key: 'hero.promiseNote', label: 'Caption under the promise', type: 'text', now: 'Response time' },
+        ],
+    },
+    {
+        key: 'contact-locations',
+        label: 'Office Locations',
+        group: 'Contact',
+        url: '/contact/locations',
+        fields: [
+            { key: 'hero.tag', label: 'Small label above the title', type: 'text', now: 'Find Us' },
+            { key: 'hero.title', label: 'Title', type: 'text', now: 'Office' },
+            { key: 'hero.accent', label: 'The words in red', type: 'text', now: 'Locations' },
+            { key: 'hero.sub', label: 'Paragraph under the title', type: 'textarea' },
+            {
+                key: 'locations', label: 'Offices', type: 'list',
+                now: 'Head Office · Narayanganj Factory · Chittagong Sales Office · Sylhet Branch Office',
+                item: [
+                    { key: 'badge', label: 'Tag, e.g. HQ or FACTORY', type: 'text' },
+                    { key: 'title', label: 'Name', type: 'text' },
+                    { key: 'address', label: 'Address', type: 'textarea' },
+                    { key: 'phone', label: 'Telephone', type: 'text' },
+                    { key: 'hours', label: 'Opening hours', type: 'text' },
+                    { key: 'email', label: 'Email', type: 'text' },
+                ],
+            },
+        ],
+    },
+    {
+        key: 'contact-hotline',
+        label: 'Hotline / Email',
+        group: 'Contact',
+        url: '/contact/hotline',
+        fields: [
+            { key: 'hero.tag', label: 'Small label above the title', type: 'text', now: 'Reach Out' },
+            { key: 'hero.title', label: 'Title', type: 'text', now: 'Hotline /' },
+            { key: 'hero.accent', label: 'The words in red', type: 'text', now: 'Email' },
+            { key: 'hero.sub', label: 'Paragraph under the title', type: 'textarea' },
+            {
+                key: 'phones', label: 'Telephone lines', type: 'list',
+                now: 'Sales Hotline · Factory / Technical · Corporate Office',
+                item: [
+                    { key: 'label', label: 'Name of the line', type: 'text' },
+                    { key: 'number', label: 'Number', type: 'text' },
+                    { key: 'hours', label: 'When it is answered', type: 'text' },
+                    { key: 'desc', label: 'What it is for', type: 'text' },
+                ],
+            },
+            {
+                key: 'emails', label: 'Email addresses', type: 'list',
+                now: 'info · media · sales · careers',
+                item: [
+                    { key: 'label', label: 'Name', type: 'text' },
+                    { key: 'email', label: 'Address', type: 'text' },
+                    { key: 'desc', label: 'What it is for', type: 'text' },
+                ],
+            },
+            {
+                key: 'socials', label: 'Social accounts', type: 'list',
+                now: 'Facebook · LinkedIn · YouTube',
+                item: [
+                    { key: 'name', label: 'Network', type: 'text' },
+                    { key: 'handle', label: 'Handle shown', type: 'text' },
+                    { key: 'href', label: 'Link', type: 'text' },
+                ],
+            },
+        ],
+    },
+    {
+        key: 'contact-map',
+        label: 'Google Map',
+        group: 'Contact',
+        url: '/contact/map',
+        fields: [
+            { key: 'hero.tag', label: 'Small label above the title', type: 'text', now: 'Find Our Way' },
+            { key: 'hero.title', label: 'Title', type: 'text', now: 'Google' },
+            { key: 'hero.accent', label: 'The words in red', type: 'text', now: 'Map' },
+            { key: 'hero.sub', label: 'Paragraph under the title', type: 'textarea' },
+            {
+                key: 'locations', label: 'Places on the map', type: 'list',
+                now: 'The same offices as the Locations page',
+                item: [
+                    { key: 'title', label: 'Name', type: 'text' },
+                    { key: 'address', label: 'Address', type: 'textarea' },
+                ],
+            },
+        ],
+    },
 ];
 
 module.exports = { PAGES };
