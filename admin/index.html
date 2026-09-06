@@ -1481,9 +1481,8 @@ function openPage(key) {
     html += `<div class="form-group"><label class="form-label">${esc(f.label)}</label>${tag}</div>`;
   });
 
-  html += `<div style="display:flex;gap:0.75rem;margin-top:1.5rem">
-    <button class="btn-primary" onclick="savePage()">SAVE CHANGES</button>
-  </div>`;
+  // নিচে দ্বিতীয় একটি Save ছিল — টপ বারেরটি সবসময় দেখা যায় বলে
+  // ওটা কেবল একই কাজের দুটি বোতাম হয়ে দাঁড়িয়েছিল
   box.innerHTML = html;
   showPageActions(page.label);
 }
