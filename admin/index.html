@@ -202,6 +202,7 @@
   }
   .sec-name { font-size: 0.86rem; font-weight: 600; color: var(--text); }
   .sec-note { font-size: 0.74rem; color: var(--subtext); margin-top: 0.12rem; }
+  .sec + .sec { margin-top: -0.2rem; }
   .sec-count { margin-left: auto; font-size: 0.72rem; color: var(--subtext); flex-shrink: 0; }
   .sec-caret {
     flex-shrink: 0; width: 14px; height: 14px; color: var(--subtext);
@@ -1534,7 +1535,7 @@ function openPage(key) {
       // আগেরটি বন্ধ করে নতুনটি খুলি
       if(secOpen) html += '</div></section>';
       const count = countFields(page.fields, f);
-      html += `<section class="sec" id="sec-${secIdx - 1}">
+      html += `<section class="sec is-shut" id="sec-${secIdx - 1}">
         <button class="sec-head" onclick="this.parentElement.classList.toggle('is-shut')">
           <span class="sec-n">${String(secIdx).padStart(2,'0')}</span>
           <span>
