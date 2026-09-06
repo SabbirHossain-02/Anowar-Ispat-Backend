@@ -462,6 +462,11 @@
           Quotations
           <span class="nav-badge" id="pending-count">0</span>
         </div>
+        <div class="nav-item" onclick="showPage('messages',this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          Messages
+          <span class="nav-badge" id="unread-count">0</span>
+        </div>
 <div class="nav-section">SYSTEM</div>
 <div class="nav-item" onclick="showPage('settings',this)">
   <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:18px;height:18px;flex-shrink:0"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
@@ -640,6 +645,22 @@
       </div>
 
       <!-- QUOTATIONS -->
+      <div class="page" id="page-messages">
+        <div class="page-header">
+          <div class="page-title">CONTACT <span>MESSAGES</span></div>
+          <div class="page-subtitle">SENT FROM THE CONTACT FORM AND THE CONTACT POP-UP</div>
+        </div>
+        <div class="data-grid">
+          <div class="data-grid-header">
+            <div class="data-grid-title">All Messages</div>
+          </div>
+          <table>
+            <thead><tr><th>FROM</th><th>SUBJECT</th><th>MESSAGE</th><th>SENT VIA</th><th>DATE</th><th>ACTION</th></tr></thead>
+            <tbody id="messages-body"><tr><td colspan="6"><div class="loading"><div class="spinner"></div> Loading...</div></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
       <div class="page" id="page-quotations">
         <div class="page-header">
           <div class="page-title">QUOTATION <span>REQUESTS</span></div>
@@ -1086,6 +1107,7 @@ function showPage(name, el) {
   if(name === 'products') loadProducts();
   if(name === 'media') loadMedia();
   if(name === 'quotations') loadQuotations();
+  if(name === 'messages') loadMessages();
   if(name === 'hero') loadHero();
   if(name === 'jobs') loadJobs();
   if(name === 'pages') loadPages();
@@ -1111,6 +1133,7 @@ function showPage_OLD(name) {
   if(name === 'products') loadProducts();
   if(name === 'media') loadMedia();
   if(name === 'quotations') loadQuotations();
+  if(name === 'messages') loadMessages();
 }
 
 async function loadAll() {
@@ -1443,6 +1466,12 @@ function openPage(key) {
   page.fields.forEach(f => {
     const val = getAt(saved, f.key);
 
+    // কেবল বোঝানোর জন্য — সংরক্ষণ হয় না
+    if(f.type === 'note') {
+      html += `<p style="color:var(--subtext);font-size:0.78rem;line-height:1.6;margin:0 0 1.1rem;padding:0.7rem 0.85rem;background:var(--zebra);border-left:2px solid var(--accent);border-radius:0 4px 4px 0">${esc(f.label)}</p>`;
+      return;
+    }
+
     if(f.type === 'image') {
       const current = val || f.now;
       html += `<div class="form-group">
@@ -1598,7 +1627,7 @@ function collectPage() {
   if(savedBanner) setAt(out, 'banner.image', savedBanner);
 
   page.fields.forEach(f => {
-    if(f.type === 'image') return;
+    if(f.type === 'image' || f.type === 'note') return;
     if(f.type === 'list') {
       const box = document.getElementById('rows-' + cssId(f.key));
       const rows = [];
@@ -1835,6 +1864,62 @@ async function loadQuotations() {
 }
 
 
+
+// দর্শকের পাঠানো বার্তা। লেখাটি বাইরে থেকে আসে, তাই সবকিছু esc()
+// দিয়ে বসানো হয় — নইলে কেউ ট্যাগ পাঠালে প্যানেলে চলত
+async function loadMessages() {
+  const tbody = document.getElementById('messages-body');
+  try {
+    const data = await authFetch(`${API}/messages`).then(r=>r.json());
+    updateUnread(data);
+    if(data.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><p>NO MESSAGES YET</p></div></td></tr>';
+      return;
+    }
+    tbody.innerHTML = data.map(m => {
+      const body = String(m.body || '');
+      const short = body.length > 120 ? body.slice(0,120) + '…' : body;
+      return `
+      <tr style="${m.is_read ? '' : 'background:var(--accent-dim)'}">
+        <td>
+          <div style="font-weight:600">${esc(m.name)}</div>
+          <a href="mailto:${esc(m.email)}" style="font-size:0.72rem;color:var(--subtext)">${esc(m.email)}</a>
+          ${m.phone ? `<div style="font-family:var(--font-mono);font-size:0.68rem;color:var(--subtext)">${esc(m.phone)}</div>` : ''}
+        </td>
+        <td style="font-size:0.8rem">${esc(m.subject || '—')}</td>
+        <td style="font-size:0.78rem;color:var(--subtext);max-width:340px;white-space:pre-wrap">${esc(short)}</td>
+        <td style="font-size:0.72rem;color:var(--subtext)">${m.source === 'modal' ? 'Pop-up' : 'Contact form'}</td>
+        <td style="font-family:var(--font-mono);font-size:0.7rem;color:var(--subtext)">${new Date(m.created_at).toLocaleDateString('en-GB')}</td>
+        <td>
+          ${m.is_read ? '' : `<button onclick="markRead(${m.id})">MARK READ</button> `}
+          <button onclick="deleteMessage(${m.id})" style="color:#E3182D;background:transparent;border:1px solid #E3182D44;padding:4px 12px;cursor:pointer;border-radius:4px;font-size:11px;font-weight:600;letter-spacing:1px">DELETE</button>
+        </td>
+      </tr>`;
+    }).join('');
+  } catch(e) {
+    tbody.innerHTML = '<tr><td colspan="6" style="color:var(--accent);font-family:var(--font-mono);font-size:0.75rem;padding:2rem">ERROR LOADING DATA</td></tr>';
+  }
+}
+
+function updateUnread(list) {
+  const badge = document.getElementById('unread-count');
+  if(!badge) return;
+  const unread = list.filter(m => !m.is_read).length;
+  badge.textContent = unread;
+  badge.style.display = unread ? '' : 'none';
+}
+
+async function markRead(id) {
+  await authFetch(`${API}/messages/${id}/read`, { method: 'PUT' });
+  loadMessages();
+}
+
+async function deleteMessage(id) {
+  if(!confirm('Delete this message? It cannot be brought back.')) return;
+  await authFetch(`${API}/messages/${id}`, { method: 'DELETE' });
+  showToast('Message deleted');
+  loadMessages();
+}
 
 async function loadCurrentTheme() {
   try {

@@ -162,6 +162,15 @@ const PAGES = [
                 key: 'empty', label: 'Shown when no products have been added', type: 'text',
                 now: 'No products available yet.',
             },
+            {
+                key: 'specLabel', label: 'Pop-up — heading above the specification list', type: 'text',
+                now: 'KEY SPECIFICATIONS',
+            },
+            {
+                key: 'specs', label: 'Pop-up — the specification list, one per line', type: 'lines',
+                now: 'Ultimate Tensile Strength: 500 MPa / Excellent Weldability and Bendability / Earthquake Resistant Properties / Advanced Rib Design for better bonding',
+            },
+            { key: 'quoteBtn', label: 'Pop-up — the quotation button', type: 'text', now: 'REQUEST A QUOTE' },
         ],
     },
     {
@@ -369,6 +378,15 @@ const PAGES = [
         group: 'Home',
         url: '/',
         fields: [
+            { key: 'hero.line1', label: 'Opening headline — first line', type: 'text', now: 'FORGED IN' },
+            { key: 'hero.accent1', label: 'Opening headline — the red word on the first line', type: 'text', now: 'FIRE' },
+            { key: 'hero.line2', label: 'Opening headline — second line', type: 'text', now: 'ENGINEERED FOR THE' },
+            { key: 'hero.accent2', label: 'Opening headline — the red word on the second line', type: 'text', now: 'FUTURE' },
+            {
+                key: 'hero.sub', label: 'Paragraph under the opening headline', type: 'textarea',
+                now: 'A cinematic journey of power, precision, and the steel that builds Bangladesh.',
+            },
+            { key: 'hero.cta', label: 'Button under the opening headline', type: 'text', now: 'DISCOVER THE FORCE' },
             { key: 'about.aTitle', label: 'About block 1 — heading', type: 'text', now: 'BUILDING A LEGACY OF' },
             { key: 'about.aAccent', label: 'About block 1 — the words in red', type: 'text', now: 'STEEL.' },
             {
@@ -497,6 +515,23 @@ const PAGES = [
                 key: 'empty', label: 'Shown when nothing has been published', type: 'text',
                 now: 'No stories have been published in this section yet.',
             },
+            { key: 'loading', label: 'Shown while the newsroom loads', type: 'text', now: 'Loading the newsroom…' },
+            {
+                key: 'failed', label: 'Shown when the newsroom cannot be reached', type: 'textarea',
+                now: 'The newsroom could not be reached just now. Please try again shortly.',
+            },
+            { key: 'artLoading', label: 'Story page — shown while the story loads', type: 'text', now: 'Loading the story…' },
+            { key: 'artGoneTag', label: 'Story page — label when the story is gone', type: 'text', now: 'NOT FOUND' },
+            {
+                key: 'artGone', label: 'Story page — heading when the story is gone', type: 'text',
+                now: 'This story is no longer available',
+            },
+            {
+                key: 'artGoneText', label: 'Story page — line under that heading', type: 'textarea',
+                now: 'It may have been removed from the newsroom, or the link may be incomplete.',
+            },
+            { key: 'artBack', label: 'Story page — the back button', type: 'text', now: 'All news' },
+            { key: 'artMore', label: 'Story page — label above the other stories', type: 'text', now: 'MORE FROM THE NEWSROOM' },
         ],
     },
     {
@@ -508,6 +543,14 @@ const PAGES = [
             { key: 'hero.tag', label: 'Small label above the title', type: 'text', now: 'Official Statements' },
             { key: 'hero.title', label: 'Title', type: 'text', now: 'Press' },
             { key: 'hero.accent', label: 'The words in red', type: 'text', now: 'Releases' },
+            { key: 'stamp', label: 'The red chip on a release', type: 'text', now: 'Official Statement' },
+            { key: 'imageNote', label: 'Caption in the empty image box', type: 'text', now: 'Official Image' },
+            { key: 'immediate', label: 'Release page — the line above the text', type: 'text', now: 'For Immediate Release' },
+            { key: 'contactLabel', label: 'Release page — heading of the contact box', type: 'text', now: 'Media Contact' },
+            { key: 'notFound', label: 'Release page — shown when the release is gone', type: 'text', now: 'Press release not found' },
+            { key: 'mediaTitle', label: 'Release page — who to contact', type: 'text', now: 'Corporate Communications' },
+            { key: 'mediaEmail', label: 'Release page — contact email', type: 'text', now: 'media@anwarispat.com' },
+            { key: 'mediaPhone', label: 'Release page — contact telephone', type: 'text', now: '+880 2223 384037' },
             {
                 key: 'releases',
                 label: 'Press releases — these are statements in the company\'s name, so publish only what has actually been issued',
@@ -519,6 +562,11 @@ const PAGES = [
                     { key: 'title', label: 'Headline', type: 'text' },
                     { key: 'date', label: 'Date', type: 'text' },
                     { key: 'read', label: 'Reading time', type: 'text' },
+                    {
+                        key: 'body',
+                        label: 'The release itself — leave a blank line between paragraphs',
+                        type: 'textarea',
+                    },
                 ],
             },
         ],
@@ -546,6 +594,67 @@ const PAGES = [
     },
     // এই পাতাগুলিতে PageBanner নেই — নিজের কেন্দ্রীভূত শিরোনাম আছে,
     // তাই ব্যানারের বদলে hero.* ঘরগুলি
+    {
+        key: 'careers-positions',
+        label: 'Open Positions',
+        group: 'Careers',
+        url: '/careers/positions',
+        fields: [
+            ...banner('CAREERS', 'Open', 'Positions', '/careers-banner.jpg'),
+            { key: 'eyebrow', label: 'Small label above the opening line', type: 'text', now: 'CAREER OPPORTUNITIES' },
+            {
+                key: 'statement', label: 'The opening line, in large type', type: 'textarea',
+                now: 'A chance for you to use your skills for future advancement.',
+            },
+            {
+                key: 'lead', label: 'Paragraph under the opening line', type: 'textarea',
+                now: 'Anwar Ispat has been rolling steel in Bangladesh for over four decades. The mill runs on the people in it — engineers on the floor, inspectors at the spectrometer, and the teams behind them.',
+            },
+            { key: 'discEyebrow', label: 'Label above the list of departments', type: 'text', now: 'WHERE WE RECRUIT' },
+            {
+                key: 'disciplines', label: 'Departments we recruit into — one per line', type: 'lines',
+                now: 'Engineering · Production · Quality control · Operations · Sales · Finance · Human resources',
+            },
+            {
+                key: 'email', label: 'Address applications are sent to', type: 'text',
+                now: 'careers@anwarispat.com',
+            },
+            {
+                key: 'vacancyLabel', label: 'Label above the vacancies (the count is added automatically)', type: 'text',
+                now: 'CURRENT VACANCIES',
+            },
+            {
+                key: 'openLabel', label: 'Label above the open-application block, when vacancies are listed', type: 'text',
+                now: 'OPEN APPLICATIONS',
+            },
+            {
+                key: 'openTitleWith', label: 'Heading when vacancies are listed', type: 'text',
+                now: 'Nothing above a fit? Write to us anyway',
+            },
+            {
+                key: 'emptyLabel', label: 'Label above the block when there are no vacancies', type: 'text',
+                now: 'CURRENT VACANCIES',
+            },
+            {
+                key: 'openTitleNone', label: 'Heading when there are no vacancies', type: 'text',
+                now: 'Specific openings are posted here as they arise',
+            },
+            {
+                key: 'openText', label: 'Paragraph about open applications', type: 'textarea',
+                now: 'We accept open applications year-round. If your experience fits one of the areas above, send it to us and it will be held against upcoming requirements.',
+            },
+            { key: 'loading', label: 'Shown while vacancies load', type: 'text', now: 'Checking for current vacancies…' },
+            {
+                key: 'steps', label: 'How to apply — the numbered steps', type: 'list',
+                now: 'Send your CV · We review · Interview and offer',
+                item: [
+                    { key: 'title', label: 'Step name', type: 'text' },
+                    { key: 'text', label: 'Description', type: 'textarea' },
+                ],
+            },
+            { key: 'next', label: 'Button at the foot of the page', type: 'text', now: 'What it is like to work here' },
+        ],
+    },
     {
         key: 'careers-experience',
         label: 'Employee Experience',
@@ -597,6 +706,21 @@ const PAGES = [
             { key: 'hero.accent', label: 'The words in red', type: 'text', now: 'Form' },
             { key: 'hero.promise', label: 'Promise shown on the right', type: 'text', now: 'Within 24 Hours' },
             { key: 'hero.promiseNote', label: 'Caption under the promise', type: 'text', now: 'Response time' },
+            { key: 'sentTitle', label: 'Heading after the message is sent', type: 'text', now: 'Message Sent!' },
+            {
+                key: 'sentText', label: 'Line after the message is sent', type: 'textarea',
+                now: 'Thank you. We will get back to you within 24 hours.',
+            },
+            { key: 'sentAgain', label: 'Button after the message is sent', type: 'text', now: 'Send Another' },
+            {
+                key: 'sideCards', label: 'The cards down the right-hand side', type: 'list',
+                now: 'Response Time · Head Office · Working Hours · General Email',
+                item: [
+                    { key: 'label', label: 'Small label', type: 'text' },
+                    { key: 'value', label: 'Main line', type: 'text' },
+                    { key: 'sub', label: 'Line underneath', type: 'text' },
+                ],
+            },
         ],
     },
     {
@@ -681,6 +805,110 @@ const PAGES = [
                     { key: 'address', label: 'Address', type: 'textarea' },
                 ],
             },
+        ],
+    },
+    {
+        key: 'navbar',
+        label: 'Menu & buttons',
+        group: 'Site-wide',
+        url: '/',
+        fields: [
+            {
+                key: 'note',
+                label: 'Each box below is one menu. The first line is the name in the top bar, the lines under it are its drop-down — in that order. The links themselves stay fixed, only the wording changes here.',
+                type: 'note',
+            },
+            {
+                key: 'menu.about', label: 'Menu 1', type: 'lines',
+                now: 'About Us / Vision, Mission & Values / Leadership Team / Heritage',
+            },
+            {
+                key: 'menu.products', label: 'Menu 2', type: 'lines',
+                now: 'Products / Our Product Range / Product Specifications / Certifications / Download Catalog · Request Quote',
+            },
+            {
+                key: 'menu.sustainability', label: 'Menu 3', type: 'lines',
+                now: 'Sustainability / Environmental, Social, Governance / CSR Activities',
+            },
+            {
+                key: 'menu.landmarks', label: 'Menu 4', type: 'lines',
+                now: 'Landmarks / Project Gallery',
+            },
+            {
+                key: 'menu.media', label: 'Menu 5', type: 'lines',
+                now: 'Media Center / News & Articles / Press Releases / Event Gallery',
+            },
+            {
+                key: 'menu.careers', label: 'Menu 6', type: 'lines',
+                now: 'Careers / Open Positions / Employee Experience',
+            },
+            {
+                key: 'menu.contact', label: 'Menu 7', type: 'lines',
+                now: 'Contact Us / Contact Form / Office Locations / Hotline · Email / Google Map',
+            },
+            { key: 'quoteBtn', label: 'The floating button in the corner of every page', type: 'text', now: 'GET QUOTE' },
+        ],
+    },
+    {
+        key: 'quote-modal',
+        label: 'Quotation pop-up',
+        group: 'Site-wide',
+        url: '/',
+        fields: [
+            { key: 'title', label: 'Heading', type: 'text', now: 'REQUEST A' },
+            { key: 'accent', label: 'Heading — the words in red', type: 'text', now: 'QUOTATION' },
+            { key: 'sub', label: 'Line under the heading', type: 'text', now: 'Submit your requirements for an exact estimation.' },
+            { key: 'catalogBtn', label: 'Catalogue button', type: 'text', now: 'DOWNLOAD CATALOGUE' },
+            { key: 'step1', label: 'Heading of the first column', type: 'text', now: 'Product Information' },
+            { key: 'step2', label: 'Heading of the second column', type: 'text', now: 'Contact Information' },
+            {
+                key: 'products', label: 'The products a visitor can pick from', type: 'list',
+                now: 'Anwars 500CWR · Anwars 500DWR · Anwars 420DWR · Other',
+                item: [
+                    { key: 'value', label: 'Saved as', type: 'text' },
+                    { key: 'label', label: 'Shown as', type: 'text' },
+                ],
+            },
+            {
+                key: 'labelNote',
+                label: 'The box below holds the names of the form fields, one per line, in the order they appear. The boxes themselves stay as they are — only their names change.',
+                type: 'note',
+            },
+            {
+                key: 'labels', label: 'Names of the form fields', type: 'lines',
+                now: 'PRODUCT NAME / SIZE (MM) / QUANTITY (TON) / QUANTITY (PCS) / ADDITIONAL PRODUCTS / BUSINESS NAME / FULL NAME * / EMAIL ADDRESS / MOBILE NUMBER * / ADDRESS / POLICE STATION / SELECT DISTRICT / MESSAGE',
+            },
+            { key: 'submit', label: 'Send button', type: 'text', now: 'SUBMIT REQUEST' },
+            { key: 'ok', label: 'Message after a successful send', type: 'textarea', now: 'QUOTATION SUBMITTED SUCCESSFULLY — We will contact you shortly.' },
+            { key: 'missing', label: 'Message when required boxes are empty', type: 'text', now: 'Full Name and Mobile Number are required.' },
+            { key: 'failed', label: 'Message when the send fails', type: 'text', now: 'Submission failed. Please try again.' },
+        ],
+    },
+    {
+        key: 'contact-modal',
+        label: 'Contact pop-up',
+        group: 'Site-wide',
+        url: '/',
+        fields: [
+            { key: 'title', label: 'Heading', type: 'text', now: 'Contact' },
+            { key: 'accent', label: 'Heading — the words in red', type: 'text', now: 'Anwar Ispat' },
+            { key: 'sub', label: 'Line under the heading', type: 'text', now: 'Tell us what you need and the right desk will answer.' },
+            { key: 'addrLabel', label: 'Address — label', type: 'text', now: 'HEAD OFFICE' },
+            {
+                key: 'addr', label: 'Address', type: 'textarea',
+                now: 'Baitul Hossain Building (12th Floor), 27 Dilkusha Commercial Area, Dhaka - 1000, Bangladesh',
+            },
+            { key: 'phoneLabel', label: 'Telephone — label', type: 'text', now: 'TELEPHONE' },
+            { key: 'phone', label: 'Telephone', type: 'text', now: '+880 2223 384037' },
+            { key: 'mailLabel', label: 'Email — label', type: 'text', now: 'EMAIL' },
+            { key: 'mail', label: 'Email', type: 'text', now: 'mail@anwargroup.net' },
+            { key: 'fName', label: 'Form — name box', type: 'text', now: 'NAME' },
+            { key: 'fEmail', label: 'Form — email box', type: 'text', now: 'EMAIL' },
+            { key: 'fSubject', label: 'Form — subject box', type: 'text', now: 'SUBJECT' },
+            { key: 'fMessage', label: 'Form — message box', type: 'text', now: 'MESSAGE' },
+            { key: 'submit', label: 'Send button', type: 'text', now: 'SEND MESSAGE' },
+            { key: 'ok', label: 'Message after a successful send', type: 'textarea', now: 'Thank you — your message has reached us. We will reply shortly.' },
+            { key: 'failed', label: 'Message when the send fails', type: 'text', now: 'The message could not be sent. Please try again.' },
         ],
     },
 ];
