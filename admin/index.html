@@ -1576,6 +1576,28 @@ function openPage(key) {
       return;
     }
 
+    // তালিকার বাইরেও ছবির ঘর — আপলোড বোতামসহ। সারির ভেতরের
+    // সংস্করণের সাথে একই ক্লাস, তাই uploadRowImage হুবহু খাটে
+    if(f.type === 'image-url') {
+      const cur = val || '';
+      html += `<div class="form-group row-img">
+        <label class="form-label">${esc(f.label)}</label>
+        <div style="display:flex;gap:0.9rem;align-items:flex-start">
+          <img class="row-img-preview" src="${esc(cur || f.now || '')}" alt=""
+               style="width:96px;height:96px;object-fit:cover;border-radius:4px;border:1px solid var(--border);background:var(--bg3)"
+               onerror="this.style.visibility='hidden'" />
+          <div style="flex:1">
+            <input class="form-input row-img-url" data-k="${esc(f.key)}" value="${esc(cur)}"${f.now ? ` placeholder="${esc(f.now)}"` : ''}
+                   oninput="const p=this.closest('.row-img').querySelector('.row-img-preview');p.src=this.value;p.style.visibility='visible'" />
+            <button class="btn-ghost" style="margin-top:0.45rem;padding:0.35rem 0.8rem;font-size:0.7rem"
+                    onclick="this.parentElement.querySelector('.row-file').click()">UPLOAD IMAGE</button>
+            <input type="file" class="row-file" accept="image/*" style="display:none" onchange="uploadRowImage(this)" />
+          </div>
+        </div>
+      </div>`;
+      return;
+    }
+
     if(f.type === 'list') {
       const rows = Array.isArray(val) ? val : [];
       html += `<div class="form-group" data-list="${esc(f.key)}">

@@ -406,12 +406,18 @@ const PAGES = [
             { type: 'section', label: "Vision & Leadership", note: "The two quotation blocks with the photographs" },
             { key: 'about.aTitle', label: 'About block 1 — heading', type: 'text', now: 'BUILDING A LEGACY OF' },
             { key: 'about.aAccent', label: 'About block 1 — the words in red', type: 'text', now: 'STEEL.' },
+            { key: 'about.aName', label: 'About block 1 — name', type: 'text', now: 'LATE ANWAR HOSSAIN' },
+            { key: 'about.aRole', label: 'About block 1 — position', type: 'text', now: 'FOUNDER, ANWAR GROUP' },
+            { key: 'about.aImg', label: 'About block 1 — photograph', type: 'image-url', now: '/founder.webp' },
             {
                 key: 'about.aQuote', label: 'About block 1 — quotation', type: 'textarea',
                 now: "Our foundation isn't just laid in concrete; it's forged in unwavering commitment and intense heat. We started with a vision to build the unbuildable.",
             },
             { key: 'about.bTitle', label: 'About block 2 — heading', type: 'text', now: 'ENGINEERING THE NEXT' },
             { key: 'about.bAccent', label: 'About block 2 — the words in red', type: 'text', now: 'CENTURY.' },
+            { key: 'about.bName', label: 'About block 2 — name', type: 'text', now: 'MANWAR HOSSAIN' },
+            { key: 'about.bRole', label: 'About block 2 — position', type: 'text', now: 'GROUP MANAGING DIRECTOR' },
+            { key: 'about.bImg', label: 'About block 2 — photograph', type: 'image-url', now: '/md.webp' },
             {
                 key: 'about.bQuote', label: 'About block 2 — quotation', type: 'textarea',
                 now: "We don't just supply materials; we engineer the resilience required to propel Bangladesh into the forefront of monumental construction.",
