@@ -1,17 +1,28 @@
-/* অ্যাডমিন প্যানেলের ফর্ম এই ফাইল থেকেই তৈরি হয়। প্রতিটি ঘরের key
-   ফ্রন্টএন্ডের ডিফল্ট অবজেক্টের পথের সাথে হুবহু মেলে — না মিললে
-   অ্যাডমিনে বদল করেও সাইটে দেখা যাবে না।
+/* The admin panel's Page Text form is generated from this file. Each
+   field key matches the path in the page's DEFAULTS object on the
+   frontend — if the two ever disagree, an edit saves but never shows.
+
+   `now` is the wording currently compiled into the site. It is shown in
+   the form as the box's placeholder so the editor can see what they are
+   replacing. It is display only: if it drifts from the frontend the
+   site is unaffected, only the hint is stale.
 
    type:
-     text     — এক লাইনের ঘর
-     textarea — অনুচ্ছেদ
-     list     — একাধিক আইটেম, প্রতিটিতে Add ও Delete
+     text     — single line
+     textarea — paragraph
+     lines    — one entry per line, saved as a list
+     image    — upload, replaces the page banner
+     list     — repeating group with Add and Delete
 */
 
-const banner = (extra = {}) => [
-    { key: 'banner.label', label: 'ব্যানার — উপরের ছোট লেখা', type: 'text', ...extra },
-    { key: 'banner.title', label: 'ব্যানার — শিরোনাম', type: 'text' },
-    { key: 'banner.accent', label: 'ব্যানার — লাল শব্দগুলো', type: 'text' },
+const banner = (label, title, accent, image) => [
+    {
+        key: 'banner.image', label: 'Banner image', type: 'image',
+        now: image,
+    },
+    { key: 'banner.label', label: 'Banner — small label above the title', type: 'text', now: label },
+    { key: 'banner.title', label: 'Banner — title', type: 'text', now: title },
+    { key: 'banner.accent', label: 'Banner — the words in red', type: 'text', now: accent },
 ];
 
 const PAGES = [
@@ -19,17 +30,25 @@ const PAGES = [
         key: 'about',
         label: 'About Us',
         group: 'About',
+        url: '/about',
         fields: [
-            ...banner(),
-            { key: 'intro', label: 'ভূমিকার অনুচ্ছেদ', type: 'textarea' },
-            { key: 'timeline.title', label: 'টাইমলাইনের শিরোনাম', type: 'text' },
-            { key: 'why.eyebrow', label: 'Why Anwar Ispat — ছোট লেখা', type: 'text' },
-            { key: 'why.title', label: 'Why Anwar Ispat — শিরোনাম', type: 'text' },
+            ...banner('ABOUT US', 'Forged in Fire, Built for', 'Eternity', '/about-banner.jpeg'),
             {
-                key: 'why.items', label: 'কারণগুলো', type: 'list',
+                key: 'intro', label: 'Opening paragraph', type: 'textarea',
+                now: 'As a proud concern of the century-old Anwar Group, Anwar Ispat has led the mild steel industry since 1978. We were the first to introduce 60-grade steel to Bangladesh and have consistently upgraded our facilities to bring the world\'s most advanced technology to the local market. From the tallest skyscrapers to complex nuclear power plants, our commitment to quality ensures that every structure built with Anwar Ispat is resilient, durable, and safe.',
+            },
+            {
+                key: 'timeline.title', label: 'Heritage timeline — heading', type: 'text',
+                now: 'A legacy to value in the present, and to pass on to future generations',
+            },
+            { key: 'why.eyebrow', label: 'Why Anwar Ispat — small label', type: 'text', now: 'WHY ANWAR ISPAT' },
+            { key: 'why.title', label: 'Why Anwar Ispat — heading', type: 'text', now: 'Six reasons builders choose us' },
+            {
+                key: 'why.items', label: 'Reasons', type: 'list',
+                now: '190+ Years of Legacy · European Technology · Pioneer in Innovation · Earthquake Resistant · Precision Quality · Nation Builder',
                 item: [
-                    { key: 'title', label: 'শিরোনাম', type: 'text' },
-                    { key: 'body', label: 'বিবরণ', type: 'textarea' },
+                    { key: 'title', label: 'Title', type: 'text' },
+                    { key: 'body', label: 'Description', type: 'textarea' },
                 ],
             },
         ],
@@ -38,19 +57,28 @@ const PAGES = [
         key: 'about-vision',
         label: 'Vision, Mission & Values',
         group: 'About',
+        url: '/about/vision',
         fields: [
-            ...banner(),
-            { key: 'vision.title', label: 'Vision — শিরোনাম', type: 'text' },
-            { key: 'vision.text', label: 'Vision — বিবরণ', type: 'textarea' },
-            { key: 'mission.title', label: 'Mission — শিরোনাম', type: 'text' },
-            { key: 'mission.text', label: 'Mission — বিবরণ', type: 'textarea' },
-            { key: 'values.eyebrow', label: 'Values — ছোট লেখা', type: 'text' },
-            { key: 'values.title', label: 'Values — শিরোনাম', type: 'text' },
+            ...banner('VISION, MISSION & VALUES', 'Since 1834,', 'Forged in Purpose', '/vision-mission.jpeg'),
+            { key: 'vision.tag', label: 'Vision — small label', type: 'text', now: 'Vision' },
+            { key: 'vision.title', label: 'Vision — heading', type: 'text', now: 'Continuing the heritage' },
             {
-                key: 'values.items', label: 'মূল্যবোধগুলো', type: 'list',
+                key: 'vision.body', label: 'Vision — text', type: 'textarea',
+                now: 'Continuing the heritage of being pioneers in industries and leaders in development.',
+            },
+            { key: 'mission.tag', label: 'Mission — small label', type: 'text', now: 'Mission' },
+            { key: 'mission.title', label: 'Mission — heading', type: 'text', now: 'Transformative growth' },
+            {
+                key: 'mission.body', label: 'Mission — text', type: 'textarea',
+                now: 'At Anwar Group, our vision and mission converge in a steadfast pursuit of transformative growth and societal progress. Rooted in our heritage, we strive to lead across industries, embracing sustainability and ethics. Through innovation and global expansion, we contribute to economic development. Empowered by excellence and a limitless mindset, we shape a meaningful future.',
+            },
+            { key: 'values.eyebrow', label: 'Values — small label', type: 'text', now: 'OUR VALUES' },
+            {
+                key: 'values.items', label: 'Values', type: 'list',
+                now: 'Continuous Innovation · Business Diversity · Environmental Consciousness · Quality Leadership · Employee Friendliness',
                 item: [
-                    { key: 'name', label: 'নাম', type: 'text' },
-                    { key: 'text', label: 'বিবরণ', type: 'textarea' },
+                    { key: 'title', label: 'Title', type: 'text' },
+                    { key: 'text', label: 'Description', type: 'textarea' },
                 ],
             },
         ],
@@ -59,15 +87,17 @@ const PAGES = [
         key: 'about-leadership',
         label: 'Leadership Team',
         group: 'About',
+        url: '/about/leadership',
         fields: [
-            ...banner(),
+            ...banner('LEADERSHIP', 'Steering the', 'Legacy', '/Leadership-banner.jpeg'),
             {
-                key: 'people', label: 'নেতৃবৃন্দ', type: 'list',
+                key: 'people', label: 'Leaders', type: 'list',
+                now: 'Manwar Hossain · Furkaan N Hossain · Waeez R Hossain',
                 item: [
-                    { key: 'name', label: 'নাম', type: 'text' },
-                    { key: 'role', label: 'পদবি', type: 'text' },
-                    { key: 'org', label: 'প্রতিষ্ঠান', type: 'text' },
-                    { key: 'bio', label: 'পরিচিতি', type: 'textarea' },
+                    { key: 'name', label: 'Name', type: 'text' },
+                    { key: 'role', label: 'Position', type: 'text' },
+                    { key: 'org', label: 'Organisation', type: 'text' },
+                    { key: 'bio', label: 'Biography', type: 'textarea' },
                 ],
             },
         ],
@@ -76,40 +106,57 @@ const PAGES = [
         key: 'sustainability-esg',
         label: 'ESG',
         group: 'Sustainability',
+        url: '/sustainability/esg',
         fields: [
-            ...banner(),
-            { key: 'lede', label: 'ভূমিকার অনুচ্ছেদ', type: 'textarea' },
+            ...banner('SUSTAINABILITY', 'Sustainable Steel', 'Development', '/sustainable-steel.jpg'),
             {
-                key: 'stats', label: 'সংখ্যাগুলো', type: 'list',
+                key: 'lede', label: 'Opening paragraph', type: 'textarea',
+                now: 'Championing the Sustainable Development Goals through how the mill is run — sustainable business practice, community empowerment and environmental stewardship.',
+            },
+            {
+                key: 'stats', label: 'Figures', type: 'list',
+                now: '48+ Years responsible · ZERO Waste water discharge · 07 SDG commitments',
                 item: [
-                    { key: 'n', label: 'সংখ্যা', type: 'text' },
-                    { key: 'l', label: 'নিচের লেখা', type: 'text' },
+                    { key: 'n', label: 'Figure', type: 'text' },
+                    { key: 'l', label: 'Caption', type: 'text' },
                 ],
             },
-            { key: 'quote.text', label: 'চেয়ারম্যানের উক্তি', type: 'textarea' },
-            { key: 'quote.name', label: 'উক্তি — নাম', type: 'text' },
-            { key: 'quote.role', label: 'উক্তি — পদবি', type: 'text' },
-            { key: 'pillars.eyebrow', label: 'স্তম্ভ — ছোট লেখা', type: 'text' },
-            { key: 'pillars.title', label: 'স্তম্ভ — শিরোনাম', type: 'text' },
             {
-                key: 'pillars.items', label: 'তিনটি স্তম্ভ', type: 'list',
+                key: 'quote.text', label: 'Chairman\'s quote', type: 'textarea',
+                now: 'I envision Anwar Group not just as a business entity but as a catalyst for progress, for a sustainable and equitable future.',
+            },
+            { key: 'quote.name', label: 'Quote — name', type: 'text', now: 'Manwar Hossain' },
+            { key: 'quote.role', label: 'Quote — position', type: 'text', now: 'Chairman, Anwar Group' },
+            { key: 'pillars.eyebrow', label: 'Pillars — small label', type: 'text', now: 'THREE PILLARS' },
+            { key: 'pillars.title', label: 'Pillars — heading', type: 'text', now: 'Our ESG framework' },
+            {
+                key: 'pillars.items', label: 'The three pillars', type: 'list',
+                now: 'Environmental · Social · Governance',
                 item: [
-                    { key: 'letter', label: 'অক্ষর (E/S/G)', type: 'text' },
-                    { key: 'title', label: 'নাম', type: 'text' },
-                    { key: 'sub', label: 'উপ-শিরোনাম', type: 'text' },
-                    { key: 'items', label: 'তালিকা (প্রতি লাইনে একটি)', type: 'lines' },
+                    { key: 'letter', label: 'Letter shown behind (E / S / G)', type: 'text' },
+                    { key: 'title', label: 'Name', type: 'text' },
+                    { key: 'sub', label: 'Subtitle', type: 'text' },
+                    { key: 'items', label: 'Points — one per line', type: 'lines' },
                 ],
             },
-            { key: 'sdg.eyebrow', label: 'SDG — ছোট লেখা', type: 'text' },
-            { key: 'sdg.title', label: 'SDG — শিরোনাম', type: 'text' },
-            { key: 'commit.eyebrow', label: 'প্রতিশ্রুতি — ছোট লেখা', type: 'text' },
-            { key: 'commit.title', label: 'প্রতিশ্রুতি — শিরোনাম', type: 'text' },
-            { key: 'commit.text', label: 'প্রতিশ্রুতির অনুচ্ছেদ (ফাঁকা লাইনে ভাগ)', type: 'textarea' },
+            { key: 'sdg.eyebrow', label: 'SDG — small label', type: 'text', now: 'UNITED NATIONS' },
+            { key: 'sdg.title', label: 'SDG — heading', type: 'text', now: 'SDG commitments' },
             {
-                key: 'practices', label: 'কার্যক্রম', type: 'list',
+                key: 'sdg.items', label: 'SDG commitments — one per line', type: 'lines',
+                now: 'Recycling and waste reduction · Supporting local communities · Green design and manufacturing · Education · Renewable energy adoption · Reforestation · Healthcare and sanitation',
+            },
+            { key: 'commit.eyebrow', label: 'Commitment — small label', type: 'text', now: 'OUR COMMITMENT' },
+            { key: 'commit.title', label: 'Commitment — heading', type: 'text', now: 'Sustainable business practices' },
+            {
+                key: 'commit.items', label: 'Commitment paragraphs — one per line', type: 'lines',
+                now: 'Three paragraphs about minimising impact, looking after employees, and the family\'s conviction towards society.',
+            },
+            {
+                key: 'practices', label: 'Practices', type: 'list',
+                now: 'Energy saving · Zero waste water · Carbon reduction',
                 item: [
-                    { key: 'label', label: 'নাম', type: 'text' },
-                    { key: 'text', label: 'বিবরণ', type: 'textarea' },
+                    { key: 'label', label: 'Name', type: 'text' },
+                    { key: 'text', label: 'Description', type: 'textarea' },
                 ],
             },
         ],
@@ -118,38 +165,54 @@ const PAGES = [
         key: 'sustainability-csr',
         label: 'CSR Activities',
         group: 'Sustainability',
+        url: '/sustainability/csr',
         fields: [
-            ...banner(),
-            { key: 'open.eyebrow', label: 'শুরুর ছোট লেখা', type: 'text' },
-            { key: 'open.statement', label: 'শুরুর বড় বিবৃতি', type: 'textarea' },
-            { key: 'open.text', label: 'শুরুর অনুচ্ছেদ', type: 'textarea' },
+            ...banner('CORPORATE SOCIAL RESPONSIBILITY', 'Community Outreach', '& Welfare', '/community-outreach.jpg'),
+            { key: 'open.eyebrow', label: 'Opening — small label', type: 'text', now: 'WHERE WE STAND' },
             {
-                key: 'figures', label: 'সংখ্যাগুলো', type: 'list',
+                key: 'open.statement', label: 'Opening — large statement', type: 'textarea',
+                now: 'Anwar Group and Anwar Ispat stand close to the communities the mill is built in.',
+            },
+            {
+                key: 'open.text', label: 'Opening — paragraph', type: 'textarea',
+                now: 'Funding schools, distributing scholarships and running medical camps for low-income families — carried on for four decades, not announced for one.',
+            },
+            {
+                key: 'figures', label: 'Figures', type: 'list',
+                now: '10K+ Families supported · 500+ Scholarships awarded · 20+ Free medical camps · 5,000+ Trees planted',
                 item: [
-                    { key: 'n', label: 'সংখ্যা', type: 'text' },
-                    { key: 'l', label: 'পাশের লেখা', type: 'text' },
+                    { key: 'n', label: 'Figure', type: 'text' },
+                    { key: 'l', label: 'Caption', type: 'text' },
                 ],
             },
             {
-                key: 'principles', label: 'মিশন ও ভিশন', type: 'list',
+                key: 'principles', label: 'Mission and Vision', type: 'list',
+                now: 'OUR MISSION People first, always · OUR VISION A stronger Bangladesh',
                 item: [
-                    { key: 'label', label: 'ছোট লেখা', type: 'text' },
-                    { key: 'title', label: 'শিরোনাম', type: 'text' },
-                    { key: 'text', label: 'বিবরণ', type: 'textarea' },
+                    { key: 'label', label: 'Small label', type: 'text' },
+                    { key: 'title', label: 'Heading', type: 'text' },
+                    { key: 'text', label: 'Description', type: 'textarea' },
                 ],
             },
-            { key: 'what.eyebrow', label: 'উদ্যোগ — ছোট লেখা', type: 'text' },
-            { key: 'what.title', label: 'উদ্যোগ — শিরোনাম', type: 'text' },
+            { key: 'what.eyebrow', label: 'Initiatives — small label', type: 'text', now: 'CSR INITIATIVES' },
+            { key: 'what.title', label: 'Initiatives — heading', type: 'text', now: 'What we do' },
             {
-                key: 'initiatives', label: 'উদ্যোগগুলো', type: 'list',
+                key: 'initiatives', label: 'Initiatives', type: 'list',
+                now: 'Education · Healthcare · Community · Employee welfare · Environment · Social welfare',
                 item: [
-                    { key: 'title', label: 'নাম', type: 'text' },
-                    { key: 'text', label: 'বিবরণ', type: 'textarea' },
+                    { key: 'title', label: 'Name', type: 'text' },
+                    { key: 'text', label: 'Description', type: 'textarea' },
                 ],
             },
-            { key: 'commit.eyebrow', label: 'প্রতিশ্রুতি — ছোট লেখা', type: 'text' },
-            { key: 'commit.lead', label: 'প্রতিশ্রুতি — বড় লেখা', type: 'textarea' },
-            { key: 'commit.text', label: 'প্রতিশ্রুতি — অনুচ্ছেদ', type: 'textarea' },
+            { key: 'commit.eyebrow', label: 'Commitment — small label', type: 'text', now: 'OUR COMMITMENT' },
+            {
+                key: 'commit.lead', label: 'Commitment — large statement', type: 'textarea',
+                now: 'At the heart of our activities is the deep-rooted conviction towards people and society at large, emanating from values that have been in the family for many centuries.',
+            },
+            {
+                key: 'commit.text', label: 'Commitment — paragraph', type: 'textarea',
+                now: 'We fund schools, distribute scholarships and run medical camps so that quality healthcare and education reach families who would otherwise go without them.',
+            },
         ],
     },
 ];

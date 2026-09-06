@@ -1,7 +1,25 @@
 const router = require('express').Router();
 const pool = require('../db');
 const jwt = require('jsonwebtoken');
+const multer = require('multer');
+const { uploadToR2 } = require('../r2');
 const { PAGES } = require('../content-schema');
+
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 20 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    const ok = /^image\//.test(file.mimetype);
+    cb(ok ? null : new Error('Only image files are allowed'), ok);
+  },
+});
+
+// multer এর এরর যেন HTML পেজ না হয়ে JSON দেয়
+const uploadBanner = (req, res, next) => upload.single('image')(req, res, (err) => {
+  if (!err) return next();
+  const tooBig = err.code === 'LIMIT_FILE_SIZE';
+  res.status(400).json({ error: tooBig ? 'Image too large (max 20MB)' : err.message });
+});
 
 const auth = (req, res, next) => {
   const token = req.headers.authorization?.split(' ')[1];
@@ -57,6 +75,36 @@ router.put('/:key', auth, async (req, res) => {
     res.json(result.rows[0]);
   } catch (err) {
     res.status(500).json({ error: 'Could not save content' });
+  }
+});
+
+// ব্যানারের ছবি R2 তে যায়, তারপর তার লিংকটি ওই পেজের data এর
+// banner.image এ বসে। বাকি লেখা অক্ষত থাকে, তাই আপলোডের জন্য পুরো
+// ফর্ম আবার সংরক্ষণ করতে হয় না।
+router.post('/:key/banner', auth, uploadBanner, async (req, res) => {
+  const key = req.params.key;
+  if (!KNOWN.has(key)) return res.status(400).json({ error: 'Unknown page' });
+  if (!req.file) return res.status(400).json({ error: 'No image received' });
+
+  try {
+    const url = await uploadToR2(req.file, 'banners');
+    const result = await pool.query(
+      `INSERT INTO page_content (page_key, data, updated_at)
+       VALUES ($1, jsonb_build_object('banner', jsonb_build_object('image', $2::text)), now())
+       ON CONFLICT (page_key) DO UPDATE
+         SET data = jsonb_set(
+               page_content.data,
+               '{banner,image}',
+               to_jsonb($2::text),
+               true
+             ),
+             updated_at = now()
+       RETURNING data`,
+      [key, url]
+    );
+    res.json({ url, data: result.rows[0].data });
+  } catch (err) {
+    res.status(500).json({ error: 'Could not upload the banner' });
   }
 });
 

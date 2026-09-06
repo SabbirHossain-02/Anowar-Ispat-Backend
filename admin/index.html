@@ -1258,25 +1258,51 @@ function openPage(key) {
 
   let html = `<div style="margin-bottom:1.25rem">
     <div style="font-family:var(--font-mono);font-size:0.7rem;letter-spacing:0.14em;color:var(--accent)">// ${esc(page.label).toUpperCase()}</div>
-    <p style="color:var(--subtext);font-size:0.78rem;margin-top:0.4rem">Leave a box empty to keep the wording already on the site.</p>
+    <p style="color:var(--subtext);font-size:0.78rem;margin-top:0.4rem">
+      Grey text inside a box is what the site shows now. Type to replace it, leave it empty to keep it.
+      ${page.url ? `<a href="${esc(page.url)}" target="_blank" rel="noopener" style="color:var(--accent);margin-left:0.4rem">View page &#8599;</a>` : ''}
+    </p>
   </div>`;
 
   page.fields.forEach(f => {
     const val = getAt(saved, f.key);
+
+    if(f.type === 'image') {
+      const current = val || f.now;
+      html += `<div class="form-group">
+        <label class="form-label">${esc(f.label)}</label>
+        <div style="display:flex;gap:1rem;align-items:center;flex-wrap:wrap">
+          <img id="banner-preview" src="${esc(current)}" alt=""
+               style="width:190px;height:106px;object-fit:cover;border-radius:4px;border:1px solid var(--border);background:#111" />
+          <div>
+            <button class="btn-ghost" onclick="document.getElementById('banner-file').click()">CHOOSE IMAGE</button>
+            <p style="color:var(--subtext);font-size:0.72rem;margin-top:0.45rem">
+              ${val ? 'Uploaded here' : 'The banner built into the site'}<br />JPG or PNG, up to 20MB
+            </p>
+          </div>
+        </div>
+        <input type="file" id="banner-file" accept="image/*" style="display:none" onchange="uploadBanner(this)" />
+      </div>`;
+      return;
+    }
+
     if(f.type === 'list') {
       const rows = Array.isArray(val) ? val : [];
       html += `<div class="form-group" data-list="${esc(f.key)}">
         <label class="form-label">${esc(f.label)}</label>
+        ${rows.length === 0 && f.now ? `<p style="color:var(--subtext);font-size:0.74rem;margin:-0.2rem 0 0.6rem">On the site now: ${esc(f.now)}</p>` : ''}
         <div class="list-rows" id="rows-${cssId(f.key)}">${rows.map((r,i)=>listRow(f,r,i)).join('')}</div>
         <button class="btn-ghost" style="margin-top:0.5rem" onclick="addRow('${esc(f.key)}')">+ ADD</button>
-        ${rows.length === 0 ? '<p style="color:var(--subtext);font-size:0.75rem;margin-top:0.5rem">Empty — the site shows its built-in list. Add one to take over.</p>' : ''}
       </div>`;
-    } else {
-      const tag = f.type === 'textarea' || f.type === 'lines'
-        ? `<textarea class="form-textarea" data-k="${esc(f.key)}">${esc(Array.isArray(val)? val.join('\n') : (val||''))}</textarea>`
-        : `<input class="form-input" data-k="${esc(f.key)}" value="${esc(val||'')}" />`;
-      html += `<div class="form-group"><label class="form-label">${esc(f.label)}</label>${tag}</div>`;
+      return;
     }
+
+    const shown = Array.isArray(val) ? val.join('\n') : (val || '');
+    const hint = f.now ? ` placeholder="${esc(f.now)}"` : '';
+    const tag = f.type === 'textarea' || f.type === 'lines'
+      ? `<textarea class="form-textarea" data-k="${esc(f.key)}"${hint}>${esc(shown)}</textarea>`
+      : `<input class="form-input" data-k="${esc(f.key)}"${hint} value="${esc(shown)}" />`;
+    html += `<div class="form-group"><label class="form-label">${esc(f.label)}</label>${tag}</div>`;
   });
 
   html += `<div style="display:flex;gap:0.75rem;margin-top:1.5rem">
@@ -1314,11 +1340,38 @@ function addRow(fieldKey) {
   box.insertAdjacentHTML('beforeend', listRow(field, null, i));
 }
 
+// ব্যানার আলাদা রুটে যায় ও সাথে সাথেই সংরক্ষিত হয় — গোটা ফর্ম
+// আবার সেভ করতে হয় না
+async function uploadBanner(input) {
+  const file = input.files[0];
+  if(!file || !currentPageKey) return;
+  const fd = new FormData();
+  fd.append('image', file);
+  showToast('Uploading…');
+  try {
+    const res = await fetch(`${API}/content/${currentPageKey}/banner`, {
+      method:'POST', headers:{Authorization:`Bearer ${token}`}, body: fd
+    });
+    const body = await res.json().catch(()=>({}));
+    if(!res.ok) return showToast(body.error || 'Could not upload', true);
+    pageValues[currentPageKey] = body.data;
+    document.getElementById('banner-preview').src = body.url;
+    showToast('Banner updated');
+  } catch(e) { showToast('Could not upload', true); }
+  finally { input.value = ''; }
+}
+
 function collectPage() {
   const page = pageSchema.find(p => p.key === currentPageKey);
   const out = {};
 
+  // ব্যানারটি ফর্মের ঘর নয়, আগেই সংরক্ষিত। এখানে ফিরিয়ে না দিলে
+  // ফর্ম সেভ করলেই আপলোড করা ছবি মুছে যেত।
+  const savedBanner = getAt(pageValues[currentPageKey] || {}, 'banner.image');
+  if(savedBanner) setAt(out, 'banner.image', savedBanner);
+
   page.fields.forEach(f => {
+    if(f.type === 'image') return;
     if(f.type === 'list') {
       const box = document.getElementById('rows-' + cssId(f.key));
       const rows = [];
