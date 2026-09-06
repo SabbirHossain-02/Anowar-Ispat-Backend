@@ -21,6 +21,23 @@ const uploadBanner = (req, res, next) => upload.single('image')(req, res, (err) 
   res.status(400).json({ error: tooBig ? 'Image too large (max 20MB)' : err.message });
 });
 
+// ভিডিও আলাদা: ছবির চেয়ে অনেক বড় হয়, তাই সীমাও আলাদা।
+// হোম ব্যানারের স্লাইডেও একই ২০০MB চলে।
+const videoUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 200 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    const ok = /^video[/]/.test(file.mimetype);
+    cb(ok ? null : new Error('Only video files are allowed'), ok);
+  },
+});
+
+const uploadVideo = (req, res, next) => videoUpload.single('video')(req, res, (err) => {
+  if (!err) return next();
+  const tooBig = err.code === 'LIMIT_FILE_SIZE';
+  res.status(400).json({ error: tooBig ? 'Video too large (max 200MB)' : err.message });
+});
+
 const auth = (req, res, next) => {
   const token = req.headers.authorization?.split(' ')[1];
   if (!token) return res.status(401).json({ error: 'No token' });
@@ -88,6 +105,18 @@ router.post('/upload', auth, uploadBanner, async (req, res) => {
     res.json({ url });
   } catch (err) {
     res.status(500).json({ error: 'Could not upload the image' });
+  }
+});
+
+// তালিকার সারিতে ভিডিও — যেমন হোমপেজের মেগা প্রজেক্ট। ফাইলটি R2 তে
+// যায়, লিংকটি ফেরত আসে; সারিতে বসানো হয় Save দিলে।
+router.post('/upload-video', auth, uploadVideo, async (req, res) => {
+  if (!req.file) return res.status(400).json({ error: 'No video received' });
+  try {
+    const url = await uploadToR2(req.file, 'content/video');
+    res.json({ url });
+  } catch (err) {
+    res.status(500).json({ error: 'Could not upload the video' });
   }
 });
 

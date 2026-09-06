@@ -430,13 +430,13 @@ const PAGES = [
             { key: 'projects.accent', label: 'Projects section — the words in red', type: 'text', now: 'PROJECTS' },
             {
                 key: 'projects.items',
-                label: 'Projects section — the eight videos. Every video link is currently dead, so replace or delete these',
+                label: 'Projects section — the eight project cards. The old videos were lost when the Cloudinary account was closed, so upload a new video and a still for each one',
                 type: 'list',
                 now: 'Padma Bridge · Rooppur · Mayor Hanif Flyover · Purbachal · Airport T3 · Shahjalal Fertilizer · Hotel Intercontinental · City Center',
                 item: [
                     { key: 'title', label: 'Name', type: 'text' },
                     { key: 'desc', label: 'Description', type: 'textarea' },
-                    { key: 'video', label: 'Video link', type: 'text' },
+                    { key: 'video', label: 'Video', type: 'video-url' },
                     { key: 'poster', label: 'Still shown before the video plays', type: 'image-url' },
                 ],
             },

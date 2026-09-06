@@ -1534,6 +1534,22 @@ function listRow(field, row, i) {
     // তালিকার ভেতরের ছবি: থাম্বনেইল, আপলোডের বোতাম, আর লিংকের ঘর।
     // আপলোড শুধু লিংকটি ঘরে বসায় — সংরক্ষণ হয় ফর্ম সেভ করলে, তাই
     // সারির অন্য বদলগুলোর সাথেই একসাথে যায়।
+    if (sub.type === 'video-url') {
+      return `<div class="row-vid" style="margin-bottom:0.6rem">
+        <label class="form-label" style="font-size:0.7rem">${esc(sub.label)}</label>
+        <input class="form-input row-vid-url" data-sub="${esc(sub.key)}" value="${esc(val)}" placeholder="No video yet" />
+        <div style="display:flex;gap:0.5rem;align-items:center;margin-top:0.4rem">
+          <button class="btn-ghost" style="padding:0.35rem 0.8rem;font-size:0.7rem"
+                  onclick="this.parentElement.querySelector('.row-vfile').click()">UPLOAD VIDEO</button>
+          <span style="color:var(--subtext);font-size:0.68rem">MP4 or WebM, up to 200MB</span>
+          <input type="file" class="row-vfile" accept="video/*" style="display:none" onchange="uploadRowVideo(this)" />
+        </div>
+        <div class="row-vid-bar" style="display:none;height:3px;background:var(--border);border-radius:2px;margin-top:0.5rem">
+          <div class="row-vid-fill" style="height:100%;width:0;background:var(--accent);border-radius:2px;transition:width 0.2s"></div>
+        </div>
+      </div>`;
+    }
+
     if (sub.type === 'image-url') {
       return `<div class="row-img" style="margin-bottom:0.6rem">
         <label class="form-label" style="font-size:0.7rem">${esc(sub.label)}</label>
@@ -1568,6 +1584,38 @@ function listRow(field, row, i) {
 }
 
 // তালিকার সারির ছবি — R2 তে তুলে লিংকটি পাশের ঘরে বসায়
+// ভিডিও অনেক বড়, তাই fetch নয় — XHR, যাতে কতটা গেল দেখানো যায়
+function uploadRowVideo(input) {
+  const file = input.files[0];
+  if(!file) return;
+  const wrap = input.closest('.row-vid');
+  const bar = wrap.querySelector('.row-vid-bar');
+  const fill = wrap.querySelector('.row-vid-fill');
+  const fd = new FormData();
+  fd.append('video', file);
+
+  bar.style.display = 'block';
+  fill.style.width = '0';
+
+  const xhr = new XMLHttpRequest();
+  xhr.open('POST', `${API}/content/upload-video`);
+  xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+  xhr.upload.onprogress = (e) => {
+    if(e.lengthComputable) fill.style.width = Math.round((e.loaded / e.total) * 100) + '%';
+  };
+  xhr.onload = () => {
+    bar.style.display = 'none';
+    let body = {};
+    try { body = JSON.parse(xhr.responseText); } catch(e) {}
+    if(xhr.status !== 200) return showToast(body.error || 'Could not upload the video', true);
+    wrap.querySelector('.row-vid-url').value = body.url;
+    showToast('Video uploaded — press Save Changes to keep it');
+  };
+  xhr.onerror = () => { bar.style.display = 'none'; showToast('Could not upload the video', true); };
+  xhr.send(fd);
+  input.value = '';
+}
+
 async function uploadRowImage(input) {
   const file = input.files[0];
   if(!file) return;
