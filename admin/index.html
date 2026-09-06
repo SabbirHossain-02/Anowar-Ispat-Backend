@@ -476,7 +476,7 @@
       <!-- DASHBOARD -->
       <div class="page active" id="page-dashboard">
         <div class="page-header">
-          <div class="page-title">COMMAND <span>CENTER</span></div>
+          <div class="page-title">DASH<span>BOARD</span></div>
           <div class="page-subtitle">OPERATIONAL OVERVIEW — ANWAR ISPAT</div>
         </div>
         <div class="stats-grid">
@@ -1012,18 +1012,37 @@ async function submitReauth() {
   } catch(e) { document.getElementById('reauth-err').style.display = 'block'; }
 }
 
-// টোকেন জুড়ে অনুরোধ পাঠায়; মেয়াদ ফুরালে একবার সাইন ইন চেয়ে আবার পাঠায়
+// JWT এর মাঝের অংশে exp থাকে — সার্ভারে না গিয়েই মেয়াদ দেখা যায়
+function tokenExpired(t) {
+  try {
+    const body = JSON.parse(atob(t.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
+    return !body.exp || body.exp * 1000 <= Date.now();
+  } catch (e) { return true; }
+}
+
+// পাতা খোলার সময় এখনো কিছু টাইপ করা হয়নি, তাই তখন মেয়াদ ফুরালে
+// সাধারণ লগইন পর্দাই ঠিক। কাজ করার মাঝপথে ফুরালে তবেই ছোট ডায়ালগ,
+// যাতে ফর্ম ছাড়তে না হয়।
+let appReady = false;
+
 async function authFetch(url, opts = {}, retried = false) {
   const headers = Object.assign({}, opts.headers, { Authorization: `Bearer ${token}` });
   const res = await fetch(url, Object.assign({}, opts, { headers }));
   if(res.status === 401 && !retried) {
+    if(!appReady) { doLogout(); return res; }
     const ok = await askReauth();
     if(ok) return authFetch(url, opts, true);
   }
   return res;
 }
 
-// Check existing token
+// আগের সেশন আছে কি না। মেয়াদ ফুরানো টোকেন নিয়ে ঢুকলে ড্যাশবোর্ড
+// আধা-লোড হয়ে পাসওয়ার্ড চাইত — তার চেয়ে সরাসরি লগইন পর্দাই পরিষ্কার।
+if(token && tokenExpired(token)) {
+  localStorage.removeItem('ai_token');
+  token = null;
+}
+
 if(token) {
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('app').style.display = 'block';
@@ -1095,11 +1114,11 @@ function showPage_OLD(name) {
 }
 
 async function loadAll() {
-  loadDashboard();
-  loadProducts();
-  loadMedia();
-  loadQuotations();
-  loadHero();
+  await Promise.allSettled([
+    loadDashboard(), loadProducts(), loadMedia(), loadQuotations(), loadHero(),
+  ]);
+  // শুরুর লোড শেষ — এরপর থেকে 401 মানে কাজের মাঝে সেশন ফুরিয়েছে
+  appReady = true;
 }
 
 // DASHBOARD
