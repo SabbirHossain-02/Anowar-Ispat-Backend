@@ -405,6 +405,10 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
           Open Positions
         </div>
+        <div class="nav-item" onclick="showPage('pages',this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          Page Text
+        </div>
       </div>
       <div class="sidebar-section">
         <div class="sidebar-section-title">// ORDERS</div>
@@ -564,6 +568,27 @@
             <thead><tr><th>POSITION</th><th>DEPARTMENT</th><th>LOCATION</th><th>TYPE</th><th>DEADLINE</th><th>ACTIONS</th></tr></thead>
             <tbody id="jobs-body"><tr><td colspan="6"><div class="loading"><div class="spinner"></div> Loading...</div></td></tr></tbody>
           </table>
+        </div>
+      </div>
+
+      <!-- PAGE TEXT -->
+      <div class="page" id="page-pages">
+        <div class="page-header">
+          <div class="page-header-top">
+            <div>
+              <div class="page-title">PAGE <span>TEXT</span></div>
+              <div class="page-subtitle">// EDIT THE WORDS ON EVERY PAGE OF THE SITE</div>
+            </div>
+            <button class="btn-ghost" onclick="resetPage()">RESET THIS PAGE</button>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:220px 1fr;gap:1.5rem;align-items:start">
+          <div class="data-grid" style="padding:0.5rem 0">
+            <div id="pages-nav"><div class="loading" style="padding:1rem"><div class="spinner"></div> Loading...</div></div>
+          </div>
+          <div class="data-grid" style="padding:1.5rem">
+            <div id="pages-form"><p style="color:var(--subtext);font-size:0.85rem">Choose a page on the left.</p></div>
+          </div>
         </div>
       </div>
 
@@ -898,6 +923,7 @@ function showPage(name, el) {
   if(name === 'quotations') loadQuotations();
   if(name === 'hero') loadHero();
   if(name === 'jobs') loadJobs();
+  if(name === 'pages') loadPages();
   if(name === 'settings') loadCurrentTheme();
 }
 function showPage_OLD(name) {
@@ -1171,6 +1197,196 @@ async function deleteJob(id) {
     await fetch(`${API}/jobs/${id}`, {method:'DELETE', headers:{Authorization:`Bearer ${token}`}});
     loadJobs(); showToast('Vacancy removed');
   } catch(e) { showToast('Could not remove the vacancy', true); }
+}
+
+// PAGE TEXT
+// ফর্মটি ব্যাকএন্ডের content-schema.js থেকে তৈরি হয়, তাই নতুন পেজ
+// যোগ করতে এখানে কিছু লিখতে হয় না — স্কিমায় যোগ করলেই এসে যায়।
+let pageSchema = [];
+let pageValues = {};
+let currentPageKey = null;
+
+// 'why.items' এর মতো পথ ধরে গভীরে ঢোকা ও বসানো
+function getAt(obj, path) {
+  return path.split('.').reduce((o, k) => (o == null ? undefined : o[k]), obj);
+}
+function setAt(obj, path, value) {
+  const keys = path.split('.');
+  const last = keys.pop();
+  let node = obj;
+  keys.forEach(k => { if(!node[k] || typeof node[k] !== 'object') node[k] = {}; node = node[k]; });
+  node[last] = value;
+}
+
+async function loadPages() {
+  const nav = document.getElementById('pages-nav');
+  try {
+    if(pageSchema.length === 0) {
+      pageSchema = await fetch(`${API}/content/schema`).then(r=>r.json());
+    }
+    pageValues = await fetch(`${API}/content`).then(r=>r.json());
+
+    let html = '';
+    let lastGroup = null;
+    pageSchema.forEach(p => {
+      if(p.group !== lastGroup) {
+        html += `<div style="padding:0.75rem 1rem 0.4rem;font-family:var(--font-mono);font-size:0.62rem;letter-spacing:0.14em;color:var(--subtext);opacity:0.7">// ${esc(p.group).toUpperCase()}</div>`;
+        lastGroup = p.group;
+      }
+      const edited = pageValues[p.key] && Object.keys(pageValues[p.key]).length > 0;
+      html += `<div class="nav-item" style="border-left-width:2px" data-pk="${esc(p.key)}" onclick="openPage('${esc(p.key)}')">
+        ${esc(p.label)}${edited ? ' <span style="color:var(--accent);font-size:0.7rem">•</span>' : ''}
+      </div>`;
+    });
+    nav.innerHTML = html;
+
+    if(currentPageKey) openPage(currentPageKey);
+  } catch(e) {
+    nav.innerHTML = '<p style="padding:1rem;color:var(--accent);font-size:0.8rem">Could not load the page list</p>';
+  }
+}
+
+function openPage(key) {
+  currentPageKey = key;
+  document.querySelectorAll('#pages-nav .nav-item').forEach(n => {
+    n.classList.toggle('active', n.dataset.pk === key);
+  });
+
+  const page = pageSchema.find(p => p.key === key);
+  const saved = pageValues[key] || {};
+  const box = document.getElementById('pages-form');
+
+  let html = `<div style="margin-bottom:1.25rem">
+    <div style="font-family:var(--font-mono);font-size:0.7rem;letter-spacing:0.14em;color:var(--accent)">// ${esc(page.label).toUpperCase()}</div>
+    <p style="color:var(--subtext);font-size:0.78rem;margin-top:0.4rem">Leave a box empty to keep the wording already on the site.</p>
+  </div>`;
+
+  page.fields.forEach(f => {
+    const val = getAt(saved, f.key);
+    if(f.type === 'list') {
+      const rows = Array.isArray(val) ? val : [];
+      html += `<div class="form-group" data-list="${esc(f.key)}">
+        <label class="form-label">${esc(f.label)}</label>
+        <div class="list-rows" id="rows-${cssId(f.key)}">${rows.map((r,i)=>listRow(f,r,i)).join('')}</div>
+        <button class="btn-ghost" style="margin-top:0.5rem" onclick="addRow('${esc(f.key)}')">+ ADD</button>
+        ${rows.length === 0 ? '<p style="color:var(--subtext);font-size:0.75rem;margin-top:0.5rem">Empty — the site shows its built-in list. Add one to take over.</p>' : ''}
+      </div>`;
+    } else {
+      const tag = f.type === 'textarea' || f.type === 'lines'
+        ? `<textarea class="form-textarea" data-k="${esc(f.key)}">${esc(Array.isArray(val)? val.join('\n') : (val||''))}</textarea>`
+        : `<input class="form-input" data-k="${esc(f.key)}" value="${esc(val||'')}" />`;
+      html += `<div class="form-group"><label class="form-label">${esc(f.label)}</label>${tag}</div>`;
+    }
+  });
+
+  html += `<div style="display:flex;gap:0.75rem;margin-top:1.5rem">
+    <button class="btn-primary" onclick="savePage()">SAVE CHANGES</button>
+  </div>`;
+  box.innerHTML = html;
+}
+
+function cssId(k) { return k.replace(/[^a-zA-Z0-9]/g, '_'); }
+
+function listRow(field, row, i) {
+  const inner = field.item.map(sub => {
+    const v = row ? (row[sub.key] || '') : '';
+    const val = Array.isArray(v) ? v.join('\n') : v;
+    const tag = sub.type === 'textarea' || sub.type === 'lines'
+      ? `<textarea class="form-textarea" style="min-height:70px" data-sub="${esc(sub.key)}">${esc(val)}</textarea>`
+      : `<input class="form-input" data-sub="${esc(sub.key)}" value="${esc(val)}" />`;
+    return `<div style="margin-bottom:0.5rem"><label class="form-label" style="font-size:0.62rem">${esc(sub.label)}</label>${tag}</div>`;
+  }).join('');
+
+  return `<div class="list-row" style="border:1px solid var(--border);border-radius:6px;padding:0.9rem;margin-bottom:0.6rem;position:relative">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem">
+      <span style="font-family:var(--font-mono);font-size:0.68rem;color:var(--accent)">${String(i+1).padStart(2,'0')}</span>
+      <button class="btn-danger" style="padding:0.2rem 0.6rem;font-size:0.62rem" onclick="this.closest('.list-row').remove()">DELETE</button>
+    </div>
+    ${inner}
+  </div>`;
+}
+
+function addRow(fieldKey) {
+  const page = pageSchema.find(p => p.key === currentPageKey);
+  const field = page.fields.find(f => f.key === fieldKey);
+  const box = document.getElementById('rows-' + cssId(fieldKey));
+  const i = box.querySelectorAll('.list-row').length;
+  box.insertAdjacentHTML('beforeend', listRow(field, null, i));
+}
+
+function collectPage() {
+  const page = pageSchema.find(p => p.key === currentPageKey);
+  const out = {};
+
+  page.fields.forEach(f => {
+    if(f.type === 'list') {
+      const box = document.getElementById('rows-' + cssId(f.key));
+      const rows = [];
+      box.querySelectorAll('.list-row').forEach(rowEl => {
+        const row = {};
+        let any = false;
+        f.item.forEach(sub => {
+          const el = rowEl.querySelector(`[data-sub="${sub.key}"]`);
+          const raw = el ? el.value.trim() : '';
+          if(raw) any = true;
+          row[sub.key] = sub.type === 'lines'
+            ? raw.split('\n').map(s=>s.trim()).filter(Boolean)
+            : raw;
+        });
+        if(any) rows.push(row);
+      });
+      // একটিও সারি না থাকলে কি-টাই পাঠাই না — তখন সাইটে কোডের
+      // তালিকাই দেখা যায়, ফাঁকা জায়গা নয়
+      if(rows.length) out[f.key] = rows;
+    } else {
+      const el = document.querySelector(`#pages-form [data-k="${f.key}"]`);
+      const raw = el ? el.value.trim() : '';
+      if(raw) setAt(out, f.key, f.type === 'lines' ? raw.split('\n').map(s=>s.trim()).filter(Boolean) : raw);
+    }
+  });
+
+  // 'why.items' এর মতো তালিকার পথও নেস্ট করে বসাতে হয়
+  const nested = {};
+  Object.keys(out).forEach(k => {
+    if(k.includes('.') && Array.isArray(out[k])) { setAt(nested, k, out[k]); delete out[k]; }
+  });
+  return deepAssign(out, nested);
+}
+
+function deepAssign(a, b) {
+  Object.keys(b).forEach(k => {
+    if(b[k] && typeof b[k] === 'object' && !Array.isArray(b[k]) && a[k] && typeof a[k] === 'object' && !Array.isArray(a[k])) {
+      deepAssign(a[k], b[k]);
+    } else { a[k] = b[k]; }
+  });
+  return a;
+}
+
+async function savePage() {
+  if(!currentPageKey) return;
+  try {
+    const res = await fetch(`${API}/content/${currentPageKey}`, {
+      method:'PUT',
+      headers:{'Content-Type':'application/json', Authorization:`Bearer ${token}`},
+      body: JSON.stringify(collectPage())
+    });
+    if(!res.ok) {
+      const err = await res.json().catch(()=>({}));
+      return showToast(err.error || 'Could not save', true);
+    }
+    await loadPages();
+    showToast('Page saved — refresh the site to see it');
+  } catch(e) { showToast('Could not save', true); }
+}
+
+async function resetPage() {
+  if(!currentPageKey) return showToast('Choose a page first', true);
+  if(!confirm('Put this page back to its original wording?')) return;
+  try {
+    await fetch(`${API}/content/${currentPageKey}`, {method:'DELETE', headers:{Authorization:`Bearer ${token}`}});
+    await loadPages();
+    showToast('Page reset to the original wording');
+  } catch(e) { showToast('Could not reset', true); }
 }
 
 // HERO BANNER

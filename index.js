@@ -15,6 +15,7 @@ app.use('/api/settings', require('./routes/settings'));
 app.use('/api/quotations', require('./routes/quotations'));
 app.use('/api/hero', require('./routes/hero'));
 app.use('/api/jobs', require('./routes/jobs'));
+app.use('/api/content', require('./routes/content'));
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, '0.0.0.0', () => {
