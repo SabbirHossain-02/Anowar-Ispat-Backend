@@ -282,7 +282,9 @@
 
   /* FORM */
   .form-group { margin-bottom: 1.2rem; }
-  .form-label { font-family: var(--font-mono); font-size: 0.65rem; color: var(--subtext); letter-spacing: 0.15em; margin-bottom: 0.5rem; display: block; }
+  /* লেবেলগুলো Share Tech Mono তে ছিল — চওড়া ফাঁক ও সরু হরফে পড়তে
+     কষ্ট হত। ফর্মে পাঠ্যতাই আগে, তাই সাধারণ হরফে। */
+  .form-label { font-family: var(--font-body); font-size: 0.78rem; font-weight: 600; color: var(--subtext); letter-spacing: 0.02em; margin-bottom: 0.45rem; display: block; }
   .form-input, .form-select, .form-textarea {
     width: 100%; background: var(--bg3); border: 1px solid var(--border);
     color: var(--text); padding: 0.8rem 1rem;

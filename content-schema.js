@@ -41,6 +41,15 @@ const PAGES = [
                 key: 'timeline.title', label: 'Heritage timeline — heading', type: 'text',
                 now: 'A legacy to value in the present, and to pass on to future generations',
             },
+            {
+                key: 'timeline.items', label: 'Heritage milestones — the years on the line', type: 'list',
+                now: '29 milestones from 1834 to 2022',
+                item: [
+                    { key: 'year', label: 'Year', type: 'text' },
+                    { key: 'name', label: 'Name', type: 'text' },
+                    { key: 'text', label: 'Description', type: 'text' },
+                ],
+            },
             { key: 'why.eyebrow', label: 'Why Anwar Ispat — small label', type: 'text', now: 'WHY ANWAR ISPAT' },
             { key: 'why.title', label: 'Why Anwar Ispat — heading', type: 'text', now: 'Six reasons builders choose us' },
             {
