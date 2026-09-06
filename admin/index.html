@@ -3,31 +3,56 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>ANWAR ISPAT — COMMAND CENTER</title>
+<title>Anwar Ispat — Admin</title>
 <link rel="icon" type="image/png" href="favicon.png" />
 <link rel="apple-touch-icon" href="favicon.png" />
 <meta name="theme-color" content="#0a0a0a" />
 <meta name="robots" content="noindex, nofollow" />
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
 <style>
   :root {
     --accent: #E3182D;
-    --accent-dim: rgba(227,24,45,0.15);
-    --accent-glow: rgba(227,24,45,0.4);
-    --bg: #0a0a0a;
-    --bg2: #111111;
-    --bg3: #181818;
-    --border: rgba(255,255,255,0.07);
-    --border-accent: rgba(227,24,45,0.3);
-    --text: #f0f0f0;
-    --subtext: #888;
-    --success: #22c55e;
-    --warning: #f59e0b;
-    --info: #3b82f6;
-    --font-head: 'Bebas Neue', sans-serif;
-    --font-body: 'Barlow', sans-serif;
-    --font-cond: 'Barlow Condensed', sans-serif;
-    --font-mono: 'Share Tech Mono', monospace;
+    --accent-dim: rgba(227,24,45,0.12);
+    --accent-glow: rgba(227,24,45,0.28);
+    --bg: #0f1115;
+    --bg2: #161920;
+    --bg3: #1c2029;
+    --border: rgba(255,255,255,0.09);
+    --border-accent: rgba(227,24,45,0.35);
+    --text: #e7e9ec;
+    --subtext: #9aa1ab;
+    --success: #16a34a;
+    --warning: #d97706;
+    --info: #2563eb;
+    --shadow: 0 1px 2px rgba(0,0,0,0.4);
+    --hover: rgba(255,255,255,0.05);
+    --zebra: rgba(255,255,255,0.02);
+    --scrim: rgba(0,0,0,0.72);
+    /* চারটি আলাদা সাজসজ্জার হরফ ছিল (Bebas, Barlow, Barlow Condensed,
+       Share Tech Mono)। ব্যবস্থাপনার পর্দায় পাঠ্যতাই আগে, তাই একটিই
+       হরফ — সংখ্যার জন্য আলাদা mono রাখা হয়েছে যাতে ঘড়ি ও আইডি
+       লাফালাফি না করে। */
+    --font-head: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --font-cond: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --font-mono: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --font-num: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+
+  html[data-theme="light"] {
+    --accent-dim: rgba(227,24,45,0.08);
+    --accent-glow: rgba(227,24,45,0.18);
+    --bg: #f5f6f8;
+    --bg2: #ffffff;
+    --bg3: #ffffff;
+    --border: rgba(0,0,0,0.10);
+    --border-accent: rgba(227,24,45,0.30);
+    --text: #16181d;
+    --subtext: #5f6672;
+    --shadow: 0 1px 2px rgba(16,24,40,0.06), 0 1px 3px rgba(16,24,40,0.08);
+    --hover: rgba(16,24,40,0.05);
+    --zebra: rgba(16,24,40,0.025);
+    --scrim: rgba(16,24,40,0.45);
   }
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { height: 100%; background: var(--bg); color: var(--text); font-family: var(--font-body); overflow: hidden; }
@@ -69,7 +94,7 @@
   .login-box::after { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
   .login-logo { font-family: var(--font-head); font-size: 2.5rem; letter-spacing: 0.05em; margin-bottom: 0.2rem; }
   .login-logo span { color: var(--accent); }
-  .login-sub { font-family: var(--font-mono); font-size: 0.7rem; color: var(--subtext); letter-spacing: 0.2em; margin-bottom: 2.5rem; }
+  .login-sub { font-family: var(--font-body); font-size: 0.88rem; color: var(--subtext); letter-spacing: 0; margin-bottom: 2.5rem; }
   .login-label { font-family: var(--font-mono); font-size: 0.7rem; color: var(--subtext); letter-spacing: 0.15em; margin-bottom: 0.5rem; }
   .login-input {
     width: 100%; background: var(--bg3); border: 1px solid var(--border);
@@ -114,9 +139,17 @@
   }
   .topbar-logo { font-family: var(--font-head); font-size: 1.4rem; letter-spacing: 0.1em; }
   .topbar-logo span { color: var(--accent); }
-  .topbar-tag { font-family: var(--font-mono); font-size: 0.65rem; color: var(--subtext); letter-spacing: 0.2em; }
+  .topbar-tag { font-family: var(--font-body); font-size: 0.78rem; color: var(--subtext); letter-spacing: 0; }
   .topbar-right { display: flex; align-items: center; gap: 1.5rem; }
-  .live-dot { display: flex; align-items: center; gap: 0.5rem; font-family: var(--font-mono); font-size: 0.7rem; color: var(--success); }
+  .theme-btn {
+    display: flex; align-items: center; justify-content: center;
+    width: 34px; height: 34px; border-radius: 6px;
+    background: var(--bg3); border: 1px solid var(--border);
+    color: var(--subtext); cursor: pointer; transition: color 0.15s, border-color 0.15s;
+  }
+  .theme-btn:hover { color: var(--text); border-color: var(--border-accent); }
+
+  .live-dot { display: flex; align-items: center; gap: 0.5rem; font-family: var(--font-body); font-size: 0.78rem; font-weight: 500; color: var(--success); }
   .live-dot::before { content: ''; width: 7px; height: 7px; background: var(--success); border-radius: 50%; animation: blink 2s infinite; }
   @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
   .logout-btn {
@@ -147,7 +180,7 @@
     transition: all 0.2s; border-radius: 0 4px 4px 0;
     text-transform: uppercase;
   }
-  .nav-item:hover { color: var(--text); background: rgba(255,255,255,0.04); }
+  .nav-item:hover { color: var(--text); background: var(--hover); }
   .nav-item.active { color: var(--accent); border-left-color: var(--accent); background: var(--accent-dim); }
   .nav-item svg { width: 16px; height: 16px; flex-shrink: 0; }
   .nav-badge {
@@ -229,11 +262,11 @@
     font-family: var(--font-mono); font-size: 0.65rem; color: var(--subtext);
     letter-spacing: 0.15em; text-transform: uppercase;
     border-bottom: 1px solid var(--border);
-    background: rgba(255,255,255,0.02);
+    background: var(--zebra);
   }
   td { padding: 0.9rem 1rem; border-bottom: 1px solid var(--border); font-size: 0.85rem; vertical-align: middle; }
   tr:last-child td { border-bottom: none; }
-  tr:hover td { background: rgba(255,255,255,0.02); }
+  tr:hover td { background: var(--zebra); }
   .td-img { width: 50px; height: 50px; object-fit: cover; border: 1px solid var(--border); }
   .td-img-placeholder { width: 50px; height: 50px; background: var(--bg3); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; }
 
@@ -249,12 +282,12 @@
   .badge-live { background: rgba(34,197,94,0.15); color: var(--success); border: 1px solid rgba(34,197,94,0.3); }
   .badge-local { background: rgba(59,130,246,0.15); color: var(--info); border: 1px solid rgba(59,130,246,0.3); }
   .badge-intl { background: rgba(227,24,45,0.15); color: var(--accent); border: 1px solid rgba(227,24,45,0.3); }
-  .badge-archive { background: rgba(255,255,255,0.05); color: var(--subtext); border: 1px solid var(--border); }
+  .badge-archive { background: var(--hover); color: var(--subtext); border: 1px solid var(--border); }
 
   /* MODAL */
   .modal-overlay {
     display: none; position: fixed; inset: 0; z-index: 500;
-    background: rgba(0,0,0,0.85); backdrop-filter: blur(4px);
+    background: var(--scrim); backdrop-filter: blur(4px);
     align-items: center; justify-content: center; padding: 2rem;
   }
   .modal-overlay.open { display: flex; }
@@ -352,7 +385,7 @@
 <div id="login-screen">
   <div class="login-box">
     <div class="login-logo">ANWAR <span>ISPAT</span></div>
-    <div class="login-sub">// COMMAND CENTER ACCESS</div>
+    <div class="login-sub">Sign in to manage the site</div>
     <div class="login-label">USERNAME</div>
     <input class="login-input" type="text" id="login-user" placeholder="Enter username" autocomplete="off" />
     <div class="login-label">PASSWORD</div>
@@ -369,11 +402,14 @@
     <header class="topbar">
       <div>
         <div class="topbar-logo">ANWAR <span>ISPAT</span></div>
-        <div class="topbar-tag">// ADMIN COMMAND CENTER</div>
+        <div class="topbar-tag">Site administration</div>
       </div>
       <div class="topbar-right">
-        <div class="live-dot">SYSTEM ONLINE</div>
-        <div style="font-family:var(--font-mono);font-size:0.7rem;color:var(--subtext)" id="topbar-time"></div>
+        <button class="theme-btn" onclick="toggleAdminTheme()" title="Switch light and dark" aria-label="Switch light and dark">
+          <svg id="theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"></svg>
+        </button>
+        <div class="live-dot">Online</div>
+        <div style="font-family:var(--font-num);font-size:0.72rem;color:var(--subtext)" id="topbar-time"></div>
         
 
 <button class="logout-btn" onclick="doLogout()">LOGOUT</button>
@@ -383,14 +419,14 @@
     <!-- SIDEBAR -->
     <aside class="sidebar">
       <div class="sidebar-section">
-        <div class="sidebar-section-title">// NAVIGATION</div>
+        <div class="sidebar-section-title">NAVIGATION</div>
         <div class="nav-item active" onclick="showPage('dashboard',this)">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
           Dashboard
         </div>
       </div>
       <div class="sidebar-section">
-        <div class="sidebar-section-title">// CONTENT</div>
+        <div class="sidebar-section-title">CONTENT</div>
         <div class="nav-item" onclick="showPage('products',this)">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
           Products
@@ -413,13 +449,13 @@
         </div>
       </div>
       <div class="sidebar-section">
-        <div class="sidebar-section-title">// ORDERS</div>
+        <div class="sidebar-section-title">ORDERS</div>
         <div class="nav-item" onclick="showPage('quotations',this)">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
           Quotations
           <span class="nav-badge" id="pending-count">0</span>
         </div>
-<div class="nav-section">// SYSTEM</div>
+<div class="nav-section">SYSTEM</div>
 <div class="nav-item" onclick="showPage('settings',this)">
   <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:18px;height:18px;flex-shrink:0"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
   Settings
@@ -434,28 +470,28 @@
       <div class="page active" id="page-dashboard">
         <div class="page-header">
           <div class="page-title">COMMAND <span>CENTER</span></div>
-          <div class="page-subtitle">// OPERATIONAL OVERVIEW — ANWAR ISPAT</div>
+          <div class="page-subtitle">OPERATIONAL OVERVIEW — ANWAR ISPAT</div>
         </div>
         <div class="stats-grid">
           <div class="stat-card">
-            <div class="stat-label">// TOTAL PRODUCTS</div>
+            <div class="stat-label">TOTAL PRODUCTS</div>
             <div class="stat-value" id="stat-products">—</div>
             <div class="stat-sub">ACTIVE IN CATALOG</div>
             <div class="stat-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg></div>
           </div>
           <div class="stat-card">
-            <div class="stat-label">// MEDIA POSTS</div>
+            <div class="stat-label">MEDIA POSTS</div>
             <div class="stat-value" id="stat-media">—</div>
             <div class="stat-sub">PUBLISHED EVENTS</div>
             <div class="stat-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg></div>
           </div>
           <div class="stat-card">
-            <div class="stat-label">// TOTAL QUOTATIONS</div>
+            <div class="stat-label">TOTAL QUOTATIONS</div>
             <div class="stat-value" id="stat-quotes">—</div>
             <div class="stat-sub">ALL TIME REQUESTS</div>
           </div>
           <div class="stat-card">
-            <div class="stat-label">// PENDING REVIEW</div>
+            <div class="stat-label">PENDING REVIEW</div>
             <div class="stat-value"><span id="stat-pending">—</span></div>
             <div class="stat-sub">AWAITING ACTION</div>
           </div>
@@ -479,7 +515,7 @@
           <div class="page-header-top">
             <div>
               <div class="page-title">PRODUCT <span>CATALOG</span></div>
-              <div class="page-subtitle">// MANAGE PRODUCT LISTINGS</div>
+              <div class="page-subtitle">MANAGE PRODUCT LISTINGS</div>
             </div>
             <button class="btn-primary" onclick="openProductModal()">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -504,7 +540,7 @@
           <div class="page-header-top">
             <div>
               <div class="page-title">MEDIA <span>&amp; EVENTS</span></div>
-              <div class="page-subtitle">// BROADCAST FEED MANAGEMENT</div>
+              <div class="page-subtitle">BROADCAST FEED MANAGEMENT</div>
             </div>
             <button class="btn-primary" onclick="openMediaModal()">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -529,7 +565,7 @@
           <div class="page-header-top">
             <div>
               <div class="page-title">HERO <span>BANNER</span></div>
-              <div class="page-subtitle">// HOMEPAGE SLIDER — VIDEO OR IMAGE</div>
+              <div class="page-subtitle">HOMEPAGE SLIDER — VIDEO OR IMAGE</div>
             </div>
             <button class="btn-primary" onclick="openHeroModal()">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -554,7 +590,7 @@
           <div class="page-header-top">
             <div>
               <div class="page-title">OPEN <span>POSITIONS</span></div>
-              <div class="page-subtitle">// CAREERS PAGE — LIVE VACANCIES</div>
+              <div class="page-subtitle">CAREERS PAGE — LIVE VACANCIES</div>
             </div>
             <button class="btn-primary" onclick="openJobModal()">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -579,7 +615,7 @@
           <div class="page-header-top">
             <div>
               <div class="page-title">PAGE <span>TEXT</span></div>
-              <div class="page-subtitle">// EDIT THE WORDS ON EVERY PAGE OF THE SITE</div>
+              <div class="page-subtitle">EDIT THE WORDS ON EVERY PAGE OF THE SITE</div>
             </div>
             <button class="btn-ghost" onclick="resetPage()">RESET THIS PAGE</button>
           </div>
@@ -598,7 +634,7 @@
       <div class="page" id="page-quotations">
         <div class="page-header">
           <div class="page-title">QUOTATION <span>REQUESTS</span></div>
-          <div class="page-subtitle">// INCOMING CUSTOMER REQUESTS</div>
+          <div class="page-subtitle">INCOMING CUSTOMER REQUESTS</div>
         </div>
         <div class="data-grid">
           <div class="data-grid-header">
@@ -615,7 +651,7 @@
 <div id="page-settings" class="page">
   <div class="topbar"><h1>Settings</h1></div>
   <div class="card" style="max-width:600px">
-    <div class="card-header"><h2>// FRONTEND THEME</h2></div>
+    <div class="card-header"><h2>FRONTEND THEME</h2></div>
     <p style="color:#555;font-size:13px;margin-bottom:24px">Select the default theme for the frontend website.</p>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
       <div id="card-dark" onclick="setTheme('dark')" style="border:2px solid #E3182D;border-radius:12px;padding:24px;cursor:pointer;text-align:center;background:#E3182D11;transition:all 0.2s">
@@ -912,6 +948,33 @@ if(token) {
   document.getElementById('app').style.display = 'block';
   loadAll();
 }
+
+// থিম — বাছাই মনে রাখে; কিছু বাছা না থাকলে সিস্টেম যা বলে
+const SUN = '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>';
+const MOON = '<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>';
+
+function paintThemeIcon(mode) {
+  const el = document.getElementById('theme-icon');
+  if (el) el.innerHTML = mode === 'light' ? MOON : SUN;
+}
+
+function applyAdminTheme(mode) {
+  document.documentElement.setAttribute('data-theme', mode);
+  paintThemeIcon(mode);
+}
+
+function toggleAdminTheme() {
+  const next = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+  try { localStorage.setItem('adminTheme', next); } catch (e) {}
+  applyAdminTheme(next);
+}
+
+(function initAdminTheme() {
+  let saved = null;
+  try { saved = localStorage.getItem('adminTheme'); } catch (e) {}
+  const prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+  applyAdminTheme(saved || (prefersLight ? 'light' : 'dark'));
+})();
 
 // NAVIGATION
 function showPage(name, el) {
@@ -1232,7 +1295,7 @@ async function loadPages() {
     let lastGroup = null;
     pageSchema.forEach(p => {
       if(p.group !== lastGroup) {
-        html += `<div style="padding:0.75rem 1rem 0.4rem;font-family:var(--font-mono);font-size:0.62rem;letter-spacing:0.14em;color:var(--subtext);opacity:0.7">// ${esc(p.group).toUpperCase()}</div>`;
+        html += `<div style="padding:0.75rem 1rem 0.4rem;font-family:var(--font-mono);font-size:0.62rem;letter-spacing:0.14em;color:var(--subtext);opacity:0.7">${esc(p.group).toUpperCase()}</div>`;
         lastGroup = p.group;
       }
       const edited = pageValues[p.key] && Object.keys(pageValues[p.key]).length > 0;
@@ -1259,7 +1322,7 @@ function openPage(key) {
   const box = document.getElementById('pages-form');
 
   let html = `<div style="margin-bottom:1.25rem">
-    <div style="font-family:var(--font-mono);font-size:0.7rem;letter-spacing:0.14em;color:var(--accent)">// ${esc(page.label).toUpperCase()}</div>
+    <div style="font-family:var(--font-mono);font-size:0.7rem;letter-spacing:0.14em;color:var(--accent)">${esc(page.label).toUpperCase()}</div>
     <p style="color:var(--subtext);font-size:0.78rem;margin-top:0.4rem">
       Grey text inside a box is what the site shows now. Type to replace it, leave it empty to keep it.
       ${page.url ? `<a href="${esc(page.url)}" target="_blank" rel="noopener" style="color:var(--accent);margin-left:0.4rem">View page &#8599;</a>` : ''}
@@ -1662,7 +1725,7 @@ async function viewQuote(id) {
     document.getElementById('quote-status-select').value = q.status;
     document.getElementById('quote-detail-body').innerHTML = `
       <div style="margin-bottom:1rem">
-        <div style="font-family:var(--font-mono);font-size:0.65rem;color:var(--subtext);letter-spacing:0.15em;margin-bottom:0.3rem">// REFERENCE</div>
+        <div style="font-family:var(--font-mono);font-size:0.65rem;color:var(--subtext);letter-spacing:0.15em;margin-bottom:0.3rem">REFERENCE</div>
         <div style="font-family:var(--font-head);font-size:2rem">#${String(q.id).padStart(4,'0')}</div>
       </div>
       <div style="font-family:var(--font-mono);font-size:0.7rem;color:var(--subtext);letter-spacing:0.15em;margin-bottom:0.8rem">01. PRODUCT INFORMATION</div>
