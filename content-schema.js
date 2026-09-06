@@ -430,7 +430,14 @@ const PAGES = [
                     { key: 'desc', label: 'Description', type: 'textarea' },
                 ],
             },
-            { type: 'section', label: "Products", note: "The product cards and the pop-up that opens when one is clicked" },
+            { type: 'section', label: "Products", note: "The heading, the product cards, and the pop-up that opens when one is clicked" },
+            { key: 'ps.title', label: 'Section heading', type: 'text', now: 'PRODUCT & SERVICE' },
+            {
+                key: 'ps.intro', label: 'Paragraph under the heading', type: 'textarea',
+                now: "Forged in extreme intensity. We provide exceptional structural solutions designed to act as the unyielding backbone of tomorrow's infrastructure.",
+            },
+            { key: 'ps.learnBtn', label: 'Button on each product card', type: 'text', now: 'Learn More' },
+            { key: 'ps.quoteBtn', label: 'Product pop-up — the quotation button', type: 'text', now: 'REQUEST A QUOTE' },
             { key: 'ps.specLabel', label: 'Product panel — specifications heading', type: 'text', now: 'KEY SPECIFICATIONS' },
             {
                 key: 'ps.specs', label: 'Product panel — specification points, one per line', type: 'lines',
@@ -450,6 +457,7 @@ const PAGES = [
             },
 
             { type: 'section', label: "Mega Projects", note: "The eight video cards" },
+            { key: 'projects.eyebrow', label: 'Projects section — small label above the heading', type: 'text', now: 'NATION BUILDERS' },
             { key: 'projects.title', label: 'Projects section — heading', type: 'text', now: 'MEGA' },
             { key: 'projects.accent', label: 'Projects section — the words in red', type: 'text', now: 'PROJECTS' },
             {
@@ -466,8 +474,16 @@ const PAGES = [
             },
 
             { type: 'section', label: "News Desk", note: "Pulls the latest from Media & Events on its own" },
-            { key: 'media.title', label: 'News section — heading', type: 'text', now: 'NEWS DESK' },
-            { key: 'media.cta', label: 'News section — button', type: 'text', now: 'INITIATE FEED' },
+            { key: 'media.title', label: 'News section — small label beside the red dot', type: 'text', now: 'NEWS DESK' },
+            {
+                key: 'media.heading', label: 'News section — the large heading, one line per row', type: 'lines',
+                now: 'MEDIA & / EVENTS',
+            },
+            {
+                key: 'media.intro', label: 'News section — paragraph under the heading', type: 'textarea',
+                now: 'Constant motion. Constant innovation. Tap into our live broadcasting feed to stay updated with structural advancements across the nation.',
+            },
+            { key: 'media.cta', label: 'News section — button', type: 'text', now: 'ACCESS FULL TERMINAL' },
             { key: 'media.loading', label: 'News section — while loading', type: 'text', now: 'Loading media posts...' },
             { key: 'media.empty', label: 'News section — when none added', type: 'text', now: 'No media posts yet.' },
 
