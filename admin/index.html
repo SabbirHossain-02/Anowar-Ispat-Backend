@@ -905,6 +905,30 @@
   </div>
 </div>
 
+<!-- সেশনের মেয়াদ ফুরালে — পাতা ছেড়ে না গিয়েই আবার সাইন ইন -->
+<div class="modal-overlay" id="reauth-modal">
+  <div class="modal" style="max-width:400px">
+    <div class="modal-header">
+      <div class="modal-title">SESSION <span>EXPIRED</span></div>
+    </div>
+    <div class="modal-body">
+      <p style="color:var(--subtext);font-size:0.86rem;margin-bottom:1.1rem">
+        You have been signed out after 24 hours. Enter the password to carry on —
+        nothing you have typed will be lost.
+      </p>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input class="form-input" type="password" id="reauth-pass" autocomplete="current-password" />
+      </div>
+      <p id="reauth-err" style="display:none;color:var(--accent);font-size:0.8rem">That password was not accepted.</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-ghost" onclick="closeReauth(false)">CANCEL</button>
+      <button class="btn-primary" onclick="submitReauth()">SIGN IN</button>
+    </div>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <script>
@@ -949,6 +973,54 @@ function doLogout() {
   localStorage.removeItem('ai_token');
   token = null;
   location.reload();
+}
+
+// সেশনের মেয়াদ ২৪ ঘণ্টা। শেষ হলে আগে কেবল "Invalid token" দেখাত —
+// পাতা লগ-ইন অবস্থাতেই থাকত আর সংরক্ষণ চুপচাপ ব্যর্থ হত। এখন এখানেই
+// আবার সাইন ইন করা যায়, ফর্ম যেমন আছে তেমনই থাকে, তারপর কাজটা নিজে
+// থেকেই আবার চেষ্টা করে — তাই টাইপ করা কিছুই হারায় না।
+let reauthResolve = null;
+
+function askReauth() {
+  return new Promise((resolve) => {
+    reauthResolve = resolve;
+    document.getElementById('reauth-pass').value = '';
+    document.getElementById('reauth-err').style.display = 'none';
+    document.getElementById('reauth-modal').classList.add('open');
+    setTimeout(() => document.getElementById('reauth-pass').focus(), 50);
+  });
+}
+
+function closeReauth(ok) {
+  document.getElementById('reauth-modal').classList.remove('open');
+  if(reauthResolve) { reauthResolve(ok); reauthResolve = null; }
+}
+
+async function submitReauth() {
+  const password = document.getElementById('reauth-pass').value;
+  if(!password) return;
+  try {
+    const res = await fetch(`${API}/auth/login`, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ username: 'admin', password })
+    });
+    const data = await res.json().catch(()=>({}));
+    if(!data.token) { document.getElementById('reauth-err').style.display = 'block'; return; }
+    token = data.token;
+    localStorage.setItem('ai_token', token);
+    closeReauth(true);
+  } catch(e) { document.getElementById('reauth-err').style.display = 'block'; }
+}
+
+// টোকেন জুড়ে অনুরোধ পাঠায়; মেয়াদ ফুরালে একবার সাইন ইন চেয়ে আবার পাঠায়
+async function authFetch(url, opts = {}, retried = false) {
+  const headers = Object.assign({}, opts.headers, { Authorization: `Bearer ${token}` });
+  const res = await fetch(url, Object.assign({}, opts, { headers }));
+  if(res.status === 401 && !retried) {
+    const ok = await askReauth();
+    if(ok) return authFetch(url, opts, true);
+  }
+  return res;
 }
 
 // Check existing token
@@ -1036,7 +1108,7 @@ async function loadDashboard() {
     const [products, media, quotes] = await Promise.all([
       fetch(`${API}/products`).then(r=>r.json()),
       fetch(`${API}/media`).then(r=>r.json()),
-      fetch(`${API}/quotations`, {headers:{Authorization:`Bearer ${token}`}}).then(r=>r.json())
+      authFetch(`${API}/quotations`).then(r=>r.json())
     ]);
     document.getElementById('stat-products').textContent = products.length;
     document.getElementById('stat-media').textContent = media.length;
@@ -1120,7 +1192,7 @@ async function saveProduct() {
   const method = id ? 'PUT' : 'POST';
 
   try {
-    await fetch(url, { method, headers:{Authorization:`Bearer ${token}`}, body: formData });
+    await authFetch(url, { method, body: formData });
     closeModal('product-modal');
     loadProducts();
     loadDashboard();
@@ -1130,7 +1202,7 @@ async function saveProduct() {
 
 async function deleteProduct(id) {
   if(!confirm('Delete this product?')) return;
-  await fetch(`${API}/products/${id}`, {method:'DELETE', headers:{Authorization:`Bearer ${token}`}});
+  await authFetch(`${API}/products/${id}`, {method:'DELETE'});
   loadProducts(); loadDashboard(); showToast('Product deleted');
 }
 
@@ -1178,7 +1250,7 @@ async function saveMedia() {
   if(file) formData.append('image', file);
 
   try {
-    await fetch(`${API}/media`, {method:'POST', headers:{Authorization:`Bearer ${token}`}, body: formData});
+    await authFetch(`${API}/media`, {method:'POST', body: formData});
     closeModal('media-modal');
     loadMedia(); loadDashboard();
     showToast('Event published');
@@ -1187,7 +1259,7 @@ async function saveMedia() {
 
 async function deleteMedia(id) {
   if(!confirm('Delete this event?')) return;
-  await fetch(`${API}/media/${id}`, {method:'DELETE', headers:{Authorization:`Bearer ${token}`}});
+  await authFetch(`${API}/media/${id}`, {method:'DELETE'});
   loadMedia(); loadDashboard(); showToast('Event deleted');
 }
 
@@ -1262,9 +1334,9 @@ async function saveJob() {
 
   const editing = editingJobId !== null;
   try {
-    const res = await fetch(`${API}/jobs${editing ? '/' + editingJobId : ''}`, {
+    const res = await authFetch(`${API}/jobs${editing ? '/' + editingJobId : ''}`, {
       method: editing ? 'PUT' : 'POST',
-      headers: { 'Content-Type':'application/json', Authorization:`Bearer ${token}` },
+      headers: { 'Content-Type':'application/json' },
       body: JSON.stringify(body)
     });
     if(!res.ok) {
@@ -1280,7 +1352,7 @@ async function saveJob() {
 async function deleteJob(id) {
   if(!confirm('Remove this vacancy from the careers page?')) return;
   try {
-    await fetch(`${API}/jobs/${id}`, {method:'DELETE', headers:{Authorization:`Bearer ${token}`}});
+    await authFetch(`${API}/jobs/${id}`, {method:'DELETE'});
     loadJobs(); showToast('Vacancy removed');
   } catch(e) { showToast('Could not remove the vacancy', true); }
 }
@@ -1457,8 +1529,7 @@ async function uploadRowImage(input) {
   fd.append('image', file);
   showToast('Uploading…');
   try {
-    const res = await fetch(`${API}/content/upload`, {
-      method:'POST', headers:{Authorization:`Bearer ${token}`}, body: fd
+    const res = await authFetch(`${API}/content/upload`, {method:'POST', body: fd
     });
     const body = await res.json().catch(()=>({}));
     if(!res.ok) return showToast(body.error || 'Could not upload', true);
@@ -1488,8 +1559,7 @@ async function uploadBanner(input) {
   fd.append('image', file);
   showToast('Uploading…');
   try {
-    const res = await fetch(`${API}/content/${currentPageKey}/banner`, {
-      method:'POST', headers:{Authorization:`Bearer ${token}`}, body: fd
+    const res = await authFetch(`${API}/content/${currentPageKey}/banner`, {method:'POST', body: fd
     });
     const body = await res.json().catch(()=>({}));
     if(!res.ok) return showToast(body.error || 'Could not upload', true);
@@ -1557,9 +1627,9 @@ function deepAssign(a, b) {
 async function savePage() {
   if(!currentPageKey) return;
   try {
-    const res = await fetch(`${API}/content/${currentPageKey}`, {
+    const res = await authFetch(`${API}/content/${currentPageKey}`, {
       method:'PUT',
-      headers:{'Content-Type':'application/json', Authorization:`Bearer ${token}`},
+      headers:{'Content-Type':'application/json'},
       body: JSON.stringify(collectPage())
     });
     if(!res.ok) {
@@ -1575,7 +1645,7 @@ async function resetPage() {
   if(!currentPageKey) return showToast('Choose a page first', true);
   if(!confirm('Put this page back to its original wording?')) return;
   try {
-    await fetch(`${API}/content/${currentPageKey}`, {method:'DELETE', headers:{Authorization:`Bearer ${token}`}});
+    await authFetch(`${API}/content/${currentPageKey}`, {method:'DELETE'});
     await loadPages();
     showToast('Page reset to the original wording');
   } catch(e) { showToast('Could not reset', true); }
@@ -1690,6 +1760,13 @@ function saveHero() {
       closeModal('hero-modal');
       loadHero();
       showToast(id ? 'Slide updated' : 'Slide added');
+    } else if(xhr.status === 401) {
+      // এখানে নিজে থেকে আবার পাঠাই না — ভিডিও বড়, চুপচাপ পুরোটা
+      // আবার তুলতে শুরু করলে অবাক লাগত। সাইন ইন করিয়ে জানিয়ে দিই।
+      askReauth().then((ok) => {
+        showToast(ok ? 'Signed in again — press Save Slide once more'
+                     : 'Session expired — sign in to save', true);
+      });
     } else {
       let msg = 'Error saving slide';
       try { msg = JSON.parse(xhr.responseText).error || msg; } catch(e) {}
@@ -1709,7 +1786,7 @@ function saveHero() {
 
 async function deleteHero(id) {
   if(!confirm('Delete this hero slide?')) return;
-  const res = await fetch(`${API}/hero/${id}`, {method:'DELETE', headers:{Authorization:`Bearer ${token}`}});
+  const res = await authFetch(`${API}/hero/${id}`, {method:'DELETE'});
   if(!res.ok) return showToast('Error deleting slide', true);
   loadHero();
   showToast('Slide deleted');
@@ -1719,7 +1796,7 @@ async function deleteHero(id) {
 async function loadQuotations() {
   const tbody = document.getElementById('quotations-body');
   try {
-    const data = await fetch(`${API}/quotations`, {headers:{Authorization:`Bearer ${token}`}}).then(r=>r.json());
+    const data = await authFetch(`${API}/quotations`).then(r=>r.json());
     if(data.length === 0) {
       tbody.innerHTML = '<tr><td colspan="9"><div class="empty-state"><div class="empty-state-icon">📋</div><p>NO QUOTATIONS YET</p></div></td></tr>';
       return;
@@ -1753,7 +1830,7 @@ async function setTheme(theme) {
   try {
     await fetch(API+'/settings/theme', {
       method: 'POST',
-      headers: {'Content-Type':'application/json', Authorization:'Bearer '+token},
+      headers: {'Content-Type':'application/json'},
       body: JSON.stringify({theme})
     });
     updateThemeButtons(theme);
@@ -1783,7 +1860,7 @@ function updateThemeButtons(theme) {
 async function deleteQuote(id) {
   if(!confirm('Delete this quotation?')) return;
   try {
-    const r = await fetch(API+'/quotations/'+id, {method:'DELETE', headers:{Authorization:'Bearer '+token}});
+    const r = await authFetch(API+'/quotations/'+id, {method:'DELETE'});
     const d = await r.json();
     if(d.success){showToast('Quotation deleted'); loadQuotations(); loadDashboard();}
     else showToast('Failed',true);
@@ -1793,7 +1870,7 @@ async function deleteQuote(id) {
 async function viewQuote(id) {
   currentQuoteId = id;
   try {
-    const data = await fetch(`${API}/quotations`, {headers:{Authorization:`Bearer ${token}`}}).then(r=>r.json());
+    const data = await authFetch(`${API}/quotations`).then(r=>r.json());
     const q = data.find(x => x.id === id);
     if(!q) return;
     document.getElementById('quote-status-select').value = q.status;
@@ -1827,8 +1904,8 @@ async function viewQuote(id) {
 
 async function updateQuoteStatus() {
   const status = document.getElementById('quote-status-select').value;
-  await fetch(`${API}/quotations/${currentQuoteId}/status`, {
-    method:'PUT', headers:{Authorization:`Bearer ${token}`,'Content-Type':'application/json'},
+  await authFetch(`${API}/quotations/${currentQuoteId}/status`, {
+    method:'PUT', headers:{'Content-Type':'application/json'},
     body: JSON.stringify({status})
   });
   closeModal('quote-modal');
