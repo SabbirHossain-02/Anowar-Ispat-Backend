@@ -497,6 +497,7 @@ const PAGES = [
                     { key: 'category', label: 'Category', type: 'text' },
                     { key: 'readTime', label: 'Reading time', type: 'text' },
                     { key: 'link', label: 'Where the button goes — leave empty and no button shows', type: 'text' },
+                    { key: 'img', label: 'Background picture of the card', type: 'image-url' },
                 ],
             },
 
