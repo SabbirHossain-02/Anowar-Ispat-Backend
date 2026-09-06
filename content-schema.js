@@ -144,6 +144,27 @@ const PAGES = [
         ],
     },
     {
+        // এই পাতাটির ব্যানার নেই — নিজের কেন্দ্রীভূত শিরোনাম আছে।
+        // পণ্যের তালিকা Products সেকশন থেকেই আসে।
+        key: 'products',
+        label: 'Products (catalogue page)',
+        group: 'Products',
+        url: '/products',
+        fields: [
+            { key: 'eyebrow', label: 'Small label above the title', type: 'text', now: 'OUR CATALOG' },
+            { key: 'title', label: 'Title', type: 'text', now: 'ENGINEERED FOR' },
+            { key: 'accent', label: 'The words in red', type: 'text', now: 'ENDURANCE' },
+            {
+                key: 'intro', label: 'Paragraph under the title', type: 'textarea',
+                now: "Forged in extreme intensity. We provide exceptional structural solutions designed to act as the unyielding backbone of tomorrow's infrastructure. Explore our full range of premium grade TMT rebars and steel products.",
+            },
+            {
+                key: 'empty', label: 'Shown when no products have been added', type: 'text',
+                now: 'No products available yet.',
+            },
+        ],
+    },
+    {
         key: 'products-range',
         label: 'Our Product Range',
         group: 'Products',
