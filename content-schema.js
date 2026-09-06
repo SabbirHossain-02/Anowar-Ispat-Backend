@@ -144,6 +144,90 @@ const PAGES = [
         ],
     },
     {
+        key: 'products-range',
+        label: 'Our Product Range',
+        group: 'Products',
+        url: '/products/range',
+        fields: [
+            ...banner('PRODUCTS', 'Reinforcement built for', 'Strength', '/product-range-banner.jpeg'),
+            {
+                key: 'intro', label: 'Opening paragraph', type: 'textarea',
+                now: 'Anwar Ispat produces deformed reinforcement bars using patented TMT technology from Belgium, tested batch by batch and certified to BSTI and ISO standards.',
+            },
+            { key: 'grades.eyebrow', label: 'Grades — small label', type: 'text', now: 'OUR GRADES' },
+            { key: 'grades.title', label: 'Grades — heading', type: 'text', now: 'Two grades, two jobs' },
+            {
+                key: 'grades.items', label: 'Grades', type: 'list',
+                now: 'ANWARS 500DWR · ANWARS 420DWR',
+                item: [
+                    { key: 'name', label: 'Name', type: 'text' },
+                    { key: 'tag', label: 'Subtitle', type: 'text' },
+                    { key: 'advantages', label: 'Advantages — one per line', type: 'lines' },
+                ],
+            },
+            { key: 'catalogue.eyebrow', label: 'Catalogue — small label', type: 'text', now: 'CATALOGUE' },
+            { key: 'catalogue.title', label: 'Catalogue — heading', type: 'text', now: 'From our product line' },
+        ],
+    },
+    {
+        key: 'products-specifications',
+        label: 'Product Specifications',
+        group: 'Products',
+        url: '/products/specifications',
+        fields: [
+            ...banner('PRODUCT SPECIFICATIONS', 'Built for', 'Strength', '/Product-Specifications.jpeg'),
+            {
+                key: 'intro', label: 'Opening paragraph', type: 'textarea',
+                now: 'Every batch is tested on a spectrometer across 28 elements before it leaves the mill, to hold the tolerances that piling, slabs and columns are designed against.',
+            },
+            { key: 'apps.eyebrow', label: 'Applications — small label', type: 'text', now: 'APPLICATIONS' },
+            { key: 'apps.title', label: 'Applications — heading', type: 'text', now: 'Where the bar goes' },
+            {
+                key: 'apps.items', label: 'Applications', type: 'list',
+                now: 'Piling foundation · Slab construction · Constructing pillars',
+                item: [
+                    { key: 'image', label: 'Photograph', type: 'image-url' },
+                    { key: 'name', label: 'Name', type: 'text' },
+                    { key: 'text', label: 'Description', type: 'textarea' },
+                ],
+            },
+            { key: 'chart.eyebrow', label: 'Size chart — small label', type: 'text', now: 'SIZE CHART' },
+            { key: 'chart.title', label: 'Size chart — heading', type: 'text', now: 'Available diameters' },
+            {
+                key: 'chart.note', label: 'Note under the size chart', type: 'textarea',
+                now: '420DWR is not produced in 8 mm. For any diameter or quantity, send us the requirement and we will confirm availability.',
+            },
+        ],
+    },
+    {
+        key: 'products-certifications',
+        label: 'Certifications',
+        group: 'Products',
+        url: '/products/certifications',
+        fields: [
+            ...banner('CERTIFICATIONS', 'Tested, audited and', 'Certified', '/Certifications-page-banner.jpg'),
+            { key: 'eyebrow', label: 'Small label', type: 'text', now: 'CERTIFICATIONS' },
+            {
+                key: 'title', label: 'Heading', type: 'text',
+                now: 'Every claim below is issued by a body outside Anwar Ispat',
+            },
+            {
+                key: 'lead', label: 'Paragraph under the heading', type: 'textarea',
+                now: 'The rebar is certified against Bangladeshi, British, Indian and American standards. The mill itself is audited to ISO quality and environmental management systems, and tested independently by BUET.',
+            },
+            {
+                key: 'items', label: 'Certificates', type: 'list',
+                now: 'BUET · BSTI · ISO 14001 · ISO 9001 · IS-1786 · BS-4449 · BDS ISO 6935-2 · ASTM',
+                item: [
+                    { key: 'logo', label: 'Logo', type: 'image-url' },
+                    { key: 'code', label: 'Standard', type: 'text' },
+                    { key: 'issuer', label: 'Issued by', type: 'text' },
+                    { key: 'scope', label: 'Kind of certificate', type: 'text' },
+                ],
+            },
+        ],
+    },
+    {
         key: 'sustainability-esg',
         label: 'ESG',
         group: 'Sustainability',

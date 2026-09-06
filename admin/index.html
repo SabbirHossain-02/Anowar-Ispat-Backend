@@ -621,7 +621,9 @@
           </div>
         </div>
         <div style="display:grid;grid-template-columns:220px 1fr;gap:1.5rem;align-items:start">
-          <div class="data-grid" style="padding:0.5rem 0">
+          <!-- ফর্ম লম্বা, তাই পেজের তালিকা স্ক্রলের সাথে সাথে থাকে —
+               নইলে অন্য পেজে যেতে প্রতিবার উপরে ফিরতে হত -->
+          <div class="data-grid" style="padding:0.5rem 0;position:sticky;top:1rem;max-height:calc(100vh - 3rem);overflow-y:auto">
             <div id="pages-nav"><div class="loading" style="padding:1rem"><div class="spinner"></div> Loading...</div></div>
           </div>
           <div class="data-grid" style="padding:1.5rem">
@@ -1298,9 +1300,8 @@ async function loadPages() {
         html += `<div style="padding:0.75rem 1rem 0.4rem;font-family:var(--font-mono);font-size:0.62rem;letter-spacing:0.14em;color:var(--subtext);opacity:0.7">${esc(p.group).toUpperCase()}</div>`;
         lastGroup = p.group;
       }
-      const edited = pageValues[p.key] && Object.keys(pageValues[p.key]).length > 0;
       html += `<div class="nav-item" style="border-left-width:2px" data-pk="${esc(p.key)}" onclick="openPage('${esc(p.key)}')">
-        ${esc(p.label)}${edited ? ' <span style="color:var(--accent);font-size:0.7rem">•</span>' : ''}
+        ${esc(p.label)}
       </div>`;
     });
     nav.innerHTML = html;
