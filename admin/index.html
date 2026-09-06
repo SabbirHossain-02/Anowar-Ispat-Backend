@@ -1170,6 +1170,32 @@ function showPage(name, el) {
   // Save ও Cancel কেবল Page Text এ অর্থবহ — অন্য সেকশনগুলো
   // নিজের নিজের মোডাল থেকে সংরক্ষণ করে
   if(name !== 'pages') showPageActions(null);
+
+  rememberPage(name === 'pages' && currentPageKey ? 'pages/' + currentPageKey : name);
+}
+
+// রিফ্রেশ দিলে ড্যাশবোর্ডে ফিরে যেত। ঠিকানার শেষে একটি চিহ্ন রেখে
+// দিই — #hero, #pages/home — তাই যে পাতায় ছিলেন সেখানেই ফেরেন।
+// replaceState, যাতে ব্যাক বোতামে পাতাগুলো জমে না যায়।
+function rememberPage(hash) {
+  if(location.hash.slice(1) === hash) return;
+  try { history.replaceState(null, '', '#' + hash); } catch(e) {}
+}
+
+// ঠিকানার চিহ্ন দেখে সেই পাতাটি খোলে। না মিললে ড্যাশবোর্ডই থাকে।
+function restorePage() {
+  const raw = decodeURIComponent(location.hash.slice(1));
+  if(!raw) return;
+  const slash = raw.indexOf('/');
+  const name = slash < 0 ? raw : raw.slice(0, slash);
+  const key = slash < 0 ? '' : raw.slice(slash + 1);
+
+  const nav = document.querySelector('.nav-item[onclick*="showPage(\'' + name + '\'"]');
+  if(!nav) return;
+
+  // loadPages() শেষে currentPageKey থাকলে সেই পেজটিই খোলে
+  if(name === 'pages' && key) currentPageKey = key;
+  showPage(name, nav);
 }
 
 // টপ বারের Save/Cancel — কোন পেজ খোলা আছে তা সহ
@@ -1197,6 +1223,7 @@ async function loadAll() {
   ]);
   // শুরুর লোড শেষ — এরপর থেকে 401 মানে কাজের মাঝে সেশন ফুরিয়েছে
   appReady = true;
+  restorePage();
 }
 
 // DASHBOARD
@@ -1502,6 +1529,7 @@ async function loadPages() {
 
 function openPage(key) {
   currentPageKey = key;
+  rememberPage('pages/' + key);
   document.querySelectorAll('#pages-nav .nav-item').forEach(n => {
     n.classList.toggle('active', n.dataset.pk === key);
   });
