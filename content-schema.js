@@ -118,6 +118,32 @@ const PAGES = [
         ],
     },
     {
+        key: 'about-heritage',
+        label: 'Heritage',
+        group: 'About',
+        url: '/about/heritage',
+        fields: [
+            ...banner('HERITAGE', 'Nearly two centuries of', 'Building', '/heritage-banner.jpeg'),
+            {
+                key: 'lede', label: 'Opening statement', type: 'textarea',
+                now: 'A legacy to value and enjoy in the present, and to preserve and pass on to future generations.',
+            },
+            {
+                // মাইলফলকগুলো About Us পাতায় একবারই রাখা আছে; এখানে
+                // কেবল যুগের সীমা, তাই একটি সাল বদলালে দুই পাতাতেই বদলায়
+                key: 'eras', label: 'Eras — the milestones themselves are edited on About Us', type: 'list',
+                now: '1834–1946 · 1965–1983 · 1995–2001 · 2004–2022',
+                item: [
+                    { key: 'span', label: 'Years shown, e.g. 1834 — 1946', type: 'text' },
+                    { key: 'title', label: 'Era title', type: 'text' },
+                    { key: 'note', label: 'Era description', type: 'textarea' },
+                    { key: 'from', label: 'First year in this era', type: 'text' },
+                    { key: 'to', label: 'Last year in this era', type: 'text' },
+                ],
+            },
+        ],
+    },
+    {
         key: 'sustainability-esg',
         label: 'ESG',
         group: 'Sustainability',
