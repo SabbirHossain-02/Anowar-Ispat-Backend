@@ -1382,10 +1382,32 @@ function listRow(field, row, i) {
   const inner = field.item.map(sub => {
     const v = row ? (row[sub.key] || '') : '';
     const val = Array.isArray(v) ? v.join('\n') : v;
+
+    // তালিকার ভেতরের ছবি: থাম্বনেইল, আপলোডের বোতাম, আর লিংকের ঘর।
+    // আপলোড শুধু লিংকটি ঘরে বসায় — সংরক্ষণ হয় ফর্ম সেভ করলে, তাই
+    // সারির অন্য বদলগুলোর সাথেই একসাথে যায়।
+    if (sub.type === 'image-url') {
+      return `<div class="row-img" style="margin-bottom:0.6rem">
+        <label class="form-label" style="font-size:0.7rem">${esc(sub.label)}</label>
+        <div style="display:flex;gap:0.75rem;align-items:flex-start">
+          <img class="row-img-preview" src="${esc(val)}" alt=""
+               style="width:66px;height:66px;object-fit:cover;border-radius:4px;border:1px solid var(--border);background:var(--bg3)"
+               onerror="this.style.visibility='hidden'" />
+          <div style="flex:1">
+            <input class="form-input row-img-url" data-sub="${esc(sub.key)}" value="${esc(val)}"
+                   oninput="const p=this.closest('.row-img').querySelector('.row-img-preview');p.src=this.value;p.style.visibility='visible'" />
+            <button class="btn-ghost" style="margin-top:0.4rem;padding:0.35rem 0.8rem;font-size:0.7rem"
+                    onclick="this.parentElement.querySelector('.row-file').click()">UPLOAD IMAGE</button>
+            <input type="file" class="row-file" accept="image/*" style="display:none" onchange="uploadRowImage(this)" />
+          </div>
+        </div>
+      </div>`;
+    }
+
     const tag = sub.type === 'textarea' || sub.type === 'lines'
       ? `<textarea class="form-textarea" style="min-height:70px" data-sub="${esc(sub.key)}">${esc(val)}</textarea>`
       : `<input class="form-input" data-sub="${esc(sub.key)}" value="${esc(val)}" />`;
-    return `<div style="margin-bottom:0.5rem"><label class="form-label" style="font-size:0.62rem">${esc(sub.label)}</label>${tag}</div>`;
+    return `<div style="margin-bottom:0.5rem"><label class="form-label" style="font-size:0.7rem">${esc(sub.label)}</label>${tag}</div>`;
   }).join('');
 
   return `<div class="list-row" style="border:1px solid var(--border);border-radius:6px;padding:0.9rem;margin-bottom:0.6rem;position:relative">
@@ -1395,6 +1417,29 @@ function listRow(field, row, i) {
     </div>
     ${inner}
   </div>`;
+}
+
+// তালিকার সারির ছবি — R2 তে তুলে লিংকটি পাশের ঘরে বসায়
+async function uploadRowImage(input) {
+  const file = input.files[0];
+  if(!file) return;
+  const wrap = input.closest('.row-img');
+  const fd = new FormData();
+  fd.append('image', file);
+  showToast('Uploading…');
+  try {
+    const res = await fetch(`${API}/content/upload`, {
+      method:'POST', headers:{Authorization:`Bearer ${token}`}, body: fd
+    });
+    const body = await res.json().catch(()=>({}));
+    if(!res.ok) return showToast(body.error || 'Could not upload', true);
+    wrap.querySelector('.row-img-url').value = body.url;
+    const p = wrap.querySelector('.row-img-preview');
+    p.src = body.url;
+    p.style.visibility = 'visible';
+    showToast('Image uploaded — press Save Changes to keep it');
+  } catch(e) { showToast('Could not upload', true); }
+  finally { input.value = ''; }
 }
 
 function addRow(fieldKey) {

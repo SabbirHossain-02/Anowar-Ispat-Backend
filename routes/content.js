@@ -78,6 +78,19 @@ router.put('/:key', auth, async (req, res) => {
   }
 });
 
+// শুধু ছবিটি R2 তে তুলে লিংক ফেরত দেয়, কিছু সংরক্ষণ করে না। তালিকার
+// ভেতরের ছবির ঘরগুলো এটি ব্যবহার করে — লিংকটি ঘরে বসে, তারপর ফর্ম
+// সংরক্ষণের সময় বাকি সবের সাথে একসাথে যায়।
+router.post('/upload', auth, uploadBanner, async (req, res) => {
+  if (!req.file) return res.status(400).json({ error: 'No image received' });
+  try {
+    const url = await uploadToR2(req.file, 'content');
+    res.json({ url });
+  } catch (err) {
+    res.status(500).json({ error: 'Could not upload the image' });
+  }
+});
+
 // ব্যানারের ছবি R2 তে যায়, তারপর তার লিংকটি ওই পেজের data এর
 // banner.image এ বসে। বাকি লেখা অক্ষত থাকে, তাই আপলোডের জন্য পুরো
 // ফর্ম আবার সংরক্ষণ করতে হয় না।
