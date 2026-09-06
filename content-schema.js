@@ -494,8 +494,9 @@ const PAGES = [
                 now: 'Three articles',
                 item: [
                     { key: 'title', label: 'Headline', type: 'text' },
-                    { key: 'cat', label: 'Category', type: 'text' },
-                    { key: 'date', label: 'Date', type: 'text' },
+                    { key: 'category', label: 'Category', type: 'text' },
+                    { key: 'readTime', label: 'Reading time', type: 'text' },
+                    { key: 'link', label: 'Where the button goes — leave empty and no button shows', type: 'text' },
                 ],
             },
 
