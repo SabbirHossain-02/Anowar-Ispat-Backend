@@ -68,19 +68,23 @@ const PAGES = [
         group: 'About',
         url: '/about/vision',
         fields: [
+            { type: 'section', label: "Banner", note: "The picture and the words across the top" },
             ...banner('VISION, MISSION & VALUES', 'Since 1834,', 'Forged in Purpose', '/vision-mission.jpeg'),
+            { type: 'section', label: "Vision", note: "The first block" },
             { key: 'vision.tag', label: 'Vision — small label', type: 'text', now: 'Vision' },
             { key: 'vision.title', label: 'Vision — heading', type: 'text', now: 'Continuing the heritage' },
             {
                 key: 'vision.body', label: 'Vision — text', type: 'textarea',
                 now: 'Continuing the heritage of being pioneers in industries and leaders in development.',
             },
+            { type: 'section', label: "Mission", note: "The second block" },
             { key: 'mission.tag', label: 'Mission — small label', type: 'text', now: 'Mission' },
             { key: 'mission.title', label: 'Mission — heading', type: 'text', now: 'Transformative growth' },
             {
                 key: 'mission.body', label: 'Mission — text', type: 'textarea',
                 now: 'At Anwar Group, our vision and mission converge in a steadfast pursuit of transformative growth and societal progress. Rooted in our heritage, we strive to lead across industries, embracing sustainability and ethics. Through innovation and global expansion, we contribute to economic development. Empowered by excellence and a limitless mindset, we shape a meaningful future.',
             },
+            { type: 'section', label: "Values", note: "The cards at the foot of the page" },
             { key: 'values.eyebrow', label: 'Values — small label', type: 'text', now: 'OUR VALUES' },
             {
                 key: 'values.items', label: 'Values', type: 'list',
@@ -263,7 +267,9 @@ const PAGES = [
         group: 'Sustainability',
         url: '/sustainability/esg',
         fields: [
+            { type: 'section', label: "Banner", note: "The picture and the words across the top" },
             ...banner('SUSTAINABILITY', 'Sustainable Steel', 'Development', '/sustainable-steel.jpg'),
+            { type: 'section', label: "Opening", note: "The paragraph and the figures under the banner" },
             {
                 key: 'lede', label: 'Opening paragraph', type: 'textarea',
                 now: 'Championing the Sustainable Development Goals through how the mill is run — sustainable business practice, community empowerment and environmental stewardship.',
@@ -276,12 +282,14 @@ const PAGES = [
                     { key: 'l', label: 'Caption', type: 'text' },
                 ],
             },
+            { type: 'section', label: "Chairman's quote", note: "The quotation block" },
             {
                 key: 'quote.text', label: 'Chairman\'s quote', type: 'textarea',
                 now: 'I envision Anwar Group not just as a business entity but as a catalyst for progress, for a sustainable and equitable future.',
             },
             { key: 'quote.name', label: 'Quote — name', type: 'text', now: 'Manwar Hossain' },
             { key: 'quote.role', label: 'Quote — position', type: 'text', now: 'Chairman, Anwar Group' },
+            { type: 'section', label: "Three pillars", note: "Environmental, Social, Governance" },
             { key: 'pillars.eyebrow', label: 'Pillars — small label', type: 'text', now: 'THREE PILLARS' },
             { key: 'pillars.title', label: 'Pillars — heading', type: 'text', now: 'Our ESG framework' },
             {
@@ -294,12 +302,14 @@ const PAGES = [
                     { key: 'items', label: 'Points — one per line', type: 'lines' },
                 ],
             },
+            { type: 'section', label: "SDG commitments", note: "The United Nations goals list" },
             { key: 'sdg.eyebrow', label: 'SDG — small label', type: 'text', now: 'UNITED NATIONS' },
             { key: 'sdg.title', label: 'SDG — heading', type: 'text', now: 'SDG commitments' },
             {
                 key: 'sdg.items', label: 'SDG commitments — one per line', type: 'lines',
                 now: 'Recycling and waste reduction · Supporting local communities · Green design and manufacturing · Education · Renewable energy adoption · Reforestation · Healthcare and sanitation',
             },
+            { type: 'section', label: "Our commitment", note: "The closing block and the practices beside it" },
             { key: 'commit.eyebrow', label: 'Commitment — small label', type: 'text', now: 'OUR COMMITMENT' },
             { key: 'commit.title', label: 'Commitment — heading', type: 'text', now: 'Sustainable business practices' },
             {
@@ -322,7 +332,9 @@ const PAGES = [
         group: 'Sustainability',
         url: '/sustainability/csr',
         fields: [
+            { type: 'section', label: "Banner", note: "The picture and the words across the top" },
             ...banner('CORPORATE SOCIAL RESPONSIBILITY', 'Community Outreach', '& Welfare', '/community-outreach.jpg'),
+            { type: 'section', label: "Opening", note: "The large statement, the paragraph and the figures" },
             { key: 'open.eyebrow', label: 'Opening — small label', type: 'text', now: 'WHERE WE STAND' },
             {
                 key: 'open.statement', label: 'Opening — large statement', type: 'textarea',
@@ -340,6 +352,7 @@ const PAGES = [
                     { key: 'l', label: 'Caption', type: 'text' },
                 ],
             },
+            { type: 'section', label: "Mission and Vision", note: "The two blocks side by side" },
             {
                 key: 'principles', label: 'Mission and Vision', type: 'list',
                 now: 'OUR MISSION People first, always · OUR VISION A stronger Bangladesh',
@@ -349,6 +362,7 @@ const PAGES = [
                     { key: 'text', label: 'Description', type: 'textarea' },
                 ],
             },
+            { type: 'section', label: "Initiatives", note: "What the company actually runs" },
             { key: 'what.eyebrow', label: 'Initiatives — small label', type: 'text', now: 'CSR INITIATIVES' },
             { key: 'what.title', label: 'Initiatives — heading', type: 'text', now: 'What we do' },
             {
@@ -359,6 +373,7 @@ const PAGES = [
                     { key: 'text', label: 'Description', type: 'textarea' },
                 ],
             },
+            { type: 'section', label: "Our commitment", note: "The closing block" },
             { key: 'commit.eyebrow', label: 'Commitment — small label', type: 'text', now: 'OUR COMMITMENT' },
             {
                 key: 'commit.lead', label: 'Commitment — large statement', type: 'textarea',
@@ -378,6 +393,7 @@ const PAGES = [
         group: 'Home',
         url: '/',
         fields: [
+            { type: 'section', label: "Opening banner", note: "The very top of the page, over the moving background" },
             { key: 'hero.line1', label: 'Opening headline — first line', type: 'text', now: 'FORGED IN' },
             { key: 'hero.accent1', label: 'Opening headline — the red word on the first line', type: 'text', now: 'FIRE' },
             { key: 'hero.line2', label: 'Opening headline — second line', type: 'text', now: 'ENGINEERED FOR THE' },
@@ -387,6 +403,7 @@ const PAGES = [
                 now: 'A cinematic journey of power, precision, and the steel that builds Bangladesh.',
             },
             { key: 'hero.cta', label: 'Button under the opening headline', type: 'text', now: 'DISCOVER THE FORCE' },
+            { type: 'section', label: "Vision & Leadership", note: "The two quotation blocks with the photographs" },
             { key: 'about.aTitle', label: 'About block 1 — heading', type: 'text', now: 'BUILDING A LEGACY OF' },
             { key: 'about.aAccent', label: 'About block 1 — the words in red', type: 'text', now: 'STEEL.' },
             {
@@ -399,6 +416,7 @@ const PAGES = [
                 key: 'about.bQuote', label: 'About block 2 — quotation', type: 'textarea',
                 now: "We don't just supply materials; we engineer the resilience required to propel Bangladesh into the forefront of monumental construction.",
             },
+            { type: 'section', label: "Why Choose Us", note: "The row of milestones" },
             { key: 'why.eyebrow', label: 'Why Choose Us — small label', type: 'text', now: 'THE FORGED PATH' },
             { key: 'why.title', label: 'Why Choose Us — heading', type: 'text', now: 'WHY CHOOSE US?' },
             {
@@ -409,6 +427,7 @@ const PAGES = [
                     { key: 'desc', label: 'Description', type: 'textarea' },
                 ],
             },
+            { type: 'section', label: "Products", note: "The product cards and the pop-up that opens when one is clicked" },
             { key: 'ps.specLabel', label: 'Product panel — specifications heading', type: 'text', now: 'KEY SPECIFICATIONS' },
             {
                 key: 'ps.specs', label: 'Product panel — specification points, one per line', type: 'lines',
@@ -417,6 +436,7 @@ const PAGES = [
             { key: 'ps.loading', label: 'Product panel — while loading', type: 'text', now: 'Loading products...' },
             { key: 'ps.empty', label: 'Product panel — when none added', type: 'text', now: 'No products published yet.' },
 
+            { type: 'section', label: "Core Strengths", note: "The turning globe with the labels going round it" },
             { key: 'strengths.heading', label: 'Orbit — small line above the name', type: 'text', now: 'WHY CHOOSE' },
             { key: 'strengths.brand', label: 'Orbit — the name', type: 'text', now: 'ANWAR' },
             { key: 'strengths.brandAccent', label: 'Orbit — the part in red', type: 'text', now: 'ISPAT' },
@@ -426,6 +446,7 @@ const PAGES = [
                 now: 'SUPERIOR STRENGTH · EXCELLENT DUCTILITY · EASY WELDABILITY · IMPROVED RIB DESIGN · TMT TECHNOLOGY · PRECISE STANDARDS · CONTROLLED MICROSTRUCTURE',
             },
 
+            { type: 'section', label: "Mega Projects", note: "The eight video cards" },
             { key: 'projects.title', label: 'Projects section — heading', type: 'text', now: 'MEGA' },
             { key: 'projects.accent', label: 'Projects section — the words in red', type: 'text', now: 'PROJECTS' },
             {
@@ -441,11 +462,13 @@ const PAGES = [
                 ],
             },
 
+            { type: 'section', label: "News Desk", note: "Pulls the latest from Media & Events on its own" },
             { key: 'media.title', label: 'News section — heading', type: 'text', now: 'NEWS DESK' },
             { key: 'media.cta', label: 'News section — button', type: 'text', now: 'INITIATE FEED' },
             { key: 'media.loading', label: 'News section — while loading', type: 'text', now: 'Loading media posts...' },
             { key: 'media.empty', label: 'News section — when none added', type: 'text', now: 'No media posts yet.' },
 
+            { type: 'section', label: "Insights", note: "The three articles near the bottom" },
             { key: 'blog.eyebrow', label: 'Insights section — small line', type: 'text', now: '[ SYSTEM.ARCHIVES.OPEN ]' },
             { key: 'blog.title', label: 'Insights section — heading', type: 'text', now: 'INSIGHTS & INNOVATIONS' },
             {
@@ -458,6 +481,7 @@ const PAGES = [
                 ],
             },
 
+            { type: 'section', label: "Footer", note: "The bottom of every page, not just this one" },
             {
                 key: 'footer.tagline', label: 'Footer — line under the logo', type: 'textarea',
                 now: "Unrelenting strength. Uncompromising quality. The structural backbone of tomorrow's infrastructure.",
@@ -507,7 +531,9 @@ const PAGES = [
         group: 'Media Center',
         url: '/media/news',
         fields: [
+            { type: 'section', label: "Banner", note: "The picture and the words across the top" },
             ...banner('MEDIA CENTER', 'Latest', 'News', '/latest-news-banner.jpg'),
+            { type: 'section', label: "The list page", note: "Labels around the stories, and what shows when there are none" },
             { key: 'lead', label: 'Label above the main story', type: 'text', now: 'LEAD STORY' },
             { key: 'more', label: 'Label above the other stories', type: 'text', now: 'MORE STORIES' },
             { key: 'ticker', label: 'Label on the scrolling headline strip', type: 'text', now: 'LATEST' },
@@ -520,6 +546,7 @@ const PAGES = [
                 key: 'failed', label: 'Shown when the newsroom cannot be reached', type: 'textarea',
                 now: 'The newsroom could not be reached just now. Please try again shortly.',
             },
+            { type: 'section', label: "The story page", note: "What a reader sees after clicking a headline" },
             { key: 'artLoading', label: 'Story page — shown while the story loads', type: 'text', now: 'Loading the story…' },
             { key: 'artGoneTag', label: 'Story page — label when the story is gone', type: 'text', now: 'NOT FOUND' },
             {
@@ -540,9 +567,11 @@ const PAGES = [
         group: 'Media Center',
         url: '/media/press',
         fields: [
+            { type: 'section', label: "Heading", note: "The top of the list page" },
             { key: 'hero.tag', label: 'Small label above the title', type: 'text', now: 'Official Statements' },
             { key: 'hero.title', label: 'Title', type: 'text', now: 'Press' },
             { key: 'hero.accent', label: 'The words in red', type: 'text', now: 'Releases' },
+            { type: 'section', label: "The release page", note: "Labels and the contact box on a single release" },
             { key: 'stamp', label: 'The red chip on a release', type: 'text', now: 'Official Statement' },
             { key: 'imageNote', label: 'Caption in the empty image box', type: 'text', now: 'Official Image' },
             { key: 'immediate', label: 'Release page — the line above the text', type: 'text', now: 'For Immediate Release' },
@@ -551,6 +580,7 @@ const PAGES = [
             { key: 'mediaTitle', label: 'Release page — who to contact', type: 'text', now: 'Corporate Communications' },
             { key: 'mediaEmail', label: 'Release page — contact email', type: 'text', now: 'media@anwarispat.com' },
             { key: 'mediaPhone', label: 'Release page — contact telephone', type: 'text', now: '+880 2223 384037' },
+            { type: 'section', label: "The releases", note: "Each one becomes its own page" },
             {
                 key: 'releases',
                 label: 'Press releases — these are statements in the company\'s name, so publish only what has actually been issued',
@@ -600,7 +630,9 @@ const PAGES = [
         group: 'Careers',
         url: '/careers/positions',
         fields: [
+            { type: 'section', label: "Banner", note: "The picture and the words across the top" },
             ...banner('CAREERS', 'Open', 'Positions', '/careers-banner.jpg'),
+            { type: 'section', label: "Opening", note: "The large line and the paragraph under it" },
             { key: 'eyebrow', label: 'Small label above the opening line', type: 'text', now: 'CAREER OPPORTUNITIES' },
             {
                 key: 'statement', label: 'The opening line, in large type', type: 'textarea',
@@ -610,11 +642,13 @@ const PAGES = [
                 key: 'lead', label: 'Paragraph under the opening line', type: 'textarea',
                 now: 'Anwar Ispat has been rolling steel in Bangladesh for over four decades. The mill runs on the people in it — engineers on the floor, inspectors at the spectrometer, and the teams behind them.',
             },
+            { type: 'section', label: "Departments", note: "The names running across the grey band" },
             { key: 'discEyebrow', label: 'Label above the list of departments', type: 'text', now: 'WHERE WE RECRUIT' },
             {
                 key: 'disciplines', label: 'Departments we recruit into — one per line', type: 'lines',
                 now: 'Engineering · Production · Quality control · Operations · Sales · Finance · Human resources',
             },
+            { type: 'section', label: "Vacancies", note: "Wording around the jobs posted from Open Positions" },
             {
                 key: 'email', label: 'Address applications are sent to', type: 'text',
                 now: 'careers@anwarispat.com',
@@ -644,6 +678,7 @@ const PAGES = [
                 now: 'We accept open applications year-round. If your experience fits one of the areas above, send it to us and it will be held against upcoming requirements.',
             },
             { key: 'loading', label: 'Shown while vacancies load', type: 'text', now: 'Checking for current vacancies…' },
+            { type: 'section', label: "How to apply", note: "The numbered steps and the button at the foot" },
             {
                 key: 'steps', label: 'How to apply — the numbered steps', type: 'list',
                 now: 'Send your CV · We review · Interview and offer',
@@ -855,12 +890,14 @@ const PAGES = [
         group: 'Site-wide',
         url: '/',
         fields: [
+            { type: 'section', label: "Heading", note: "The top of the pop-up" },
             { key: 'title', label: 'Heading', type: 'text', now: 'REQUEST A' },
             { key: 'accent', label: 'Heading — the words in red', type: 'text', now: 'QUOTATION' },
             { key: 'sub', label: 'Line under the heading', type: 'text', now: 'Submit your requirements for an exact estimation.' },
             { key: 'catalogBtn', label: 'Catalogue button', type: 'text', now: 'DOWNLOAD CATALOGUE' },
             { key: 'step1', label: 'Heading of the first column', type: 'text', now: 'Product Information' },
             { key: 'step2', label: 'Heading of the second column', type: 'text', now: 'Contact Information' },
+            { type: 'section', label: "The form", note: "What a visitor picks from and fills in" },
             {
                 key: 'products', label: 'The products a visitor can pick from', type: 'list',
                 now: 'Anwars 500CWR · Anwars 500DWR · Anwars 420DWR · Other',
@@ -890,9 +927,11 @@ const PAGES = [
         group: 'Site-wide',
         url: '/',
         fields: [
+            { type: 'section', label: "Heading", note: "The top of the pop-up" },
             { key: 'title', label: 'Heading', type: 'text', now: 'Contact' },
             { key: 'accent', label: 'Heading — the words in red', type: 'text', now: 'Anwar Ispat' },
             { key: 'sub', label: 'Line under the heading', type: 'text', now: 'Tell us what you need and the right desk will answer.' },
+            { type: 'section', label: "Contact details", note: "The address, telephone and email down the left" },
             { key: 'addrLabel', label: 'Address — label', type: 'text', now: 'HEAD OFFICE' },
             {
                 key: 'addr', label: 'Address', type: 'textarea',
@@ -902,6 +941,7 @@ const PAGES = [
             { key: 'phone', label: 'Telephone', type: 'text', now: '+880 2223 384037' },
             { key: 'mailLabel', label: 'Email — label', type: 'text', now: 'EMAIL' },
             { key: 'mail', label: 'Email', type: 'text', now: 'mail@anwargroup.net' },
+            { type: 'section', label: "The form", note: "The boxes a visitor fills in, and what they see after sending" },
             { key: 'fName', label: 'Form — name box', type: 'text', now: 'NAME' },
             { key: 'fEmail', label: 'Form — email box', type: 'text', now: 'EMAIL' },
             { key: 'fSubject', label: 'Form — subject box', type: 'text', now: 'SUBJECT' },

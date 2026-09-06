@@ -172,6 +172,60 @@
     font-family: var(--font-mono); font-size: 0.6rem; color: var(--subtext);
     letter-spacing: 0.2em; padding: 0.5rem 0.5rem; text-transform: uppercase;
   }
+  /* Page Text এর ভেতরে সেকশন — দর্শক পাতায় যা যে ক্রমে দেখে */
+  .sec {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    margin: 0 0 0.9rem;
+    overflow: hidden;
+  }
+  .sec-head {
+    display: flex; align-items: center; gap: 0.85rem;
+    width: 100%; text-align: left;
+    padding: 0.8rem 1rem;
+    background: var(--zebra);
+    border: none; border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.15s;
+  }
+  .sec-head:hover { background: var(--hover); }
+  .sec-n {
+    flex-shrink: 0;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--accent);
+    background: var(--accent-dim);
+    border-radius: 4px;
+    padding: 0.22rem 0.45rem;
+    letter-spacing: 0.05em;
+  }
+  .sec-name { font-size: 0.86rem; font-weight: 600; color: var(--text); }
+  .sec-note { font-size: 0.74rem; color: var(--subtext); margin-top: 0.12rem; }
+  .sec-count { margin-left: auto; font-size: 0.72rem; color: var(--subtext); flex-shrink: 0; }
+  .sec-caret {
+    flex-shrink: 0; width: 14px; height: 14px; color: var(--subtext);
+    transition: transform 0.18s;
+  }
+  .sec-body { padding: 1rem 1rem 0.35rem; }
+  .sec.is-shut .sec-body { display: none; }
+  .sec.is-shut .sec-head { border-bottom: none; }
+  .sec.is-shut .sec-caret { transform: rotate(-90deg); }
+
+  /* উপরে লাফানোর সারি */
+  .sec-jump {
+    display: flex; flex-wrap: wrap; gap: 0.35rem;
+    margin: 0 0 1.1rem;
+  }
+  .sec-jump button {
+    font-family: inherit; font-size: 0.72rem;
+    color: var(--subtext); background: transparent;
+    border: 1px solid var(--border); border-radius: 999px;
+    padding: 0.3rem 0.7rem; cursor: pointer;
+    transition: all 0.15s;
+  }
+  .sec-jump button:hover { color: var(--accent); border-color: var(--accent); }
+
   .nav-item {
     display: flex; align-items: center; gap: 0.8rem;
     padding: 0.75rem 1rem; cursor: pointer;
@@ -1463,7 +1517,38 @@ function openPage(key) {
     </p>
   </div>`;
 
+  // সেকশন থাকলে প্রতিটি অংশ আলাদা বাক্সে, উপরে লাফানোর সারি
+  const secs = page.fields.filter(f => f.type === 'section');
+  if(secs.length) {
+    html += '<div class="sec-jump">' + secs.map((f, i) =>
+      `<button onclick="jumpSec(${i})">${String(i+1).padStart(2,'0')} &nbsp;${esc(f.label)}</button>`
+    ).join('') + '</div>';
+  }
+
+  let secOpen = false;
+  let secIdx = 0;
+
   page.fields.forEach(f => {
+    if(f.type === 'section') {
+      secIdx += 1;
+      // আগেরটি বন্ধ করে নতুনটি খুলি
+      if(secOpen) html += '</div></section>';
+      const count = countFields(page.fields, f);
+      html += `<section class="sec" id="sec-${secIdx - 1}">
+        <button class="sec-head" onclick="this.parentElement.classList.toggle('is-shut')">
+          <span class="sec-n">${String(secIdx).padStart(2,'0')}</span>
+          <span>
+            <span class="sec-name">${esc(f.label)}</span>
+            ${f.note ? `<span class="sec-note">${esc(f.note)}</span>` : ''}
+          </span>
+          <span class="sec-count">${count} ${count === 1 ? 'box' : 'boxes'}</span>
+          <svg class="sec-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="sec-body">`;
+      secOpen = true;
+      return;
+    }
+
     const val = getAt(saved, f.key);
 
     // কেবল বোঝানোর জন্য — সংরক্ষণ হয় না
@@ -1510,6 +1595,8 @@ function openPage(key) {
     html += `<div class="form-group"><label class="form-label">${esc(f.label)}</label>${tag}</div>`;
   });
 
+  if(secOpen) html += '</div></section>';
+
   // নিচে দ্বিতীয় একটি Save ছিল — টপ বারেরটি সবসময় দেখা যায় বলে
   // ওটা কেবল একই কাজের দুটি বোতাম হয়ে দাঁড়িয়েছিল
   box.innerHTML = html;
@@ -1525,6 +1612,26 @@ function cancelPage() {
 }
 
 function cssId(k) { return k.replace(/[^a-zA-Z0-9]/g, '_'); }
+
+// একটি সেকশনের নিচে কতগুলো ঘর — পরের সেকশন আসা পর্যন্ত
+function countFields(fields, head) {
+  let on = false, c = 0;
+  for(const f of fields) {
+    if(f === head) { on = true; continue; }
+    if(!on) continue;
+    if(f.type === 'section') break;
+    if(f.type !== 'note') c += 1;
+  }
+  return c;
+}
+
+// লাফানোর সারি থেকে — বন্ধ থাকলে খুলে দেয়
+function jumpSec(i) {
+  const el = document.getElementById('sec-' + i);
+  if(!el) return;
+  el.classList.remove('is-shut');
+  el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
 
 function listRow(field, row, i) {
   const inner = field.item.map(sub => {
@@ -1675,7 +1782,7 @@ function collectPage() {
   if(savedBanner) setAt(out, 'banner.image', savedBanner);
 
   page.fields.forEach(f => {
-    if(f.type === 'image' || f.type === 'note') return;
+    if(f.type === 'image' || f.type === 'note' || f.type === 'section') return;
     if(f.type === 'list') {
       const box = document.getElementById('rows-' + cssId(f.key));
       const rows = [];
