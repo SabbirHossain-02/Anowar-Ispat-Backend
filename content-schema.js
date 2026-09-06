@@ -443,8 +443,6 @@ const PAGES = [
                 key: 'ps.specs', label: 'Product panel — specification points, one per line', type: 'lines',
                 now: 'Excellent Weldability and Bendability · Earthquake Resistant Properties · Advanced Rib Design',
             },
-            { key: 'ps.loading', label: 'Product panel — while loading', type: 'text', now: 'Loading products...' },
-            { key: 'ps.empty', label: 'Product panel — when none added', type: 'text', now: 'No products published yet.' },
 
             { type: 'section', label: "Core Strengths", note: "The turning globe with the labels going round it" },
             { key: 'strengths.heading', label: 'Orbit — small line above the name', type: 'text', now: 'WHY CHOOSE' },
