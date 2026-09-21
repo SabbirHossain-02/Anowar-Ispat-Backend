@@ -1541,7 +1541,7 @@ function openPage(key) {
   let html = `<div style="margin-bottom:1.25rem">
     <div style="font-family:var(--font-mono);font-size:0.7rem;letter-spacing:0.14em;color:var(--accent)">${esc(page.label).toUpperCase()}</div>
     <p style="color:var(--subtext);font-size:0.78rem;margin-top:0.4rem">
-      Grey text inside a box is what the site shows now. Type to replace it, leave it empty to keep it.
+      What is in a box is what the site shows. Change it and save; clear it and save to remove that text from the site.
       ${page.url ? `<a href="${esc(page.url)}" target="_blank" rel="noopener" style="color:var(--accent);margin-left:0.4rem">View page &#8599;</a>` : ''}
     </p>
   </div>`;
@@ -1639,7 +1639,12 @@ function openPage(key) {
     }
 
     const shown = Array.isArray(val) ? val.join('\n') : (val || '');
-    const hint = f.now ? ` placeholder="${esc(f.now)}"` : '';
+    // '' মানে ইচ্ছে করে মুছে দেওয়া — তখন আগের লেখাটা placeholder এ
+    // দেখালে মনে হত ওটা এখনও সাইটে আছে
+    const cleared = val === '' || (Array.isArray(val) && val.length === 0);
+    const hint = cleared
+      ? ' placeholder="Empty — nothing shows on the site"'
+      : (f.now ? ` placeholder="${esc(f.now)}"` : '');
     const tag = f.type === 'textarea' || f.type === 'lines'
       ? `<textarea class="form-textarea" data-k="${esc(f.key)}"${hint}>${esc(shown)}</textarea>`
       : `<input class="form-input" data-k="${esc(f.key)}"${hint} value="${esc(shown)}" />`;
@@ -1850,13 +1855,19 @@ function collectPage() {
         });
         if(any) rows.push(row);
       });
-      // একটিও সারি না থাকলে কি-টাই পাঠাই না — তখন সাইটে কোডের
-      // তালিকাই দেখা যায়, ফাঁকা জায়গা নয়
-      if(rows.length) out[f.key] = rows;
+      // আগে সংরক্ষিত তালিকা থেকে সব সারি মুছে দিলে [] পাঠাই — তখন
+      // সাইটেও কিছু থাকে না। কখনও সংরক্ষিত হয়নি এমন তালিকা খালি
+      // থাকলে পাঠাই না, তখন কোডের তালিকাই থাকে।
+      const hadList = Array.isArray(getAt(pageValues[currentPageKey] || {}, f.key));
+      if(rows.length || hadList) out[f.key] = rows;
     } else {
       const el = document.querySelector(`#pages-form [data-k="${f.key}"]`);
       const raw = el ? el.value.trim() : '';
-      if(raw) setAt(out, f.key, f.type === 'lines' ? raw.split('\n').map(s=>s.trim()).filter(Boolean) : raw);
+      // লেখা থাকলে পাঠাই। খালি হলেও পাঠাই — যদি আগে কিছু সংরক্ষিত
+      // ছিল, কারণ তার মানে অ্যাডমিন সেটা মুছে দিয়েছেন। কখনও সংরক্ষিত
+      // হয়নি এমন ঘর খালি থাকলে পাঠাই না, তখন কোডের লেখাই থাকে।
+      const had = getAt(pageValues[currentPageKey] || {}, f.key) !== undefined;
+      if(raw || had) setAt(out, f.key, f.type === 'lines' ? raw.split('\n').map(s=>s.trim()).filter(Boolean) : raw);
     }
   });
 
