@@ -184,6 +184,7 @@ const PAGES = [
         group: 'Products',
         url: '/products',
         fields: [
+            { type: 'section', label: "Heading", note: "The label, title and paragraph at the top of the page" },
             { key: 'eyebrow', label: 'Small label above the title', type: 'text', now: 'OUR CATALOG' },
             { key: 'title', label: 'Title', type: 'text', now: 'ENGINEERED FOR' },
             { key: 'accent', label: 'The words in red', type: 'text', now: 'ENDURANCE' },
@@ -191,10 +192,15 @@ const PAGES = [
                 key: 'intro', label: 'Paragraph under the title', type: 'textarea',
                 now: "Forged in extreme intensity. We provide exceptional structural solutions designed to act as the unyielding backbone of tomorrow's infrastructure. Explore our full range of premium grade TMT rebars and steel products.",
             },
+            { type: 'section', label: "Product cards", note: "The grid of products" },
+            { type: 'note', label: "The products themselves — picture, name and description — are added, changed and deleted in Products in the left menu, and show here straight away.", goto: 'products', button: 'Open Products' },
+            { key: 'learnBtn', label: 'First button on each card', type: 'text', now: 'Learn More' },
+            { key: 'cardQuoteBtn', label: 'Second button on each card', type: 'text', now: 'Get Quote' },
             {
                 key: 'empty', label: 'Shown when no products have been added', type: 'text',
                 now: 'No products available yet.',
             },
+            { type: 'section', label: "Pop-up", note: "The panel that opens when a product is clicked" },
             {
                 key: 'specLabel', label: 'Pop-up — heading above the specification list', type: 'text',
                 now: 'KEY SPECIFICATIONS',

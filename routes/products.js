@@ -45,13 +45,18 @@ router.post('/', auth, uploadImage, async (req, res) => {
 
 router.put('/:id', auth, uploadImage, async (req, res) => {
   const { title, description, existing_image } = req.body;
-  const image_url = req.file ? await uploadToR2(req.file, 'products') : existing_image;
+  // প্যানেল নতুন ছবি না দিলে existing_image পাঠায় না — আগে তখন
+  // image_url খালি হয়ে যেত, অর্থাৎ শুধু লেখা বদলালেই ছবি মুছে যেত।
+  // এখন নতুন ছবি না এলে আগেরটাই থাকে।
+  const before = await pool.query('SELECT image_url FROM products WHERE id=$1', [req.params.id]);
+  const oldImage = before.rows[0]?.image_url || null;
+  const image_url = req.file ? await uploadToR2(req.file, 'products') : (existing_image || null);
   const result = await pool.query(
-    'UPDATE products SET title=$1, description=$2, image_url=$3 WHERE id=$4 RETURNING *',
+    'UPDATE products SET title=$1, description=$2, image_url=COALESCE($3, image_url) WHERE id=$4 RETURNING *',
     [title, description, image_url, req.params.id]
   );
   // ছবি বদলে গেলে পুরোনোটা R2 থেকে সরাই
-  if (req.file && existing_image) await deleteFromR2(existing_image);
+  if (req.file && oldImage) await deleteFromR2(oldImage);
   res.json(result.rows[0]);
 });
 
