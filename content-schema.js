@@ -920,7 +920,6 @@ const PAGES = [
             { key: 'title', label: 'Heading', type: 'text', now: 'REQUEST A' },
             { key: 'accent', label: 'Heading — the words in red', type: 'text', now: 'QUOTATION' },
             { key: 'sub', label: 'Line under the heading', type: 'text', now: 'Submit your requirements for an exact estimation.' },
-            { key: 'catalogBtn', label: 'Catalogue button', type: 'text', now: 'DOWNLOAD CATALOGUE' },
             { key: 'step1', label: 'Heading of the first column', type: 'text', now: 'Product Information' },
             { key: 'step2', label: 'Heading of the second column', type: 'text', now: 'Contact Information' },
             { type: 'section', label: "The form", note: "What a visitor picks from and fills in" },
