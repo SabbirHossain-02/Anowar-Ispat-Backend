@@ -289,6 +289,7 @@ const PAGES = [
                 now: '420DWR is not produced in 8 mm. For any diameter or quantity, send us the requirement and we will confirm availability.',
             },
             { key: 'chart.quoteBtn', label: 'Button under the size chart', type: 'text', now: 'Request a quotation' },
+            { type: 'note', label: "Clicking a size opens the quotation form with that grade already picked. For a newly added grade to be picked there too, add it to the quotation form's product list, saved as \"Anwars\" and the grade — for example Anwars 500CWR.", goto: 'page:quote-modal', button: 'Open the quotation form list' },
         ],
     },
     {
