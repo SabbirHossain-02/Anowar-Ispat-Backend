@@ -2277,6 +2277,13 @@ window.addEventListener('beforeunload', (e) => { if(dirty) { e.preventDefault();
 
 // Page Text এর ভেতর থেকে বাঁ পাশের কোনো মেনুতে যাওয়া
 function goModule(name) {
+  // Page Text এর আরেকটি পাতা — openPage নিজেই সংরক্ষণ না করা বদলের কথা জিজ্ঞেস করে
+  if(name.indexOf('page:') === 0) {
+    openPage(name.slice(5));
+    const main = document.querySelector('.main');
+    if(main) main.scrollTop = 0;
+    return;
+  }
   if(dirty && !confirm('You have changes on this page that are not saved. Leave without saving?')) return;
   dirty = false;
   const nav = document.querySelector('.nav-item[onclick*="showPage(\'' + name + '\'"]');

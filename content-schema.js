@@ -41,7 +41,7 @@ const PAGES = [
                 now: 'As a proud concern of the century-old Anwar Group, Anwar Ispat has led the mild steel industry since 1978. We were the first to introduce 60-grade steel to Bangladesh and have consistently upgraded our facilities to bring the world\'s most advanced technology to the local market. From the tallest skyscrapers to complex nuclear power plants, our commitment to quality ensures that every structure built with Anwar Ispat is resilient, durable, and safe.',
             },
             { type: 'section', label: "Heritage timeline", note: "The wavy line of years that slides sideways" },
-            { type: 'note', label: "These years are also used on the Heritage page (About → Heritage), so a change here shows there too." },
+            { type: 'note', label: "These years are also used on the Heritage page (About → Heritage), so a change here shows there too. Which years go into which era is set on the Heritage page.", goto: 'page:about-heritage', button: 'Open Heritage eras' },
             {
                 key: 'timeline.title', label: 'Heritage timeline — heading', type: 'text',
                 now: 'A legacy to value in the present, and to pass on to future generations',
@@ -151,15 +151,20 @@ const PAGES = [
         group: 'About',
         url: '/about/heritage',
         fields: [
+            { type: 'section', label: "Banner", note: "The picture and the words across the top, and the path under it" },
             ...banner('HERITAGE', 'Nearly two centuries of', 'Building', '/heritage-banner.jpeg'),
+            { key: 'crumb', label: 'Path under the banner — this page\'s name (after Home > About us >)', type: 'text', now: 'Heritage' },
+            { type: 'section', label: "Opening statement", note: "The large sentence under the banner" },
             {
                 key: 'lede', label: 'Opening statement', type: 'textarea',
                 now: 'A legacy to value and enjoy in the present, and to preserve and pass on to future generations.',
             },
+            { type: 'section', label: "Eras", note: "The pinned timelines that slide sideways as the page scrolls" },
+            { type: 'note', label: "The years themselves (year, name, description, highlight) are kept once, on About Us → Heritage timeline, and shared by both pages. Here you only set how they are grouped: every year between an era's first and last year shows in that era. An era with no years in its range is not shown.", goto: 'page:about', button: 'Edit the years on About Us' },
             {
                 // মাইলফলকগুলো About Us পাতায় একবারই রাখা আছে; এখানে
                 // কেবল যুগের সীমা, তাই একটি সাল বদলালে দুই পাতাতেই বদলায়
-                key: 'eras', label: 'Eras — the milestones themselves are edited on About Us', type: 'list',
+                key: 'eras', label: 'Eras, in order — each one becomes its own sliding timeline', type: 'list',
                 now: '1834–1946 · 1965–1983 · 1995–2001 · 2004–2022',
                 item: [
                     { key: 'span', label: 'Years shown, e.g. 1834 — 1946', type: 'text' },
