@@ -397,8 +397,9 @@ const PAGES = [
         group: 'Sustainability',
         url: '/sustainability/csr',
         fields: [
-            { type: 'section', label: "Banner", note: "The picture and the words across the top" },
+            { type: 'section', label: "Banner", note: "The picture and the words across the top, and the path under it" },
             ...banner('CORPORATE SOCIAL RESPONSIBILITY', 'Community Outreach', '& Welfare', '/community-outreach.jpg'),
+            { key: 'crumb', label: "Path under the banner — this page's name (after Home > Sustainability >)", type: 'text', now: 'CSR Activities' },
             { type: 'section', label: "Opening", note: "The large statement, the paragraph and the figures" },
             { key: 'open.eyebrow', label: 'Opening — small label', type: 'text', now: 'WHERE WE STAND' },
             {
@@ -410,16 +411,16 @@ const PAGES = [
                 now: 'Funding schools, distributing scholarships and running medical camps for low-income families — carried on for four decades, not announced for one.',
             },
             {
-                key: 'figures', label: 'Figures', type: 'list',
+                key: 'figures', label: 'Figures — shown beside the statement, in order', type: 'list',
                 now: '10K+ Families supported · 500+ Scholarships awarded · 20+ Free medical camps · 5,000+ Trees planted',
                 item: [
                     { key: 'n', label: 'Figure', type: 'text' },
                     { key: 'l', label: 'Caption', type: 'text' },
                 ],
             },
-            { type: 'section', label: "Mission and Vision", note: "The two blocks side by side" },
+            { type: 'section', label: "Mission and Vision", note: "The blocks side by side — each has its own label, heading and text" },
             {
-                key: 'principles', label: 'Mission and Vision', type: 'list',
+                key: 'principles', label: 'The blocks, in order — open each one below to edit it; ADD makes another, DELETE removes one', type: 'list',
                 now: 'OUR MISSION People first, always · OUR VISION A stronger Bangladesh',
                 item: [
                     { key: 'label', label: 'Small label', type: 'text' },
@@ -431,7 +432,7 @@ const PAGES = [
             { key: 'what.eyebrow', label: 'Initiatives — small label', type: 'text', now: 'CSR INITIATIVES' },
             { key: 'what.title', label: 'Initiatives — heading', type: 'text', now: 'What we do' },
             {
-                key: 'initiatives', label: 'Initiatives', type: 'list',
+                key: 'initiatives', label: 'Initiatives — the numbered rows, in order (each gets the next icon in turn)', type: 'list',
                 now: 'Education · Healthcare · Community · Employee welfare · Environment · Social welfare',
                 item: [
                     { key: 'title', label: 'Name', type: 'text' },
