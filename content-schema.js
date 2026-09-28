@@ -298,7 +298,10 @@ const PAGES = [
         group: 'Products',
         url: '/products/certifications',
         fields: [
+            { type: 'section', label: "Banner", note: "The picture and the words across the top, and the path under it" },
             ...banner('CERTIFICATIONS', 'Tested, audited and', 'Certified', '/Certifications-page-banner.jpg'),
+            { key: 'crumb', label: "Path under the banner — this page's name (after Home > Products >)", type: 'text', now: 'Certifications' },
+            { type: 'section', label: "Introduction", note: "The label, heading and paragraph above the certificates" },
             { key: 'eyebrow', label: 'Small label', type: 'text', now: 'CERTIFICATIONS' },
             {
                 key: 'title', label: 'Heading', type: 'text',
@@ -308,14 +311,15 @@ const PAGES = [
                 key: 'lead', label: 'Paragraph under the heading', type: 'textarea',
                 now: 'The rebar is certified against Bangladeshi, British, Indian and American standards. The mill itself is audited to ISO quality and environmental management systems, and tested independently by BUET.',
             },
+            { type: 'section', label: "Certificates", note: "The grid of certificate cards" },
             {
-                key: 'items', label: 'Certificates', type: 'list',
+                key: 'items', label: 'Certificates — the cards, in order', type: 'list',
                 now: 'BUET · BSTI · ISO 14001 · ISO 9001 · IS-1786 · BS-4449 · BDS ISO 6935-2 · ASTM',
                 item: [
-                    { key: 'logo', label: 'Logo', type: 'image-url' },
-                    { key: 'code', label: 'Standard', type: 'text' },
-                    { key: 'issuer', label: 'Issued by', type: 'text' },
-                    { key: 'scope', label: 'Kind of certificate', type: 'text' },
+                    { key: 'logo', label: 'Logo — shown on a white plate', type: 'image-url' },
+                    { key: 'code', label: 'Standard (the bold name), e.g. ISO 9001:2015', type: 'text' },
+                    { key: 'issuer', label: 'Issued by / what it covers', type: 'text' },
+                    { key: 'scope', label: 'Kind of certificate (small label at the foot of the card)', type: 'text' },
                 ],
             },
         ],
