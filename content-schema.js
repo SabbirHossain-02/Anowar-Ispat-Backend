@@ -775,8 +775,9 @@ const PAGES = [
         group: 'Careers',
         url: '/careers/positions',
         fields: [
-            { type: 'section', label: "Banner", note: "The picture and the words across the top" },
+            { type: 'section', label: "Banner", note: "The picture and the words across the top, and the path under it" },
             ...banner('CAREERS', 'Open', 'Positions', '/careers-banner.jpg'),
+            { key: 'crumb', label: "Path under the banner — this page's name (after Home > Careers >)", type: 'text', now: 'Open Positions' },
             { type: 'section', label: "Opening", note: "The large line and the paragraph under it" },
             { key: 'eyebrow', label: 'Small label above the opening line', type: 'text', now: 'CAREER OPPORTUNITIES' },
             {
@@ -790,10 +791,11 @@ const PAGES = [
             { type: 'section', label: "Departments", note: "The names running across the grey band" },
             { key: 'discEyebrow', label: 'Label above the list of departments', type: 'text', now: 'WHERE WE RECRUIT' },
             {
-                key: 'disciplines', label: 'Departments we recruit into — one per line', type: 'lines',
+                key: 'disciplines', label: 'Departments we recruit into — press Enter for each new one', type: 'lines',
                 now: 'Engineering · Production · Quality control · Operations · Sales · Finance · Human resources',
             },
             { type: 'section', label: "Vacancies", note: "Wording around the jobs posted from Open Positions" },
+            { type: 'note', label: "The vacancies themselves — title, department, location, type, experience, education, deadline and description — are posted, edited and deleted in Open Positions in the left menu, and show here straight away. With none posted, the page invites open applications instead.", goto: 'jobs', button: 'Open Positions menu' },
             {
                 key: 'email', label: 'Address applications are sent to', type: 'text',
                 now: 'careers@anwarispat.com',
@@ -823,6 +825,11 @@ const PAGES = [
                 now: 'We accept open applications year-round. If your experience fits one of the areas above, send it to us and it will be held against upcoming requirements.',
             },
             { key: 'loading', label: 'Shown while vacancies load', type: 'text', now: 'Checking for current vacancies…' },
+            { key: 'applyBtn', label: 'Apply button on each vacancy (opens an email)', type: 'text', now: 'Apply' },
+            { key: 'subjectPrefix', label: 'Email subject — written before the job title', type: 'text', now: 'Application: ' },
+            { key: 'factExperience', label: 'Vacancy — label before the experience', type: 'text', now: 'Experience' },
+            { key: 'factEducation', label: 'Vacancy — label before the education', type: 'text', now: 'Education' },
+            { key: 'factDeadline', label: 'Vacancy — label before the deadline', type: 'text', now: 'Apply by' },
             { type: 'section', label: "How to apply", note: "The numbered steps and the button at the foot" },
             {
                 key: 'steps', label: 'How to apply — the numbered steps', type: 'list',
@@ -841,25 +848,42 @@ const PAGES = [
         group: 'Careers',
         url: '/careers/experience',
         fields: [
+            { type: 'section', label: "Heading", note: "The top of the page" },
             { key: 'hero.tag', label: 'Small label above the title', type: 'text', now: 'Life at Anwar Ispat' },
             { key: 'hero.title', label: 'Title', type: 'text', now: 'Employee' },
             { key: 'hero.accent', label: 'The words in red', type: 'text', now: 'Experience' },
+            { key: 'hero.sub', label: 'Paragraph under the title', type: 'textarea', now: 'A workplace built on trust, growth, and purpose. Discover what makes Anwar Ispat a great place to build your career.' },
             {
-                key: 'values', label: 'Values', type: 'list',
+                key: 'stats', label: 'Figures under the paragraph — typed by hand', type: 'list',
+                now: '2000+ Employees · 48+ Years Legacy · 95% Retention Rate · 5 Locations',
+                item: [
+                    { key: 'n', label: 'Figure', type: 'text' },
+                    { key: 'l', label: 'Caption', type: 'text' },
+                ],
+            },
+            { type: 'section', label: "Our values", note: "The coloured cards" },
+            { key: 'labels.values', label: 'Label above the values', type: 'text', now: 'Our Values' },
+            {
+                key: 'values', label: 'Values, in order (each takes the next colour in turn)', type: 'list',
                 now: 'Integrity · Teamwork · Excellence',
                 item: [
                     { key: 'title', label: 'Name', type: 'text' },
                     { key: 'text', label: 'Description', type: 'textarea' },
                 ],
             },
+            { type: 'section', label: "Benefits & perks", note: "The two-column list" },
+            { key: 'labels.perks', label: 'Label above the benefits', type: 'text', now: 'Benefits & Perks' },
             {
-                key: 'perks', label: 'Benefits', type: 'list',
+                key: 'perks', label: 'Benefits, in order', type: 'list',
                 now: 'Competitive Salary · Healthcare Coverage · Career Growth · Transport · Provident Fund · Leave',
                 item: [
                     { key: 'title', label: 'Name', type: 'text' },
                     { key: 'text', label: 'Description', type: 'text' },
                 ],
             },
+            { type: 'section', label: "Employee stories", note: "The photo cards with quotes" },
+            { key: 'labels.stories', label: 'Label above the stories', type: 'text', now: 'Employee Stories' },
+            { key: 'labels.photo', label: 'Caption in the empty photo box', type: 'text', now: 'Employee Photo' },
             {
                 key: 'stories',
                 label: 'Employee stories — these are quotes attributed to named people, so only publish what they have actually said',
