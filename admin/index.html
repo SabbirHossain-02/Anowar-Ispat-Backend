@@ -1785,13 +1785,19 @@ function openPage(key) {
       return;
     }
 
-    const shown = Array.isArray(val) ? val.join('\n') : (val || '');
+    // কখনও সংরক্ষিত হয়নি এমন লেখার ঘরে সাইটের লেখাটা আসল লেখা হিসেবেই
+    // বসে। আগে ধূসর placeholder হয়ে থাকত — দেখতে লেখার মতো, অথচ ঘর
+    // আসলে ফাঁকা; মুছে সেভ দিলেও সাইট থেকে যেত না।
+    const single = f.type === 'text' || f.type === 'textarea';
+    const prefill = single && val === undefined && f.now ? f.now : null;
+    const shown = prefill !== null ? prefill : (Array.isArray(val) ? val.join('\n') : (val || ''));
     // '' মানে ইচ্ছে করে মুছে দেওয়া — তখন আগের লেখাটা placeholder এ
     // দেখালে মনে হত ওটা এখনও সাইটে আছে
     const cleared = val === '' || (Array.isArray(val) && val.length === 0);
-    const hint = cleared
+    const hint = ((cleared || single)
       ? ' placeholder="Empty — nothing shows on the site"'
-      : (f.now ? ` placeholder="${esc(f.now)}"` : '');
+      : (f.now ? ` placeholder="${esc(f.now)}"` : '')
+    ) + (prefill !== null ? ` data-prefill="${esc(prefill)}"` : '');
     const tag = f.type === 'textarea' || f.type === 'lines'
       ? `<textarea class="form-textarea" data-k="${esc(f.key)}"${hint}>${esc(shown)}</textarea>`
       : `<input class="form-input" data-k="${esc(f.key)}"${hint} value="${esc(shown)}" />`;
@@ -2160,7 +2166,11 @@ function collectPage(base) {
       // ছিল, কারণ তার মানে অ্যাডমিন সেটা মুছে দিয়েছেন। কখনও সংরক্ষিত
       // হয়নি এমন ঘর খালি থাকলে পাঠাই না, তখন কোডের লেখাই থাকে।
       const had = getAt(pageValues[currentPageKey] || {}, f.key) !== undefined;
-      if(raw || had) setAt(out, f.key, f.type === 'lines' ? raw.split('\n').map(s=>s.trim()).filter(Boolean) : raw);
+      // সাইটের লেখা বসিয়ে দেওয়া ঘর: হাত না দিলে পাঠাই না (কোডের লেখাই
+      // থাকে), বদলালে বা মুছে দিলে পাঠাই — মোছা মানে সাইটেও ফাঁকা
+      const pre = el ? el.dataset.prefill : undefined;
+      if(!had && pre !== undefined && raw === pre.trim()) return;
+      if(raw || had || pre !== undefined) setAt(out, f.key, f.type === 'lines' ? raw.split('\n').map(s=>s.trim()).filter(Boolean) : raw);
     }
   });
 
