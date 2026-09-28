@@ -621,12 +621,15 @@ const PAGES = [
         group: 'Media Center',
         url: '/media/news',
         fields: [
-            { type: 'section', label: "Banner", note: "The picture and the words across the top" },
+            { type: 'section', label: "Banner", note: "The picture and the words across the top, and the path under it" },
             ...banner('MEDIA CENTER', 'Latest', 'News', '/latest-news-banner.jpg'),
+            { key: 'crumb', label: "Path under the banner — this page's name (after Home > Media Center >)", type: 'text', now: 'News & Articles' },
             { type: 'section', label: "The list page", note: "Labels around the stories, and what shows when there are none" },
+            { type: 'note', label: "The stories themselves — headline, picture, date, category and full text — are posted, edited and deleted in Media & Events in the left menu, and show here straight away. Press Enter twice in a story's text to start a new paragraph.", goto: 'media', button: 'Open Media & Events' },
             { key: 'lead', label: 'Label above the main story', type: 'text', now: 'LEAD STORY' },
             { key: 'more', label: 'Label above the other stories', type: 'text', now: 'MORE STORIES' },
             { key: 'ticker', label: 'Label on the scrolling headline strip', type: 'text', now: 'LATEST' },
+            { key: 'readStory', label: 'Link text on the main story', type: 'text', now: 'Read the story' },
             {
                 key: 'empty', label: 'Shown when nothing has been published', type: 'text',
                 now: 'No stories have been published in this section yet.',
@@ -649,6 +652,9 @@ const PAGES = [
             },
             { key: 'artBack', label: 'Story page — the back button', type: 'text', now: 'All news' },
             { key: 'artMore', label: 'Story page — label above the other stories', type: 'text', now: 'MORE FROM THE NEWSROOM' },
+            { key: 'artRead', label: 'Story page — link text on the other stories', type: 'text', now: 'Read' },
+            { key: 'artCopy', label: 'Story page — copy-link button', type: 'text', now: 'Copy link' },
+            { key: 'artCopied', label: 'Story page — shown after the link is copied', type: 'text', now: 'Link copied' },
         ],
     },
     {
