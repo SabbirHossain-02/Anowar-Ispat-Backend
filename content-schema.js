@@ -330,15 +330,16 @@ const PAGES = [
         group: 'Sustainability',
         url: '/sustainability/esg',
         fields: [
-            { type: 'section', label: "Banner", note: "The picture and the words across the top" },
+            { type: 'section', label: "Banner", note: "The picture and the words across the top, and the path under it" },
             ...banner('SUSTAINABILITY', 'Sustainable Steel', 'Development', '/sustainable-steel.jpg'),
+            { key: 'crumb', label: "Path under the banner — this page's name (after Home > Sustainability >)", type: 'text', now: 'Environmental, Social, Governance' },
             { type: 'section', label: "Opening", note: "The paragraph and the figures under the banner" },
             {
                 key: 'lede', label: 'Opening paragraph', type: 'textarea',
                 now: 'Championing the Sustainable Development Goals through how the mill is run — sustainable business practice, community empowerment and environmental stewardship.',
             },
             {
-                key: 'stats', label: 'Figures', type: 'list',
+                key: 'stats', label: 'Figures — shown side by side, in order', type: 'list',
                 now: '48+ Years responsible · ZERO Waste water discharge · 07 SDG commitments',
                 item: [
                     { key: 'n', label: 'Figure', type: 'text' },
@@ -352,6 +353,7 @@ const PAGES = [
             },
             { key: 'quote.name', label: 'Quote — name', type: 'text', now: 'Manwar Hossain' },
             { key: 'quote.role', label: 'Quote — position', type: 'text', now: 'Chairman, Anwar Group' },
+            { key: 'quote.photo', label: 'Quote — photograph', type: 'image-url', now: '/Manwar-Hossain-transparent-1by1-ar.png' },
             { type: 'section', label: "Three pillars", note: "Environmental, Social, Governance" },
             { key: 'pillars.eyebrow', label: 'Pillars — small label', type: 'text', now: 'THREE PILLARS' },
             { key: 'pillars.title', label: 'Pillars — heading', type: 'text', now: 'Our ESG framework' },
@@ -369,18 +371,18 @@ const PAGES = [
             { key: 'sdg.eyebrow', label: 'SDG — small label', type: 'text', now: 'UNITED NATIONS' },
             { key: 'sdg.title', label: 'SDG — heading', type: 'text', now: 'SDG commitments' },
             {
-                key: 'sdg.items', label: 'SDG commitments — one per line', type: 'lines',
+                key: 'sdg.items', label: 'SDG commitments — press Enter for each new line (each gets the next icon in turn)', type: 'lines',
                 now: 'Recycling and waste reduction · Supporting local communities · Green design and manufacturing · Education · Renewable energy adoption · Reforestation · Healthcare and sanitation',
             },
             { type: 'section', label: "Our commitment", note: "The closing block and the practices beside it" },
             { key: 'commit.eyebrow', label: 'Commitment — small label', type: 'text', now: 'OUR COMMITMENT' },
             { key: 'commit.title', label: 'Commitment — heading', type: 'text', now: 'Sustainable business practices' },
             {
-                key: 'commit.items', label: 'Commitment paragraphs — one per line', type: 'lines',
+                key: 'commit.items', label: 'Commitment paragraphs — press Enter for a new paragraph', type: 'lines',
                 now: 'Three paragraphs about minimising impact, looking after employees, and the family\'s conviction towards society.',
             },
             {
-                key: 'practices', label: 'Practices', type: 'list',
+                key: 'practices', label: 'Practices — the numbered list beside the paragraphs', type: 'list',
                 now: 'Energy saving · Zero waste water · Carbon reduction',
                 item: [
                     { key: 'label', label: 'Name', type: 'text' },
