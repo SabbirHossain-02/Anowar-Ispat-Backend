@@ -501,6 +501,10 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><polygon points="10 8 15 10.5 10 13"/><line x1="8" y1="21" x2="16" y2="21"/></svg>
           Hero Banner
         </div>
+        <div class="nav-item" onclick="showPage('projects',this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"/><path d="M5 21V9l7-5 7 5v12"/><path d="M9 21v-6h6v6"/></svg>
+          Mega Projects
+        </div>
         <div class="nav-item" onclick="showPage('jobs',this)">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
           Open Positions
@@ -647,6 +651,32 @@
           <table>
             <thead><tr><th>PREVIEW</th><th>TITLE</th><th>SUBTITLE</th><th>TYPE</th><th>ORDER</th><th>ACTIONS</th></tr></thead>
             <tbody id="hero-body"><tr><td colspan="6"><div class="loading"><div class="spinner"></div> Loading...</div></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- MEGA PROJECTS -->
+      <div class="page" id="page-projects">
+        <div class="page-header">
+          <div class="page-header-top">
+            <div>
+              <div class="page-title">MEGA <span>PROJECTS</span></div>
+              <div class="page-subtitle">HOMEPAGE PROJECT CARDS — EVERY CHANGE IS LIVE ON THE SITE AS SOON AS IT IS SAVED</div>
+            </div>
+            <button class="btn-primary" onclick="openProjectModal(-1)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              ADD PROJECT
+            </button>
+          </div>
+        </div>
+        <div class="data-grid">
+          <div class="data-grid-header">
+            <div class="data-grid-title">All Projects <span id="projects-count" style="color:var(--subtext);font-weight:400"></span></div>
+            <span style="color:var(--subtext);font-size:0.72rem">The heading above the cards is in Page Text → Home page → Mega Projects</span>
+          </div>
+          <table>
+            <thead><tr><th>ORDER</th><th>PREVIEW</th><th>NAME</th><th>DESCRIPTION</th><th>VIDEO</th><th>ACTIONS</th></tr></thead>
+            <tbody id="projects-body"><tr><td colspan="6"><div class="loading"><div class="spinner"></div> Loading...</div></td></tr></tbody>
           </table>
         </div>
       </div>
@@ -851,10 +881,11 @@
 <div class="modal-overlay" id="media-modal">
   <div class="modal">
     <div class="modal-header">
-      <div class="modal-title">POST <span>EVENT</span></div>
+      <div class="modal-title" id="media-modal-title">POST <span>EVENT</span></div>
       <button class="modal-close" onclick="closeModal('media-modal')">✕</button>
     </div>
     <div class="modal-body">
+      <input type="hidden" id="media-id" />
       <div class="form-group">
         <label class="form-label">TITLE</label>
         <input class="form-input" id="media-title" placeholder="Event title..." />
@@ -879,7 +910,7 @@
         </div>
       </div>
       <div class="form-group">
-        <label class="form-label">EVENT IMAGE</label>
+        <label class="form-label" id="media-image-label">EVENT IMAGE</label>
         <div class="file-upload-area" onclick="document.getElementById('media-file').click()">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="opacity:0.4"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
           <p>CLICK TO UPLOAD IMAGE</p>
@@ -890,7 +921,57 @@
     </div>
     <div class="modal-footer">
       <button class="btn-ghost" onclick="closeModal('media-modal')">CANCEL</button>
-      <button class="btn-primary" onclick="saveMedia()">PUBLISH EVENT</button>
+      <button class="btn-primary" id="media-save-btn" onclick="saveMedia()">PUBLISH EVENT</button>
+    </div>
+  </div>
+</div>
+
+<!-- MEGA PROJECT MODAL -->
+<div class="modal-overlay" id="project-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="project-modal-title">ADD <span>PROJECT</span></div>
+      <button class="modal-close" onclick="closeModal('project-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="project-index" />
+      <div class="form-group">
+        <label class="form-label">PROJECT NAME *</label>
+        <input class="form-input" id="project-title" placeholder="e.g. Padma Multipurpose Bridge" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">DESCRIPTION — shown when a visitor opens the card</label>
+        <textarea class="form-textarea" id="project-desc" placeholder="What Anwar Ispat supplied, and why the project matters..."></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">VIDEO — plays when the mouse is over the card (MP4 or WebM, up to 200MB)</label>
+        <div class="file-upload-area" onclick="document.getElementById('project-vfile').click()">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="opacity:0.4"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <p id="project-video-label">CLICK TO UPLOAD VIDEO</p>
+        </div>
+        <input type="file" id="project-vfile" accept="video/*" style="display:none" onchange="uploadProjectVideo(this)" />
+        <div id="project-vbar" style="display:none;height:6px;background:var(--bg3);border:1px solid var(--border);margin-top:0.5rem">
+          <div id="project-vfill" style="height:100%;width:0;background:var(--accent);transition:width 0.2s"></div>
+        </div>
+        <input type="hidden" id="project-video" />
+        <video id="project-video-preview" muted playsinline controls style="display:none;width:100%;max-height:180px;margin-top:0.6rem;background:#000;border-radius:4px"></video>
+        <button class="btn-ghost" id="project-video-remove" style="display:none;margin-top:0.45rem;padding:0.35rem 0.8rem;font-size:0.7rem" onclick="setProjectVideo('')">REMOVE VIDEO</button>
+      </div>
+      <div class="form-group">
+        <label class="form-label">STILL PICTURE — shown on the card before the video plays (optional)</label>
+        <div class="file-upload-area" onclick="document.getElementById('project-pfile').click()">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="opacity:0.4"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          <p>CLICK TO UPLOAD PICTURE</p>
+        </div>
+        <input type="file" id="project-pfile" accept="image/*" style="display:none" onchange="uploadProjectPoster(this)" />
+        <input type="hidden" id="project-poster" />
+        <img id="project-poster-preview" class="file-preview" style="display:none" />
+        <button class="btn-ghost" id="project-poster-remove" style="display:none;margin-top:0.45rem;padding:0.35rem 0.8rem;font-size:0.7rem" onclick="setProjectPoster('')">REMOVE PICTURE</button>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-ghost" onclick="closeModal('project-modal')">CANCEL</button>
+      <button class="btn-primary" id="project-save-btn" onclick="saveProject()">SAVE PROJECT</button>
     </div>
   </div>
 </div>
@@ -1011,6 +1092,8 @@
 const API = '/api';
 let token = localStorage.getItem('ai_token');
 let currentQuoteId = null;
+// Page Text এ সংরক্ষণ না করা বদল আছে কি না
+let dirty = false;
 
 // TIME
 setInterval(() => {
@@ -1154,6 +1237,8 @@ function toggleAdminTheme() {
 
 // NAVIGATION
 function showPage(name, el) {
+  if(dirty && name !== 'pages' && !confirm('You have changes in Page Text that are not saved. Leave without saving?')) return;
+  if(name !== 'pages') dirty = false;
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   const page = document.getElementById('page-' + name);
@@ -1164,6 +1249,7 @@ function showPage(name, el) {
   if(name === 'quotations') loadQuotations();
   if(name === 'messages') loadMessages();
   if(name === 'hero') loadHero();
+  if(name === 'projects') loadProjects();
   if(name === 'jobs') loadJobs();
   if(name === 'pages') loadPages();
   if(name === 'settings') loadCurrentTheme();
@@ -1320,7 +1406,7 @@ async function saveProduct() {
     closeModal('product-modal');
     loadProducts();
     loadDashboard();
-    showToast(id ? 'Product updated' : 'Product added');
+    showToast(id ? 'Product updated — live on the site now' : 'Product added — live on the site now');
   } catch(e) { showToast('Error saving product', true); }
 }
 
@@ -1331,10 +1417,13 @@ async function deleteProduct(id) {
 }
 
 // MEDIA
+let mediaList = [];
+
 async function loadMedia() {
   const tbody = document.getElementById('media-body');
   try {
-    const data = await fetch(`${API}/media`).then(r=>r.json());
+    const data = await fetch(`${API}/media`, {cache:'no-store'}).then(r=>r.json());
+    mediaList = Array.isArray(data) ? data : [];
     if(data.length === 0) {
       tbody.innerHTML = '<tr><td colspan="5"><div class="empty-state"><div class="empty-state-icon">📰</div><p>NO EVENTS YET — POST YOUR FIRST EVENT</p></div></td></tr>';
       return;
@@ -1342,20 +1431,37 @@ async function loadMedia() {
     tbody.innerHTML = data.map(m => `
       <tr>
         <td>${m.image_url ? `<img class="td-img" src="${API.replace('/api','')}${m.image_url}" />` : `<div class="td-img-placeholder"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#444" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>`}</td>
-        <td style="font-weight:600;max-width:250px">${m.title}</td>
-        <td style="font-family:var(--font-mono);font-size:0.75rem;color:var(--subtext)">${m.event_date || '—'}</td>
-        <td><span class="badge badge-${(m.category||'local').toLowerCase()}">${m.category || 'LOCAL'}</span></td>
-        <td><button class="btn-danger" onclick="deleteMedia(${m.id})">DELETE</button></td>
+        <td style="font-weight:600;max-width:250px">${esc(m.title)}</td>
+        <td style="font-family:var(--font-mono);font-size:0.75rem;color:var(--subtext)">${esc(m.event_date) || '—'}</td>
+        <td><span class="badge badge-${esc((m.category||'local').toLowerCase())}">${esc(m.category || 'LOCAL')}</span></td>
+        <td style="white-space:nowrap">
+          <button class="btn-ghost" onclick="editMedia(${Number(m.id)})">EDIT</button>
+          <button class="btn-danger" onclick="deleteMedia(${Number(m.id)})">DELETE</button>
+        </td>
       </tr>`).join('');
   } catch(e) { tbody.innerHTML = '<tr><td colspan="5" style="color:var(--accent);font-family:var(--font-mono);font-size:0.75rem;padding:2rem">ERROR LOADING DATA</td></tr>'; }
 }
 
-function openMediaModal() {
-  document.getElementById('media-title').value = '';
-  document.getElementById('media-desc').value = '';
-  document.getElementById('media-date').value = '';
-  document.getElementById('media-preview').style.display = 'none';
+function openMediaModal(m) {
+  document.getElementById('media-id').value = m ? m.id : '';
+  document.getElementById('media-title').value = m ? (m.title || '') : '';
+  document.getElementById('media-desc').value = m ? (m.description || '') : '';
+  document.getElementById('media-date').value = m ? (m.event_date || '') : '';
+  document.getElementById('media-category').value = m && m.category ? m.category : 'LIVE';
+  document.getElementById('media-file').value = '';
+  const prev = document.getElementById('media-preview');
+  if(m && m.image_url) { prev.src = m.image_url; prev.style.display = 'block'; }
+  else { prev.style.display = 'none'; }
+  document.getElementById('media-modal-title').innerHTML = m ? 'EDIT <span>POST</span>' : 'POST <span>EVENT</span>';
+  document.getElementById('media-save-btn').textContent = m ? 'SAVE CHANGES' : 'PUBLISH EVENT';
+  document.getElementById('media-image-label').textContent = m ? 'EVENT IMAGE — choose a new one only to replace it' : 'EVENT IMAGE';
   document.getElementById('media-modal').classList.add('open');
+}
+
+function editMedia(id) {
+  const m = mediaList.find(x => Number(x.id) === Number(id));
+  if(!m) return showToast('That post no longer exists', true);
+  openMediaModal(m);
 }
 
 async function saveMedia() {
@@ -1373,11 +1479,16 @@ async function saveMedia() {
   formData.append('category', category);
   if(file) formData.append('image', file);
 
+  const id = document.getElementById('media-id').value;
   try {
-    await authFetch(`${API}/media`, {method:'POST', body: formData});
+    const res = await authFetch(id ? `${API}/media/${id}` : `${API}/media`, {method: id ? 'PUT' : 'POST', body: formData});
+    if(!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      return showToast(err.error || 'Could not save the post', true);
+    }
     closeModal('media-modal');
     loadMedia(); loadDashboard();
-    showToast('Event published');
+    showToast(id ? 'Post updated — live on the site now' : 'Event published — live on the site now');
   } catch(e) { showToast('Error publishing event', true); }
 }
 
@@ -1490,6 +1601,8 @@ let currentPageKey = null;
 
 // 'why.items' এর মতো পথ ধরে গভীরে ঢোকা ও বসানো
 function getAt(obj, path) {
+  // নোট ও সেকশনের শিরোনামে কোনো key নেই
+  if(!path) return undefined;
   return path.split('.').reduce((o, k) => (o == null ? undefined : o[k]), obj);
 }
 function setAt(obj, path, value) {
@@ -1528,6 +1641,11 @@ async function loadPages() {
 }
 
 function openPage(key) {
+  if(dirty && key !== currentPageKey && !confirm('You have changes on this page that are not saved. Leave without saving?')) {
+    document.querySelectorAll('#pages-nav .nav-item').forEach(n => n.classList.toggle('active', n.dataset.pk === currentPageKey));
+    return;
+  }
+  if(key !== currentPageKey) dirty = false;
   currentPageKey = key;
   rememberPage('pages/' + key);
   document.querySelectorAll('#pages-nav .nav-item').forEach(n => {
@@ -1570,7 +1688,7 @@ function openPage(key) {
             <span class="sec-name">${esc(f.label)}</span>
             ${f.note ? `<span class="sec-note">${esc(f.note)}</span>` : ''}
           </span>
-          <span class="sec-count">${count} ${count === 1 ? 'box' : 'boxes'}</span>
+          <span class="sec-count">${count === 0 ? 'Own menu' : count + ' ' + (count === 1 ? 'box' : 'boxes')}</span>
           <svg class="sec-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
         </button>
         <div class="sec-body">`;
@@ -1582,7 +1700,10 @@ function openPage(key) {
 
     // কেবল বোঝানোর জন্য — সংরক্ষণ হয় না
     if(f.type === 'note') {
-      html += `<p style="color:var(--subtext);font-size:0.78rem;line-height:1.6;margin:0 0 1.1rem;padding:0.7rem 0.85rem;background:var(--zebra);border-left:2px solid var(--accent);border-radius:0 4px 4px 0">${esc(f.label)}</p>`;
+      const btn = f.goto
+        ? `<button class="btn-ghost" style="margin-top:0.55rem;padding:0.35rem 0.85rem;font-size:0.7rem" onclick="goModule('${esc(f.goto)}')">${esc(f.button || 'Open')} &rarr;</button>`
+        : '';
+      html += `<div style="color:var(--subtext);font-size:0.78rem;line-height:1.6;margin:0 0 1.1rem;padding:0.7rem 0.85rem;background:var(--zebra);border-left:2px solid var(--accent);border-radius:0 4px 4px 0">${esc(f.label)}${btn ? '<br />' + btn : ''}</div>`;
       return;
     }
 
@@ -1663,6 +1784,7 @@ function openPage(key) {
 function cancelPage() {
   if(!currentPageKey) return;
   if(!confirm('Discard the changes you have not saved on this page?')) return;
+  dirty = false;
   openPage(currentPageKey);
   showToast('Changes discarded');
 }
@@ -1743,8 +1865,12 @@ function listRow(field, row, i) {
   const orig = row ? esc(JSON.stringify(row)) : '';
   return `<div class="list-row" data-orig="${orig}" style="border:1px solid var(--border);border-radius:6px;padding:0.9rem;margin-bottom:0.6rem;position:relative">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem">
-      <span style="font-family:var(--font-mono);font-size:0.68rem;color:var(--accent)">${String(i+1).padStart(2,'0')}</span>
-      <button class="btn-danger" style="padding:0.2rem 0.6rem;font-size:0.62rem" onclick="this.closest('.list-row').remove()">DELETE</button>
+      <span class="row-num" style="font-family:var(--font-mono);font-size:0.68rem;color:var(--accent)">${String(i+1).padStart(2,'0')}</span>
+      <span style="display:flex;gap:0.35rem">
+        <button class="btn-ghost" title="Move up" style="padding:0.2rem 0.55rem;font-size:0.7rem" onclick="moveRow(this,-1)">&uarr;</button>
+        <button class="btn-ghost" title="Move down" style="padding:0.2rem 0.55rem;font-size:0.7rem" onclick="moveRow(this,1)">&darr;</button>
+        <button class="btn-danger" style="padding:0.2rem 0.6rem;font-size:0.62rem" onclick="removeRow(this)">DELETE</button>
+      </span>
     </div>
     ${inner}
   </div>`;
@@ -1776,6 +1902,7 @@ function uploadRowVideo(input) {
     try { body = JSON.parse(xhr.responseText); } catch(e) {}
     if(xhr.status !== 200) return showToast(body.error || 'Could not upload the video', true);
     wrap.querySelector('.row-vid-url').value = body.url;
+    markDirty();
     showToast('Video uploaded — press Save Changes to keep it');
   };
   xhr.onerror = () => { bar.style.display = 'none'; showToast('Could not upload the video', true); };
@@ -1796,6 +1923,7 @@ async function uploadRowImage(input) {
     const body = await res.json().catch(()=>({}));
     if(!res.ok) return showToast(body.error || 'Could not upload', true);
     wrap.querySelector('.row-img-url').value = body.url;
+    markDirty();
     const p = wrap.querySelector('.row-img-preview');
     p.src = body.url;
     p.style.visibility = 'visible';
@@ -1804,12 +1932,39 @@ async function uploadRowImage(input) {
   finally { input.value = ''; }
 }
 
+// তালিকার সারি উপরে-নিচে সরানো আর মোছা — সংরক্ষণ হয় Save দিলে
+function renumberRows(box) {
+  box.querySelectorAll('.list-row').forEach((r, i) => {
+    const n = r.querySelector('.row-num');
+    if(n) n.textContent = String(i + 1).padStart(2, '0');
+  });
+}
+function moveRow(btn, dir) {
+  const row = btn.closest('.list-row');
+  const box = row.parentElement;
+  if(dir < 0 && row.previousElementSibling) box.insertBefore(row, row.previousElementSibling);
+  if(dir > 0 && row.nextElementSibling) box.insertBefore(row.nextElementSibling, row);
+  renumberRows(box);
+  markDirty();
+}
+function removeRow(btn) {
+  const row = btn.closest('.list-row');
+  const box = row.parentElement;
+  row.remove();
+  renumberRows(box);
+  markDirty();
+}
+
 function addRow(fieldKey) {
   const page = pageSchema.find(p => p.key === currentPageKey);
   const field = page.fields.find(f => f.key === fieldKey);
   const box = document.getElementById('rows-' + cssId(fieldKey));
   const i = box.querySelectorAll('.list-row').length;
   box.insertAdjacentHTML('beforeend', listRow(field, null, i));
+  const added = box.lastElementChild;
+  const first = added && added.querySelector('input, textarea');
+  if(first) first.focus();
+  markDirty();
 }
 
 // ব্যানার আলাদা রুটে যায় ও সাথে সাথেই সংরক্ষিত হয় — গোটা ফর্ম
@@ -1832,14 +1987,12 @@ async function uploadBanner(input) {
   finally { input.value = ''; }
 }
 
-function collectPage() {
+function collectPage(base) {
   const page = pageSchema.find(p => p.key === currentPageKey);
-  const out = {};
-
-  // ব্যানারটি ফর্মের ঘর নয়, আগেই সংরক্ষিত। এখানে ফিরিয়ে না দিলে
-  // ফর্ম সেভ করলেই আপলোড করা ছবি মুছে যেত।
-  const savedBanner = getAt(pageValues[currentPageKey] || {}, 'banner.image');
-  if(savedBanner) setAt(out, 'banner.image', savedBanner);
+  // সংরক্ষিত পুরোটা থেকে শুরু, তার উপর ফর্মের ঘরগুলো। ফর্মে নেই এমন
+  // কিছু — ব্যানারের ছবি, মেগা প্রজেক্টের কার্ড (নিজের মেনু থেকে আসে) —
+  // তাই সেভ করলে মুছে যায় না।
+  const out = JSON.parse(JSON.stringify(base || pageValues[currentPageKey] || {}));
 
   page.fields.forEach(f => {
     if(f.type === 'image' || f.type === 'note' || f.type === 'section') return;
@@ -1864,7 +2017,7 @@ function collectPage() {
       // সাইটেও কিছু থাকে না। কখনও সংরক্ষিত হয়নি এমন তালিকা খালি
       // থাকলে পাঠাই না, তখন কোডের তালিকাই থাকে।
       const hadList = Array.isArray(getAt(pageValues[currentPageKey] || {}, f.key));
-      if(rows.length || hadList) out[f.key] = rows;
+      if(rows.length || hadList) setAt(out, f.key, rows);
     } else {
       const el = document.querySelector(`#pages-form [data-k="${f.key}"]`);
       const raw = el ? el.value.trim() : '';
@@ -1876,12 +2029,7 @@ function collectPage() {
     }
   });
 
-  // 'why.items' এর মতো তালিকার পথও নেস্ট করে বসাতে হয়
-  const nested = {};
-  Object.keys(out).forEach(k => {
-    if(k.includes('.') && Array.isArray(out[k])) { setAt(nested, k, out[k]); delete out[k]; }
-  });
-  return deepAssign(out, nested);
+  return out;
 }
 
 function deepAssign(a, b) {
@@ -1895,19 +2043,35 @@ function deepAssign(a, b) {
 
 async function savePage() {
   if(!currentPageKey) return;
+  const key = currentPageKey;
+  const btn = document.querySelector('#page-actions .btn-primary');
+  if(btn) { btn.disabled = true; btn.textContent = 'SAVING…'; }
   try {
-    const res = await authFetch(`${API}/content/${currentPageKey}`, {
+    // সদ্য সংরক্ষিত অবস্থাটা নিয়ে তার উপর বসাই — অন্য মেনু থেকে এর মধ্যে
+    // কিছু বদলে থাকলে (যেমন মেগা প্রজেক্ট) সেটা যেন হারিয়ে না যায়
+    const fresh = await fetch(`${API}/content/${key}`, {cache:'no-store'}).then(r => r.ok ? r.json() : null).catch(() => null);
+    const body = collectPage(fresh && typeof fresh === 'object' ? fresh : undefined);
+    const res = await authFetch(`${API}/content/${key}`, {
       method:'PUT',
       headers:{'Content-Type':'application/json'},
-      body: JSON.stringify(collectPage())
+      body: JSON.stringify(body)
     });
     if(!res.ok) {
       const err = await res.json().catch(()=>({}));
       return showToast(err.error || 'Could not save', true);
     }
+    // ফর্ম নতুন করে আঁকা হয় — যে অংশগুলো খোলা ছিল সেগুলো খোলাই থাকে,
+    // পাতাও একই জায়গায় থাকে
+    const open = [...document.querySelectorAll('#pages-form .sec:not(.is-shut)')].map(el => el.id);
+    const main = document.querySelector('.main');
+    const top = main ? main.scrollTop : 0;
     await loadPages();
-    showToast('Page saved — refresh the site to see it');
+    open.forEach(id => { const el = document.getElementById(id); if(el) el.classList.remove('is-shut'); });
+    if(main) main.scrollTop = top;
+    dirty = false;
+    showToast('Saved — the site has updated already, no refresh needed');
   } catch(e) { showToast('Could not save', true); }
+  finally { if(btn) { btn.disabled = false; btn.textContent = 'SAVE'; } }
 }
 
 async function resetPage() {
@@ -1915,9 +2079,219 @@ async function resetPage() {
   if(!confirm('Put this page back to its original wording?')) return;
   try {
     await authFetch(`${API}/content/${currentPageKey}`, {method:'DELETE'});
+    dirty = false;
     await loadPages();
     showToast('Page reset to the original wording');
   } catch(e) { showToast('Could not reset', true); }
+}
+
+// সংরক্ষণ না করা বদল থাকলে অন্য পেজ বা মেনুতে যাওয়ার আগে জিজ্ঞেস করি
+function markDirty() { dirty = true; }
+document.addEventListener('input', (e) => { if(e.target.closest && e.target.closest('#pages-form')) dirty = true; });
+window.addEventListener('beforeunload', (e) => { if(dirty) { e.preventDefault(); e.returnValue = ''; } });
+
+// Page Text এর ভেতর থেকে বাঁ পাশের কোনো মেনুতে যাওয়া
+function goModule(name) {
+  if(dirty && !confirm('You have changes on this page that are not saved. Leave without saving?')) return;
+  dirty = false;
+  const nav = document.querySelector('.nav-item[onclick*="showPage(\'' + name + '\'"]');
+  showPage(name, nav);
+  const main = document.querySelector('.main');
+  if(main) main.scrollTop = 0;
+}
+
+// MEGA PROJECTS
+// কার্ডগুলো হোম পেজের content এর projects.items এ থাকে। প্রতিটি বদল
+// সাথে সাথে সংরক্ষিত হয় — শুধু ওই তালিকাটুকু (PATCH), বাকি লেখা অক্ষত।
+let projectList = [];
+
+async function loadProjects() {
+  const tbody = document.getElementById('projects-body');
+  try {
+    const home = await fetch(`${API}/content/home`, {cache:'no-store'}).then(r => r.json());
+    const items = home && home.projects && Array.isArray(home.projects.items) ? home.projects.items : [];
+    projectList = items;
+    renderProjects();
+  } catch(e) {
+    tbody.innerHTML = '<tr><td colspan="6" style="color:var(--accent);font-family:var(--font-mono);font-size:0.75rem;padding:2rem">ERROR LOADING DATA</td></tr>';
+  }
+}
+
+function renderProjects() {
+  const tbody = document.getElementById('projects-body');
+  document.getElementById('projects-count').textContent = projectList.length ? '(' + projectList.length + ')' : '';
+  if(projectList.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><div class="empty-state-icon">🏗</div><p>NO PROJECTS YET — PRESS ADD PROJECT TO PUT THE FIRST CARD ON THE HOMEPAGE</p></div></td></tr>';
+    return;
+  }
+  const last = projectList.length - 1;
+  tbody.innerHTML = projectList.map((p, i) => `
+    <tr>
+      <td style="white-space:nowrap">
+        <span style="font-family:var(--font-mono);font-size:0.75rem;color:var(--accent);margin-right:0.4rem">${String(i+1).padStart(2,'0')}</span>
+        <button class="btn-ghost" title="Move up" style="padding:0.2rem 0.5rem" ${i === 0 ? 'disabled' : ''} onclick="moveProject(${i},-1)">&uarr;</button>
+        <button class="btn-ghost" title="Move down" style="padding:0.2rem 0.5rem" ${i === last ? 'disabled' : ''} onclick="moveProject(${i},1)">&darr;</button>
+      </td>
+      <td>${p.poster
+            ? `<img class="td-img" src="${esc(p.poster)}" />`
+            : (p.video ? `<video class="td-img" src="${esc(p.video)}" muted preload="metadata"></video>` : '<div class="td-img-placeholder"></div>')}</td>
+      <td style="font-weight:600;max-width:220px">${esc(p.title) || '—'}</td>
+      <td style="color:var(--subtext);max-width:320px;font-size:0.78rem">${esc((p.desc || '').slice(0, 140))}${(p.desc || '').length > 140 ? '…' : ''}</td>
+      <td>${p.video ? '<span class="badge badge-completed">VIDEO</span>' : '<span style="color:var(--subtext);font-size:0.72rem">None yet</span>'}</td>
+      <td style="white-space:nowrap">
+        <button class="btn-ghost" onclick="openProjectModal(${i})">EDIT</button>
+        <button class="btn-danger" onclick="deleteProject(${i})">DELETE</button>
+      </td>
+    </tr>`).join('');
+}
+
+async function saveProjects(items, okMsg) {
+  const res = await authFetch(`${API}/content/home`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ path: 'projects.items', value: items })
+  });
+  if(!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    showToast(err.error || 'Could not save', true);
+    return false;
+  }
+  const body = await res.json().catch(() => ({}));
+  projectList = body.data && body.data.projects && Array.isArray(body.data.projects.items) ? body.data.projects.items : items;
+  if(pageValues && body.data) pageValues.home = body.data;
+  renderProjects();
+  showToast(okMsg);
+  return true;
+}
+
+function setProjectVideo(url) {
+  document.getElementById('project-video').value = url || '';
+  const v = document.getElementById('project-video-preview');
+  if(url) { v.src = url; v.style.display = 'block'; } else { v.removeAttribute('src'); v.load(); v.style.display = 'none'; }
+  document.getElementById('project-video-remove').style.display = url ? 'inline-block' : 'none';
+  document.getElementById('project-video-label').textContent = url ? 'CLICK TO REPLACE THE VIDEO' : 'CLICK TO UPLOAD VIDEO';
+}
+
+function setProjectPoster(url) {
+  document.getElementById('project-poster').value = url || '';
+  const p = document.getElementById('project-poster-preview');
+  if(url) { p.src = url; p.style.display = 'block'; } else { p.style.display = 'none'; }
+  document.getElementById('project-poster-remove').style.display = url ? 'inline-block' : 'none';
+}
+
+function openProjectModal(i) {
+  const p = i >= 0 ? projectList[i] : null;
+  document.getElementById('project-index').value = String(i);
+  document.getElementById('project-title').value = p ? (p.title || '') : '';
+  document.getElementById('project-desc').value = p ? (p.desc || '') : '';
+  setProjectVideo(p ? p.video : '');
+  setProjectPoster(p ? p.poster : '');
+  document.getElementById('project-vbar').style.display = 'none';
+  document.getElementById('project-modal-title').innerHTML = p ? 'EDIT <span>PROJECT</span>' : 'ADD <span>PROJECT</span>';
+  document.getElementById('project-save-btn').disabled = false;
+  document.getElementById('project-modal').classList.add('open');
+  setTimeout(() => document.getElementById('project-title').focus(), 50);
+}
+
+// ভিডিও বড় — XHR, যাতে কতটা উঠল দেখানো যায়। উঠে গেলে লিংকটি ঘরে
+// বসে; কার্ডে যায় SAVE PROJECT দিলে।
+function uploadProjectVideo(input) {
+  const file = input.files[0];
+  if(!file) return;
+  const bar = document.getElementById('project-vbar');
+  const fill = document.getElementById('project-vfill');
+  const btn = document.getElementById('project-save-btn');
+  const fd = new FormData();
+  fd.append('video', file);
+  bar.style.display = 'block';
+  fill.style.width = '0';
+  btn.disabled = true;
+  document.getElementById('project-video-label').textContent = 'UPLOADING… 0%';
+
+  const xhr = new XMLHttpRequest();
+  xhr.open('POST', `${API}/content/upload-video`);
+  xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+  xhr.upload.onprogress = (e) => {
+    if(!e.lengthComputable) return;
+    const pct = Math.round(e.loaded / e.total * 100);
+    fill.style.width = pct + '%';
+    document.getElementById('project-video-label').textContent = 'UPLOADING… ' + pct + '%';
+  };
+  xhr.onload = () => {
+    bar.style.display = 'none';
+    btn.disabled = false;
+    let body = {};
+    try { body = JSON.parse(xhr.responseText); } catch(e) {}
+    if(xhr.status !== 200) {
+      setProjectVideo(document.getElementById('project-video').value);
+      if(xhr.status === 401) return askReauth().then(ok => showToast(ok ? 'Signed in again — choose the video once more' : 'Session expired — sign in to upload', true));
+      return showToast(body.error || 'Could not upload the video', true);
+    }
+    setProjectVideo(body.url);
+    showToast('Video uploaded — press SAVE PROJECT to put it on the card');
+  };
+  xhr.onerror = () => {
+    bar.style.display = 'none';
+    btn.disabled = false;
+    setProjectVideo(document.getElementById('project-video').value);
+    showToast('Upload failed — check your connection', true);
+  };
+  xhr.send(fd);
+  input.value = '';
+}
+
+async function uploadProjectPoster(input) {
+  const file = input.files[0];
+  if(!file) return;
+  const fd = new FormData();
+  fd.append('image', file);
+  showToast('Uploading…');
+  try {
+    const res = await authFetch(`${API}/content/upload`, {method:'POST', body: fd});
+    const body = await res.json().catch(() => ({}));
+    if(!res.ok) return showToast(body.error || 'Could not upload', true);
+    setProjectPoster(body.url);
+    showToast('Picture uploaded — press SAVE PROJECT to put it on the card');
+  } catch(e) { showToast('Could not upload', true); }
+  finally { input.value = ''; }
+}
+
+async function saveProject() {
+  const i = Number(document.getElementById('project-index').value);
+  const title = document.getElementById('project-title').value.trim();
+  if(!title) return showToast('Project name is required', true);
+  const old = i >= 0 ? projectList[i] : {};
+  // আগের সারির অন্য ঘরগুলো (থাকলে) রেখে দিই
+  const row = Object.assign({}, old, {
+    title,
+    desc: document.getElementById('project-desc').value.trim(),
+    video: document.getElementById('project-video').value.trim(),
+    poster: document.getElementById('project-poster').value.trim(),
+  });
+  const items = projectList.slice();
+  if(i >= 0 && i < items.length) items[i] = row; else items.push(row);
+  const btn = document.getElementById('project-save-btn');
+  btn.disabled = true;
+  try {
+    const ok = await saveProjects(items, i >= 0 ? 'Project updated — live on the site now' : 'Project added — live on the site now');
+    if(ok) closeModal('project-modal');
+  } catch(e) { showToast('Could not save', true); }
+  finally { btn.disabled = false; }
+}
+
+async function deleteProject(i) {
+  const p = projectList[i];
+  if(!p || !confirm('Delete "' + (p.title || 'this project') + '" from the homepage?')) return;
+  const items = projectList.filter((_, k) => k !== i);
+  try { await saveProjects(items, 'Project deleted'); } catch(e) { showToast('Could not delete', true); }
+}
+
+async function moveProject(i, dir) {
+  const j = i + dir;
+  if(j < 0 || j >= projectList.length) return;
+  const items = projectList.slice();
+  [items[i], items[j]] = [items[j], items[i]];
+  try { await saveProjects(items, 'Order saved'); } catch(e) { showToast('Could not save the order', true); }
 }
 
 // HERO BANNER
@@ -2028,7 +2402,7 @@ function saveHero() {
     if(xhr.status >= 200 && xhr.status < 300) {
       closeModal('hero-modal');
       loadHero();
-      showToast(id ? 'Slide updated' : 'Slide added');
+      showToast(id ? 'Slide updated — live on the site now' : 'Slide added — live on the site now');
     } else if(xhr.status === 401) {
       // এখানে নিজে থেকে আবার পাঠাই না — ভিডিও বড়, চুপচাপ পুরোটা
       // আবার তুলতে শুরু করলে অবাক লাগত। সাইন ইন করিয়ে জানিয়ে দিই।

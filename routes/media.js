@@ -43,6 +43,28 @@ router.post('/', auth, uploadImage, async (req, res) => {
   res.json(result.rows[0]);
 });
 
+// আগে শুধু যোগ আর মোছা যেত — একটা বানান ভুল ঠিক করতেও পোস্টটি মুছে
+// নতুন করে দিতে হত। নতুন ছবি না দিলে আগেরটাই থাকে।
+router.put('/:id', auth, uploadImage, async (req, res) => {
+  const { title, description, event_date, category } = req.body;
+  if (!title || !String(title).trim()) return res.status(400).json({ error: 'Title is required' });
+  try {
+    const image_url = req.file ? await uploadToR2(req.file, 'media') : null;
+    const result = await pool.query(
+      `UPDATE media_events
+          SET title = $1, description = $2, event_date = $3, category = $4,
+              image_url = COALESCE($5, image_url)
+        WHERE id = $6 AND is_active = true
+        RETURNING *`,
+      [title, description, event_date, category, image_url, req.params.id]
+    );
+    if (!result.rows.length) return res.status(404).json({ error: 'That post no longer exists' });
+    res.json(result.rows[0]);
+  } catch (err) {
+    res.status(500).json({ error: 'Could not save the post' });
+  }
+});
+
 router.delete('/:id', auth, async (req, res) => {
   await pool.query('UPDATE media_events SET is_active=false WHERE id=$1', [req.params.id]);
   res.json({ success: true });

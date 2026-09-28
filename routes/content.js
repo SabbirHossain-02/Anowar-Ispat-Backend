@@ -95,6 +95,53 @@ router.put('/:key', auth, async (req, res) => {
   }
 });
 
+// পেজের একটিমাত্র অংশ বদলায়, বাকি সব যেমন ছিল থাকে — যেমন মেগা
+// প্রজেক্টের কার্ডগুলো (projects.items)। পুরো পেজ PUT করলে অন্য ট্যাবে
+// খোলা Page Text ফর্মের পুরনো লেখা দিয়ে নতুন বদল মুছে যেতে পারত।
+router.patch('/:key', auth, async (req, res) => {
+  const key = req.params.key;
+  if (!KNOWN.has(key)) return res.status(400).json({ error: 'Unknown page' });
+  const { path, value } = req.body || {};
+  if (typeof path !== 'string' || !/^[A-Za-z0-9_]+(\.[A-Za-z0-9_]+)*$/.test(path)) {
+    return res.status(400).json({ error: 'Invalid path' });
+  }
+  if (value === undefined) return res.status(400).json({ error: 'No value' });
+
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    const cur = await client.query(
+      'SELECT data FROM page_content WHERE page_key = $1 FOR UPDATE', [key]
+    );
+    const data = cur.rows[0]?.data && typeof cur.rows[0].data === 'object' ? cur.rows[0].data : {};
+
+    const keys = path.split('.');
+    const last = keys.pop();
+    let node = data;
+    keys.forEach((k) => {
+      if (!node[k] || typeof node[k] !== 'object' || Array.isArray(node[k])) node[k] = {};
+      node = node[k];
+    });
+    node[last] = value;
+
+    const result = await client.query(
+      `INSERT INTO page_content (page_key, data, updated_at)
+       VALUES ($1, $2, now())
+       ON CONFLICT (page_key)
+       DO UPDATE SET data = EXCLUDED.data, updated_at = now()
+       RETURNING page_key, data, updated_at`,
+      [key, data]
+    );
+    await client.query('COMMIT');
+    res.json(result.rows[0]);
+  } catch (err) {
+    await client.query('ROLLBACK').catch(() => {});
+    res.status(500).json({ error: 'Could not save content' });
+  } finally {
+    client.release();
+  }
+});
+
 // শুধু ছবিটি R2 তে তুলে লিংক ফেরত দেয়, কিছু সংরক্ষণ করে না। তালিকার
 // ভেতরের ছবির ঘরগুলো এটি ব্যবহার করে — লিংকটি ঘরে বসে, তারপর ফর্ম
 // সংরক্ষণের সময় বাকি সবের সাথে একসাথে যায়।

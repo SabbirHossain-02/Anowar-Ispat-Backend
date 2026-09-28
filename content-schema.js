@@ -392,14 +392,17 @@ const PAGES = [
         ],
     },
     {
-        // হোমপেজের সেকশনগুলি। পণ্য, খবর ও হিরো ব্যানার নিজ নিজ
-        // সেকশন থেকেই আসে — এখানে কেবল স্থায়ী লেখাগুলি।
+        // হোমপেজের সেকশনগুলি, পাতায় যে ক্রমে আছে সেই ক্রমে। হিরো ব্যানার,
+        // পণ্য, মেগা প্রজেক্ট ও খবরের কার্ড বাঁ পাশের নিজ নিজ মেনুতে।
         key: 'home',
         label: 'Home page',
         group: 'Home',
         url: '/',
         fields: [
-            { type: 'section', label: "Opening banner", note: "The very top of the page, over the moving background" },
+            { type: 'section', label: "Video banner", note: "The sliding video or picture banner at the very top of the page" },
+            { type: 'note', label: "The slides of this banner — the video or picture, the big white and red title, and the line under it — are added, changed, reordered and deleted in Hero Banner in the left menu.", goto: 'hero', button: "Open Hero Banner" },
+
+            { type: 'section', label: "Opening headline", note: "The headline and button right after the video banner" },
             { key: 'hero.line1', label: 'Opening headline — first line', type: 'text', now: 'FORGED IN' },
             { key: 'hero.accent1', label: 'Opening headline — the red word on the first line', type: 'text', now: 'FIRE' },
             { key: 'hero.line2', label: 'Opening headline — second line', type: 'text', now: 'ENGINEERED FOR THE' },
@@ -409,7 +412,24 @@ const PAGES = [
                 now: 'A cinematic journey of power, precision, and the steel that builds Bangladesh.',
             },
             { key: 'hero.cta', label: 'Button under the opening headline', type: 'text', now: 'DISCOVER THE FORCE' },
-            { type: 'section', label: "Vision & Leadership", note: "The two quotation blocks with the photographs" },
+
+            { type: 'section', label: "Products", note: "The heading, the product cards, and the pop-up that opens when one is clicked" },
+            { type: 'note', label: "The product cards themselves — picture, name and description — are added, changed and deleted in Products in the left menu.", goto: 'products', button: "Open Products" },
+            { key: 'ps.title', label: 'Section heading', type: 'text', now: 'PRODUCT & SERVICE' },
+            {
+                key: 'ps.intro', label: 'Paragraph under the heading', type: 'textarea',
+                now: "Forged in extreme intensity. We provide exceptional structural solutions designed to act as the unyielding backbone of tomorrow's infrastructure.",
+            },
+            { key: 'ps.learnBtn', label: 'Button on each product card', type: 'text', now: 'Learn More' },
+            { key: 'ps.cardQuoteBtn', label: 'Second button on each product card', type: 'text', now: 'Get Quote' },
+            { key: 'ps.quoteBtn', label: 'Product pop-up — the quotation button', type: 'text', now: 'REQUEST A QUOTE' },
+            { key: 'ps.specLabel', label: 'Product panel — specifications heading', type: 'text', now: 'KEY SPECIFICATIONS' },
+            {
+                key: 'ps.specs', label: 'Product panel — specification points, one per line', type: 'lines',
+                now: 'Excellent Weldability and Bendability · Earthquake Resistant Properties · Advanced Rib Design',
+            },
+
+            { type: 'section', label: "Vision & Leadership", note: "The quotation blocks with the photographs" },
             { key: 'about.eyebrow', label: 'Small red label above the blocks', type: 'text', now: 'VISION & LEADERSHIP' },
             {
                 key: 'about.blocks',
@@ -425,6 +445,7 @@ const PAGES = [
                     { key: 'img', label: 'Photograph', type: 'image-url' },
                 ],
             },
+
             { type: 'section', label: "Why Choose Us", note: "The row of milestones" },
             { key: 'why.eyebrow', label: 'Why Choose Us — small label', type: 'text', now: 'THE FORGED PATH' },
             { key: 'why.title', label: 'Why Choose Us — heading', type: 'text', now: 'WHY CHOOSE US?' },
@@ -436,21 +457,8 @@ const PAGES = [
                     { key: 'desc', label: 'Description', type: 'textarea' },
                 ],
             },
-            { type: 'section', label: "Products", note: "The heading, the product cards, and the pop-up that opens when one is clicked" },
-            { key: 'ps.title', label: 'Section heading', type: 'text', now: 'PRODUCT & SERVICE' },
-            {
-                key: 'ps.intro', label: 'Paragraph under the heading', type: 'textarea',
-                now: "Forged in extreme intensity. We provide exceptional structural solutions designed to act as the unyielding backbone of tomorrow's infrastructure.",
-            },
-            { key: 'ps.learnBtn', label: 'Button on each product card', type: 'text', now: 'Learn More' },
-            { key: 'ps.quoteBtn', label: 'Product pop-up — the quotation button', type: 'text', now: 'REQUEST A QUOTE' },
-            { key: 'ps.specLabel', label: 'Product panel — specifications heading', type: 'text', now: 'KEY SPECIFICATIONS' },
-            {
-                key: 'ps.specs', label: 'Product panel — specification points, one per line', type: 'lines',
-                now: 'Excellent Weldability and Bendability · Earthquake Resistant Properties · Advanced Rib Design',
-            },
 
-            { type: 'section', label: "Core Strengths", note: "The turning globe with the labels going round it" },
+            { type: 'section', label: "Core Strengths", note: "The orbit with the labels going round it" },
             { key: 'strengths.heading', label: 'Orbit — small line above the name', type: 'text', now: 'WHY CHOOSE' },
             { key: 'strengths.brand', label: 'Orbit — the name', type: 'text', now: 'ANWAR' },
             { key: 'strengths.brandAccent', label: 'Orbit — the part in red', type: 'text', now: 'ISPAT' },
@@ -460,24 +468,14 @@ const PAGES = [
                 now: 'SUPERIOR STRENGTH · EXCELLENT DUCTILITY · EASY WELDABILITY · IMPROVED RIB DESIGN · TMT TECHNOLOGY · PRECISE STANDARDS · CONTROLLED MICROSTRUCTURE',
             },
 
-            { type: 'section', label: "Mega Projects", note: "The eight video cards" },
+            { type: 'section', label: "Mega Projects", note: "The project video cards" },
+            { type: 'note', label: "The project cards — name, description, video and still picture — are added, changed, reordered and deleted in Mega Projects in the left menu.", goto: 'projects', button: "Open Mega Projects" },
             { key: 'projects.eyebrow', label: 'Projects section — small label above the heading', type: 'text', now: 'NATION BUILDERS' },
             { key: 'projects.title', label: 'Projects section — heading', type: 'text', now: 'MEGA' },
             { key: 'projects.accent', label: 'Projects section — the words in red', type: 'text', now: 'PROJECTS' },
-            {
-                key: 'projects.items',
-                label: 'Projects section — the eight project cards. The old videos were lost when the Cloudinary account was closed, so upload a new video and a still for each one',
-                type: 'list',
-                now: 'Padma Bridge · Rooppur · Mayor Hanif Flyover · Purbachal · Airport T3 · Shahjalal Fertilizer · Hotel Intercontinental · City Center',
-                item: [
-                    { key: 'title', label: 'Name', type: 'text' },
-                    { key: 'desc', label: 'Description', type: 'textarea' },
-                    { key: 'video', label: 'Video', type: 'video-url' },
-                    { key: 'poster', label: 'Still shown before the video plays', type: 'image-url' },
-                ],
-            },
 
-            { type: 'section', label: "News Desk", note: "Pulls the latest from Media & Events on its own" },
+            { type: 'section', label: "News Desk", note: "The scrolling news cards" },
+            { type: 'note', label: "The news cards come from Media & Events in the left menu — post, edit or delete them there and they show here straight away.", goto: 'media', button: "Open Media & Events" },
             { key: 'media.title', label: 'News section — small label beside the red dot', type: 'text', now: 'NEWS DESK' },
             {
                 key: 'media.heading', label: 'News section — the large heading, one line per row', type: 'lines',
@@ -491,7 +489,7 @@ const PAGES = [
             { key: 'media.loading', label: 'News section — while loading', type: 'text', now: 'Loading media posts...' },
             { key: 'media.empty', label: 'News section — when none added', type: 'text', now: 'No media posts yet.' },
 
-            { type: 'section', label: "Insights", note: "The three articles near the bottom" },
+            { type: 'section', label: "Insights", note: "The article cards near the bottom" },
             { key: 'blog.eyebrow', label: 'Insights section — small line', type: 'text', now: '[ SYSTEM.ARCHIVES.OPEN ]' },
             { key: 'blog.cta', label: 'Insights section — the button on each card', type: 'text', now: 'INITIATE FEED' },
             { key: 'blog.title', label: 'Insights section — heading', type: 'text', now: 'INSIGHTS & INNOVATIONS' },
@@ -523,6 +521,11 @@ const PAGES = [
                 key: 'footer.legal', label: 'Footer — second column links, one per line as  Label | link', type: 'lines',
                 now: 'Privacy Policy · Terms of Service',
             },
+            {
+                key: 'footer.social', label: 'Footer — social links at the very bottom, one per line as  Name | link', type: 'lines',
+                now: 'Facebook | # · LinkedIn | # · Twitter | #',
+            },
+            { key: 'footer.copyright', label: 'Footer — copyright line (the year is added in front on its own)', type: 'text', now: 'Anwar Ispat. All Rights Reserved.' },
         ],
     },
     {
