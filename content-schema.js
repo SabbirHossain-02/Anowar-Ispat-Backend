@@ -591,15 +591,19 @@ const PAGES = [
         group: 'Landmarks',
         url: '/projects',
         fields: [
+            { type: 'section', label: "Banner", note: "The picture and the words across the top, and the path under it" },
             ...banner('PROJECT GALLERY', 'Built with', 'Anwar Ispat', '/gallery-banner.jpg'),
+            { key: 'crumb', label: "Path under the banner — this page's name (after Home > Landmarks >)", type: 'text', now: 'Project Gallery' },
+            { type: 'section', label: "Introduction", note: "The label, heading and paragraph above the photos" },
             { key: 'eyebrow', label: 'Small label', type: 'text', now: 'PROJECT GALLERY' },
-            { key: 'title', label: 'Heading', type: 'text', now: 'Twelve structures the country depends on' },
+            { key: 'title', label: 'Heading — write {count} where the number of projects should go, so it stays right when you add or remove one', type: 'text', now: 'Twelve structures the country depends on' },
             {
-                key: 'lead', label: 'Paragraph under the heading', type: 'textarea',
+                key: 'lead', label: 'Paragraph under the heading ({count} works here too)', type: 'textarea',
                 now: 'Bridges, expressways, ports and power — each one carrying rebar rolled at our mill. Select any project to see it full size.',
             },
+            { type: 'section', label: "Projects", note: "The photo grid — a click opens the photo full size" },
             {
-                key: 'items', label: 'Projects', type: 'list',
+                key: 'items', label: 'Projects, in order', type: 'list',
                 now: 'Twelve landmarks',
                 item: [
                     { key: 'img', label: 'Photograph', type: 'image-url' },
