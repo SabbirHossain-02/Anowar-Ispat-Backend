@@ -155,6 +155,32 @@ router.post('/upload', auth, uploadBanner, async (req, res) => {
   }
 });
 
+// PDF — যেমন প্রেস বিজ্ঞপ্তির পূর্ণ কপি। R2 তে তুলে লিংক ফেরত দেয়;
+// সারিতে বসে Save দিলে।
+const pdfUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 20 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    const ok = file.mimetype === 'application/pdf';
+    cb(ok ? null : new Error('Only PDF files are allowed'), ok);
+  },
+});
+const uploadPdf = (req, res, next) => pdfUpload.single('file')(req, res, (err) => {
+  if (!err) return next();
+  const tooBig = err.code === 'LIMIT_FILE_SIZE';
+  res.status(400).json({ error: tooBig ? 'PDF too large (max 20MB)' : err.message });
+});
+
+router.post('/upload-file', auth, uploadPdf, async (req, res) => {
+  if (!req.file) return res.status(400).json({ error: 'No file received' });
+  try {
+    const url = await uploadToR2(req.file, 'content/files');
+    res.json({ url });
+  } catch (err) {
+    res.status(500).json({ error: 'Could not upload the file' });
+  }
+});
+
 // তালিকার সারিতে ভিডিও — যেমন হোমপেজের মেগা প্রজেক্ট। ফাইলটি R2 তে
 // যায়, লিংকটি ফেরত আসে; সারিতে বসানো হয় Save দিলে।
 router.post('/upload-video', auth, uploadVideo, async (req, res) => {

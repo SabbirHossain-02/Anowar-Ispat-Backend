@@ -40,7 +40,7 @@ const notify = (kind) => {
 const WATCHED = new Set(['content', 'hero', 'media', 'products', 'jobs', 'settings']);
 
 // শুধু ফাইল তোলা — এতে সাইটের কিছু বদলায় না, লিংকটি পরে সংরক্ষণে যায়
-const UPLOAD_ONLY = /^\/content\/upload(-video)?\/?$/;
+const UPLOAD_ONLY = /^\/content\/upload(-video|-file)?\/?$/;
 
 const watch = (req, res, next) => {
   if (req.method === 'GET' || req.method === 'OPTIONS') return next();

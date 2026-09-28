@@ -1900,6 +1900,20 @@ function listRow(field, row, i) {
       </div>`;
     }
 
+    // PDF — আপলোড বোতাম, আর দেওয়া থাকলে খুলে দেখার লিংক
+    if (sub.type === 'file-url') {
+      return `<div class="row-pdf" style="margin-bottom:0.6rem">
+        <label class="form-label" style="font-size:0.7rem">${esc(sub.label)}</label>
+        <input class="form-input row-pdf-url" data-sub="${esc(sub.key)}" value="${esc(val)}" placeholder="No PDF — the PDF link is hidden on the site" />
+        <div style="display:flex;gap:0.6rem;align-items:center;margin-top:0.4rem">
+          <button type="button" class="btn-ghost" style="padding:0.35rem 0.8rem;font-size:0.7rem" onclick="this.parentElement.querySelector('.row-pdf-file').click()">UPLOAD PDF</button>
+          <a class="row-pdf-open" href="${esc(val)}" target="_blank" rel="noopener" style="font-size:0.72rem;color:var(--accent);${val ? '' : 'display:none'}">Open the PDF &#8599;</a>
+          <span style="color:var(--subtext);font-size:0.68rem">PDF, up to 20MB</span>
+          <input type="file" class="row-pdf-file" accept="application/pdf" style="display:none" onchange="uploadRowPdf(this)" />
+        </div>
+      </div>`;
+    }
+
     // হ্যাঁ/না — যেমন টাইমলাইনের কোনো সাল লাল করে দেখানো
     if (sub.type === 'check') {
       return `<label style="display:flex;align-items:center;gap:0.5rem;margin:0.2rem 0 0.6rem;font-size:0.78rem;color:var(--text);cursor:pointer">
@@ -1963,6 +1977,26 @@ function uploadRowVideo(input) {
   xhr.onerror = () => { bar.style.display = 'none'; showToast('Could not upload the video', true); };
   xhr.send(fd);
   input.value = '';
+}
+
+async function uploadRowPdf(input) {
+  const file = input.files[0];
+  if(!file) return;
+  const wrap = input.closest('.row-pdf');
+  const fd = new FormData();
+  fd.append('file', file);
+  showToast('Uploading…');
+  try {
+    const res = await authFetch(`${API}/content/upload-file`, {method:'POST', body: fd});
+    const body = await res.json().catch(()=>({}));
+    if(!res.ok) return showToast(body.error || 'Could not upload', true);
+    wrap.querySelector('.row-pdf-url').value = body.url;
+    const a = wrap.querySelector('.row-pdf-open');
+    a.href = body.url; a.style.display = '';
+    markDirty();
+    showToast('PDF uploaded — press Save to put it on the release');
+  } catch(e) { showToast('Could not upload', true); }
+  finally { input.value = ''; }
 }
 
 async function uploadRowImage(input) {
