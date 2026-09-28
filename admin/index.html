@@ -214,6 +214,20 @@
   .sec.is-shut .sec-caret { transform: rotate(-90deg); }
 
   /* উপরে লাফানোর সারি */
+  .pr-help { display: grid; gap: 0.35rem; margin: -0.8rem 0 1.25rem; padding: 0.85rem 1rem; background: var(--bg2); border: 1px solid var(--border); border-left: 3px solid var(--accent); font-size: 0.8rem; color: var(--subtext); line-height: 1.55; }
+  .pr-help b { color: var(--text); }
+  .pr-help a { color: var(--accent); }
+  .modal.pr-modal { max-width: 820px; display: flex; flex-direction: column; overflow: hidden; }
+  .pr-modal .modal-body { overflow-y: auto; flex: 1; }
+  .pr-footer { background: var(--bg2); }
+  .pr-footer .btn-primary, .pr-footer .btn-ghost { white-space: nowrap; }
+  .pr-step { font-family: var(--font-mono); font-size: 0.66rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin: 0.4rem 0 0.9rem; padding-bottom: 0.45rem; border-bottom: 1px solid var(--border); }
+  .pr-step:not(:first-of-type) { margin-top: 1.4rem; }
+  .pr-hint { font-size: 0.7rem; color: var(--subtext); margin-top: 0.35rem; line-height: 1.45; }
+  .pr-hint.is-warn { color: var(--warning); }
+  .pr-title-cell { font-weight: 600; max-width: 380px; }
+  .pr-title-cell small { display: block; font-family: var(--font-mono); font-size: 0.65rem; color: var(--subtext); font-weight: 400; margin-top: 0.2rem; }
+  .pr-latest { display: inline-block; margin-left: 0.4rem; padding: 0.05rem 0.4rem; font-size: 0.6rem; letter-spacing: 0.08em; background: var(--accent); color: #fff; border-radius: 2px; vertical-align: middle; }
   .social-row { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; }
   .social-row .social-name { flex: 0 0 170px; display: flex; align-items: center; gap: 0.55rem; font-size: 0.82rem; font-weight: 600; color: var(--text); }
   .social-row .social-url { flex: 1; min-width: 0; }
@@ -516,6 +530,10 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"/><path d="M5 21V9l7-5 7 5v12"/><path d="M9 21v-6h6v6"/></svg>
           Mega Projects
         </div>
+        <div class="nav-item" onclick="showPage('press',this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 22h14a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2zm0 0a2 2 0 0 1-2-2v-9h4"/><line x1="10" y1="7" x2="16" y2="7"/><line x1="10" y1="11" x2="16" y2="11"/><line x1="10" y1="15" x2="14" y2="15"/></svg>
+          Press Releases
+        </div>
         <div class="nav-item" onclick="showPage('jobs',this)">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
           Open Positions
@@ -688,6 +706,42 @@
           <table>
             <thead><tr><th>ORDER</th><th>PREVIEW</th><th>NAME</th><th>DESCRIPTION</th><th>VIDEO</th><th>ACTIONS</th></tr></thead>
             <tbody id="projects-body"><tr><td colspan="6"><div class="loading"><div class="spinner"></div> Loading...</div></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- PRESS RELEASES -->
+      <div class="page" id="page-press">
+        <div class="page-header">
+          <div class="page-header-top">
+            <div>
+              <div class="page-title">PRESS <span>RELEASES</span></div>
+              <div class="page-subtitle">MEDIA CENTER — OFFICIAL STATEMENTS. EVERY CHANGE IS LIVE ON THE SITE AS SOON AS IT IS SAVED</div>
+            </div>
+            <div style="display:flex;gap:0.6rem;flex-wrap:wrap">
+              <a class="btn-ghost" href="/media/press" target="_blank" rel="noopener" style="text-decoration:none">VIEW PAGE &#8599;</a>
+              <button class="btn-primary" onclick="openPressModal(-1)">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                NEW RELEASE
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="pr-help">
+          <div><b>1</b> Press <b>NEW RELEASE</b>, fill in the headline and the text, and save — it appears on the site straight away.</div>
+          <div><b>2</b> The release at the <b>top of this list</b> is shown large as the latest release. Use &uarr; &darr; to change the order.</div>
+          <div><b>3</b> The words around the releases (headings, contact box, archive) are in <a href="#" onclick="goModule('page:media-press');return false">Page Text &rarr; Press Releases</a>.</div>
+        </div>
+
+        <div class="data-grid">
+          <div class="data-grid-header">
+            <div class="data-grid-title">All Releases <span id="press-count" style="color:var(--subtext);font-weight:400"></span></div>
+            <input class="form-input" id="press-search" placeholder="Search headline, reference or category…" oninput="renderPress()" style="max-width:280px;padding:0.45rem 0.75rem;font-size:0.8rem" />
+          </div>
+          <table>
+            <thead><tr><th>ORDER</th><th>HEADLINE</th><th>CATEGORY</th><th>DATE</th><th>EXTRAS</th><th>ACTIONS</th></tr></thead>
+            <tbody id="press-body"><tr><td colspan="6"><div class="loading"><div class="spinner"></div> Loading...</div></td></tr></tbody>
           </table>
         </div>
       </div>
@@ -987,6 +1041,95 @@
   </div>
 </div>
 
+<!-- PRESS RELEASE MODAL -->
+<div class="modal-overlay" id="press-modal">
+  <div class="modal pr-modal">
+    <div class="modal-header">
+      <div class="modal-title" id="press-modal-title">NEW <span>RELEASE</span></div>
+      <button class="modal-close" onclick="closePressModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="press-index" />
+
+      <div class="pr-step">1 &middot; The basics</div>
+      <div class="form-group">
+        <label class="form-label">HEADLINE *</label>
+        <input class="form-input" id="press-title" placeholder="e.g. Anwar Ispat opens a new rolling mill in Narayanganj" oninput="pressDirty=true" />
+        <div class="pr-hint" id="press-title-hint">This is the big title on the list and on the release's own page.</div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">CATEGORY</label>
+          <input class="form-input" id="press-cat" list="press-cats" placeholder="Pick or type, e.g. Corporate" oninput="pressDirty=true" />
+          <datalist id="press-cats"></datalist>
+          <div class="pr-hint">Each category becomes a filter button on the page.</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">DATE</label>
+          <input class="form-input" id="press-date" type="date" oninput="pressDirty=true" />
+          <div class="pr-hint" id="press-date-hint">Shown as e.g. June 16, 2026.</div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">REFERENCE NUMBER</label>
+          <input class="form-input" id="press-pr" placeholder="PR-2026-007" oninput="pressDirty=true" />
+          <div class="pr-hint">Filled in for you — change it if you use your own numbering.</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">READING TIME</label>
+          <input class="form-input" id="press-read" placeholder="3 min read" oninput="pressReadTouched=true;pressDirty=true" />
+          <div class="pr-hint">Worked out from the text as you type.</div>
+        </div>
+      </div>
+
+      <div class="pr-step">2 &middot; The release</div>
+      <div class="form-group">
+        <label class="form-label">FULL TEXT *</label>
+        <textarea class="form-textarea" id="press-text" style="min-height:260px;line-height:1.6" placeholder="Write the release here.&#10;&#10;Leave an empty line between paragraphs — each one shows as its own paragraph on the site." oninput="pressBodyChanged()"></textarea>
+        <div class="pr-hint"><span id="press-words">0 words</span> &middot; Press Enter twice to start a new paragraph.</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">SHORT SUMMARY <span style="text-transform:none;letter-spacing:0;color:var(--subtext);font-weight:400">— optional</span></label>
+        <textarea class="form-textarea" id="press-summary" style="min-height:70px" placeholder="One or two sentences. Used when this is the latest release at the top. Leave empty to use the start of the text." oninput="pressDirty=true"></textarea>
+      </div>
+
+      <div class="pr-step">3 &middot; Attachments <span style="text-transform:none;letter-spacing:0;font-weight:400">— both optional</span></div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">PICTURE</label>
+          <div class="file-upload-area" style="padding:1.1rem" onclick="document.getElementById('press-img-file').click()">
+            <p id="press-img-label" style="font-size:0.72rem">CLICK TO UPLOAD A PICTURE</p>
+          </div>
+          <input type="file" id="press-img-file" accept="image/*" style="display:none" onchange="uploadPressImg(this)" />
+          <input type="hidden" id="press-img" />
+          <img id="press-img-preview" class="file-preview" style="display:none" />
+          <button type="button" class="btn-ghost" id="press-img-remove" style="display:none;margin-top:0.45rem;padding:0.3rem 0.75rem;font-size:0.68rem" onclick="setPressImg('');pressDirty=true">REMOVE PICTURE</button>
+          <div class="pr-hint">Shown in the large box when this is the latest release.</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">PDF COPY</label>
+          <div class="file-upload-area" style="padding:1.1rem" onclick="document.getElementById('press-pdf-file').click()">
+            <p id="press-pdf-label" style="font-size:0.72rem">CLICK TO UPLOAD A PDF</p>
+          </div>
+          <input type="file" id="press-pdf-file" accept="application/pdf" style="display:none" onchange="uploadPressPdf(this)" />
+          <input type="hidden" id="press-pdf" />
+          <div id="press-pdf-row" style="display:none;margin-top:0.5rem;gap:0.6rem;align-items:center">
+            <a id="press-pdf-open" href="#" target="_blank" rel="noopener" style="font-size:0.75rem;color:var(--accent)">Open the PDF &#8599;</a>
+            <button type="button" class="btn-ghost" style="padding:0.3rem 0.75rem;font-size:0.68rem" onclick="setPressPdf('');pressDirty=true">REMOVE PDF</button>
+          </div>
+          <div class="pr-hint">A "PDF" download link appears on the release only when a file is here.</div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer pr-footer">
+      <span id="press-status" style="margin-right:auto;font-size:0.72rem;color:var(--subtext)"></span>
+      <button class="btn-ghost" onclick="closePressModal()">CANCEL</button>
+      <button class="btn-primary" id="press-save-btn" onclick="savePress()">SAVE &amp; PUBLISH</button>
+    </div>
+  </div>
+</div>
+
 <!-- OPEN POSITION MODAL -->
 <div class="modal-overlay" id="job-modal">
   <div class="modal">
@@ -1261,6 +1404,7 @@ function showPage(name, el) {
   if(name === 'messages') loadMessages();
   if(name === 'hero') loadHero();
   if(name === 'projects') loadProjects();
+  if(name === 'press') loadPress();
   if(name === 'jobs') loadJobs();
   if(name === 'pages') loadPages();
   if(name === 'settings') loadCurrentTheme();
@@ -2570,6 +2714,241 @@ async function moveProject(i, dir) {
   const items = projectList.slice();
   [items[i], items[j]] = [items[j], items[i]];
   try { await saveProjects(items, 'Order saved'); } catch(e) { showToast('Could not save the order', true); }
+}
+
+// PRESS RELEASES
+// বিজ্ঞপ্তিগুলো content এর media-press.releases এ। প্রতিটি বদল সাথে
+// সাথে সংরক্ষিত হয় — শুধু ওই তালিকাটুকু (PATCH), পাতার বাকি লেখা অক্ষত।
+let pressList = [];
+let pressDirty = false;
+let pressReadTouched = false;
+
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+// "June 16, 2026" <-> "2026-06-16"
+function pressDateToInput(s) {
+  const d = new Date(String(s || ''));
+  if(isNaN(d)) return '';
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+function pressDateFromInput(v) {
+  const m = String(v || '').match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  return m ? MONTHS[+m[2] - 1] + ' ' + (+m[3]) + ', ' + m[1] : '';
+}
+// সাইটের src/lib/press.js এর releaseSlug এর হুবহু
+function pressSlug(r, i) {
+  const s = String((r && r.title) || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 70);
+  return s || 'release-' + (i + 1);
+}
+function pressReadTime(text) {
+  const words = String(text || '').trim().split(/\s+/).filter(Boolean).length;
+  return Math.max(1, Math.round(words / 200)) + ' min read';
+}
+function nextPressRef() {
+  const year = new Date().getFullYear();
+  let max = 0;
+  pressList.forEach(r => { const m = String(r.pr || '').match(/^PR-(\d{4})-(\d+)$/); if(m && +m[1] === year) max = Math.max(max, +m[2]); });
+  return 'PR-' + year + '-' + String(max + 1).padStart(3, '0');
+}
+
+async function loadPress() {
+  const tbody = document.getElementById('press-body');
+  try {
+    const d = await fetch(`${API}/content/media-press`, {cache:'no-store'}).then(r => r.json());
+    pressList = d && Array.isArray(d.releases) ? d.releases : [];
+    renderPress();
+  } catch(e) {
+    tbody.innerHTML = '<tr><td colspan="6" style="color:var(--accent);font-family:var(--font-mono);font-size:0.75rem;padding:2rem">ERROR LOADING DATA</td></tr>';
+  }
+}
+
+function renderPress() {
+  const tbody = document.getElementById('press-body');
+  const q = (document.getElementById('press-search').value || '').trim().toLowerCase();
+  document.getElementById('press-count').textContent = pressList.length ? '(' + pressList.length + ')' : '';
+  if(pressList.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><div class="empty-state-icon">📰</div><p>NO RELEASES YET — PRESS NEW RELEASE TO PUBLISH THE FIRST ONE</p></div></td></tr>';
+    return;
+  }
+  const rows = pressList.map((r, i) => ({ r, i })).filter(({ r }) => !q || [r.title, r.pr, r.cat].some(v => String(v || '').toLowerCase().includes(q)));
+  if(rows.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6" style="color:var(--subtext);font-size:0.8rem;padding:1.5rem">No release matches "' + esc(q) + '".</td></tr>';
+    return;
+  }
+  const last = pressList.length - 1;
+  tbody.innerHTML = rows.map(({ r, i }) => `
+    <tr>
+      <td style="white-space:nowrap">
+        <span style="font-family:var(--font-mono);font-size:0.75rem;color:var(--accent);margin-right:0.4rem">${String(i+1).padStart(2,'0')}</span>
+        <button class="btn-ghost" title="Move up" style="padding:0.2rem 0.5rem" ${i === 0 || q ? 'disabled' : ''} onclick="movePress(${i},-1)">&uarr;</button>
+        <button class="btn-ghost" title="Move down" style="padding:0.2rem 0.5rem" ${i === last || q ? 'disabled' : ''} onclick="movePress(${i},1)">&darr;</button>
+      </td>
+      <td class="pr-title-cell">${esc(r.title) || '<i style="color:var(--subtext)">No headline</i>'}${i === 0 ? '<span class="pr-latest">LATEST</span>' : ''}<small>${esc(r.pr) || '—'} · ${esc(r.read) || ''}</small></td>
+      <td>${r.cat ? `<span class="badge badge-reviewing">${esc(r.cat)}</span>` : '<span style="color:var(--subtext)">—</span>'}</td>
+      <td style="font-family:var(--font-mono);font-size:0.75rem;color:var(--subtext);white-space:nowrap">${esc(r.date) || '—'}</td>
+      <td style="font-size:0.72rem;color:var(--subtext);white-space:nowrap">${[r.img ? '🖼 Picture' : '', r.pdf ? '📄 PDF' : ''].filter(Boolean).join('<br>') || '—'}</td>
+      <td style="white-space:nowrap">
+        <button class="btn-ghost" onclick="openPressModal(${i})">EDIT</button>
+        <a class="btn-ghost" href="/media/press/${esc(pressSlug(r, i))}" target="_blank" rel="noopener" style="text-decoration:none">VIEW</a>
+        <button class="btn-danger" onclick="deletePress(${i})">DELETE</button>
+      </td>
+    </tr>`).join('');
+}
+
+async function savePressList(items, okMsg) {
+  const res = await authFetch(`${API}/content/media-press`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ path: 'releases', value: items })
+  });
+  if(!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    showToast(err.error || 'Could not save', true);
+    return false;
+  }
+  const body = await res.json().catch(() => ({}));
+  pressList = body.data && Array.isArray(body.data.releases) ? body.data.releases : items;
+  if(pageValues && body.data) pageValues['media-press'] = body.data;
+  renderPress();
+  showToast(okMsg);
+  return true;
+}
+
+function setPressImg(url) {
+  document.getElementById('press-img').value = url || '';
+  const p = document.getElementById('press-img-preview');
+  if(url) { p.src = url; p.style.display = 'block'; } else { p.style.display = 'none'; }
+  document.getElementById('press-img-remove').style.display = url ? 'inline-block' : 'none';
+  document.getElementById('press-img-label').textContent = url ? 'CLICK TO REPLACE THE PICTURE' : 'CLICK TO UPLOAD A PICTURE';
+}
+function setPressPdf(url) {
+  document.getElementById('press-pdf').value = url || '';
+  const row = document.getElementById('press-pdf-row');
+  row.style.display = url ? 'flex' : 'none';
+  document.getElementById('press-pdf-open').href = url || '#';
+  document.getElementById('press-pdf-label').textContent = url ? 'CLICK TO REPLACE THE PDF' : 'CLICK TO UPLOAD A PDF';
+}
+
+function pressBodyChanged() {
+  pressDirty = true;
+  const t = document.getElementById('press-text').value;
+  const words = t.trim().split(/\s+/).filter(Boolean).length;
+  const paras = t.split(/\r?\n\s*\r?\n/).map(s => s.trim()).filter(Boolean).length;
+  document.getElementById('press-words').textContent = words + ' words · ' + paras + ' paragraph' + (paras === 1 ? '' : 's');
+  if(!pressReadTouched) document.getElementById('press-read').value = pressReadTime(t);
+}
+
+function openPressModal(i) {
+  const r = i >= 0 ? pressList[i] : null;
+  document.getElementById('press-index').value = String(i);
+  document.getElementById('press-title').value = r ? (r.title || '') : '';
+  document.getElementById('press-cat').value = r ? (r.cat || '') : '';
+  document.getElementById('press-pr').value = r ? (r.pr || '') : nextPressRef();
+  document.getElementById('press-read').value = r ? (r.read || '') : '';
+  document.getElementById('press-text').value = r ? (r.body || '') : '';
+  document.getElementById('press-summary').value = r ? (r.summary || '') : '';
+  // তারিখ চেনা গেলে ক্যালেন্ডারে, না চেনা গেলে লেখাটা যেমন ছিল থাকে
+  const dateIn = document.getElementById('press-date');
+  const hint = document.getElementById('press-date-hint');
+  dateIn.value = r ? pressDateToInput(r.date) : pressDateToInput(new Date().toDateString());
+  dateIn.dataset.orig = r ? (r.date || '') : '';
+  hint.classList.toggle('is-warn', !!(r && r.date && !dateIn.value));
+  hint.textContent = r && r.date && !dateIn.value ? 'Now shown as "' + r.date + '" — pick a date to replace it.' : 'Shown as e.g. June 16, 2026.';
+  document.getElementById('press-title-hint').textContent = r
+    ? "Changing the headline also changes this release's web address."
+    : "This is the big title on the list and on the release's own page.";
+  setPressImg(r ? r.img : '');
+  setPressPdf(r ? r.pdf : '');
+  document.getElementById('press-cats').innerHTML = [...new Set(pressList.map(x => x.cat).filter(Boolean))].map(c => `<option value="${esc(c)}">`).join('');
+  pressReadTouched = !!(r && r.read && r.read !== pressReadTime(r.body));
+  pressBodyChanged();
+  pressDirty = false;
+  document.getElementById('press-status').textContent = r ? (i === 0 ? 'This is the latest release, shown large at the top.' : 'Release ' + (i + 1) + ' of ' + pressList.length) : 'The new release is added at the top, as the latest.';
+  document.getElementById('press-modal-title').innerHTML = r ? 'EDIT <span>RELEASE</span>' : 'NEW <span>RELEASE</span>';
+  document.getElementById('press-save-btn').disabled = false;
+  document.getElementById('press-modal').classList.add('open');
+  setTimeout(() => document.getElementById('press-title').focus(), 50);
+}
+
+function closePressModal() {
+  if(pressDirty && !confirm('Close without saving this release?')) return;
+  pressDirty = false;
+  closeModal('press-modal');
+}
+
+async function uploadPressImg(input) {
+  const file = input.files[0];
+  if(!file) return;
+  const fd = new FormData(); fd.append('image', file);
+  document.getElementById('press-img-label').textContent = 'UPLOADING…';
+  try {
+    const res = await authFetch(`${API}/content/upload`, {method:'POST', body: fd});
+    const body = await res.json().catch(() => ({}));
+    if(!res.ok) { setPressImg(document.getElementById('press-img').value); return showToast(body.error || 'Could not upload', true); }
+    setPressImg(body.url); pressDirty = true;
+    showToast('Picture uploaded — press SAVE & PUBLISH to keep it');
+  } catch(e) { setPressImg(document.getElementById('press-img').value); showToast('Could not upload', true); }
+  finally { input.value = ''; }
+}
+
+async function uploadPressPdf(input) {
+  const file = input.files[0];
+  if(!file) return;
+  const fd = new FormData(); fd.append('file', file);
+  document.getElementById('press-pdf-label').textContent = 'UPLOADING…';
+  try {
+    const res = await authFetch(`${API}/content/upload-file`, {method:'POST', body: fd});
+    const body = await res.json().catch(() => ({}));
+    if(!res.ok) { setPressPdf(document.getElementById('press-pdf').value); return showToast(body.error || 'Could not upload', true); }
+    setPressPdf(body.url); pressDirty = true;
+    showToast('PDF uploaded — press SAVE & PUBLISH to keep it');
+  } catch(e) { setPressPdf(document.getElementById('press-pdf').value); showToast('Could not upload', true); }
+  finally { input.value = ''; }
+}
+
+async function savePress() {
+  const i = Number(document.getElementById('press-index').value);
+  const title = document.getElementById('press-title').value.trim();
+  const body = document.getElementById('press-text').value.trim();
+  if(!title) { document.getElementById('press-title').focus(); return showToast('Please write a headline', true); }
+  if(!body) { document.getElementById('press-text').focus(); return showToast('Please write the text of the release', true); }
+  const dateIn = document.getElementById('press-date');
+  const old = i >= 0 ? pressList[i] : {};
+  // আগের সারির অন্য ঘরগুলো (থাকলে) রেখে দিই
+  const row = Object.assign({}, old, {
+    title,
+    cat: document.getElementById('press-cat').value.trim(),
+    date: dateIn.value ? pressDateFromInput(dateIn.value) : (dateIn.dataset.orig || ''),
+    pr: document.getElementById('press-pr').value.trim(),
+    read: document.getElementById('press-read').value.trim() || pressReadTime(body),
+    body,
+    summary: document.getElementById('press-summary').value.trim(),
+    img: document.getElementById('press-img').value.trim(),
+    pdf: document.getElementById('press-pdf').value.trim(),
+  });
+  const items = pressList.slice();
+  // নতুন বিজ্ঞপ্তি উপরে — সেটাই সাইটে "Latest Release"
+  if(i >= 0 && i < items.length) items[i] = row; else items.unshift(row);
+  const btn = document.getElementById('press-save-btn');
+  btn.disabled = true; btn.textContent = 'SAVING…';
+  try {
+    const ok = await savePressList(items, i >= 0 ? 'Release updated — live on the site now' : 'Release published — live on the site now');
+    if(ok) { pressDirty = false; closeModal('press-modal'); }
+  } catch(e) { showToast('Could not save', true); }
+  finally { btn.disabled = false; btn.textContent = 'SAVE & PUBLISH'; }
+}
+
+async function deletePress(i) {
+  const r = pressList[i];
+  if(!r || !confirm('Delete this press release from the site?\n\n"' + (r.title || 'Untitled') + '"\n\nThis cannot be undone.')) return;
+  try { await savePressList(pressList.filter((_, k) => k !== i), 'Release deleted'); } catch(e) { showToast('Could not delete', true); }
+}
+
+async function movePress(i, dir) {
+  const j = i + dir;
+  if(j < 0 || j >= pressList.length) return;
+  const items = pressList.slice();
+  [items[i], items[j]] = [items[j], items[i]];
+  try { await savePressList(items, j === 0 || i === 0 ? 'Order saved — the top one is now the latest release' : 'Order saved'); } catch(e) { showToast('Could not save the order', true); }
 }
 
 // HERO BANNER
