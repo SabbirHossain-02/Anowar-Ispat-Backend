@@ -253,15 +253,19 @@ const PAGES = [
         group: 'Products',
         url: '/products/specifications',
         fields: [
+            { type: 'section', label: "Banner", note: "The picture and the words across the top, and the path under it" },
             ...banner('PRODUCT SPECIFICATIONS', 'Built for', 'Strength', '/Product-Specifications.jpeg'),
+            { key: 'crumb', label: "Path under the banner — this page's name (after Home > Products >)", type: 'text', now: 'Product Specifications' },
+            { type: 'section', label: "Opening paragraph", note: "The paragraph under the banner" },
             {
                 key: 'intro', label: 'Opening paragraph', type: 'textarea',
                 now: 'Every batch is tested on a spectrometer across 28 elements before it leaves the mill, to hold the tolerances that piling, slabs and columns are designed against.',
             },
+            { type: 'section', label: "Applications", note: "The three picture cards" },
             { key: 'apps.eyebrow', label: 'Applications — small label', type: 'text', now: 'APPLICATIONS' },
             { key: 'apps.title', label: 'Applications — heading', type: 'text', now: 'Where the bar goes' },
             {
-                key: 'apps.items', label: 'Applications', type: 'list',
+                key: 'apps.items', label: 'Applications — the cards, in order', type: 'list',
                 now: 'Piling foundation · Slab construction · Constructing pillars',
                 item: [
                     { key: 'image', label: 'Photograph', type: 'image-url' },
@@ -269,18 +273,22 @@ const PAGES = [
                     { key: 'text', label: 'Description', type: 'textarea' },
                 ],
             },
+            { type: 'section', label: "Size chart", note: "The table of diameters — a visitor clicks a size to ask for a quotation" },
             { key: 'chart.eyebrow', label: 'Size chart — small label', type: 'text', now: 'SIZE CHART' },
             { key: 'chart.title', label: 'Size chart — heading', type: 'text', now: 'Available diameters' },
             {
-                key: 'chart.grades',
-                label: 'Size chart — grades shown as columns, one per line. Available: 500CWR, 500DWR, 420DWR. Delete a line to hide that column, add it back to show it',
-                type: 'lines',
-                now: '500DWR / 420DWR',
+                key: 'chart.columns', label: 'Size chart — one entry per grade, shown left to right. Add a grade to add its columns, delete it to remove them', type: 'list',
+                now: '500DWR · 420DWR',
+                item: [
+                    { key: 'grade', label: 'Grade (column heading), e.g. 500DWR', type: 'text' },
+                    { key: 'sizes', label: 'Sizes in mm, one per line, smallest first — they fill two per row. Write — for a size this grade is not made in, so the rows stay lined up', type: 'lines' },
+                ],
             },
             {
                 key: 'chart.note', label: 'Note under the size chart', type: 'textarea',
                 now: '420DWR is not produced in 8 mm. For any diameter or quantity, send us the requirement and we will confirm availability.',
             },
+            { key: 'chart.quoteBtn', label: 'Button under the size chart', type: 'text', now: 'Request a quotation' },
         ],
     },
     {
