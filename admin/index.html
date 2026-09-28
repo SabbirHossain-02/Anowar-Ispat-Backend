@@ -1900,6 +1900,20 @@ function listRow(field, row, i) {
       </div>`;
     }
 
+    // কয়েকটি ছবি — ছোট ছবির সারি, প্রতিটিতে মোছার বোতাম; একসাথে অনেকগুলো তোলা যায়
+    if (sub.type === 'images') {
+      const pics = (Array.isArray(v) ? v : []).filter(Boolean);
+      return `<div class="row-pics" data-sub="${esc(sub.key)}" style="margin-bottom:0.6rem">
+        <label class="form-label" style="font-size:0.7rem">${esc(sub.label)}</label>
+        <div class="row-pics-list" style="display:flex;flex-wrap:wrap;gap:0.45rem">${pics.map(picThumb).join('')}</div>
+        <div style="display:flex;gap:0.6rem;align-items:center;margin-top:0.45rem">
+          <button type="button" class="btn-ghost" style="padding:0.35rem 0.8rem;font-size:0.7rem" onclick="this.parentElement.querySelector('.row-pics-file').click()">UPLOAD PHOTOS</button>
+          <span class="row-pics-note" style="color:var(--subtext);font-size:0.68rem">JPG or PNG — pick several at once</span>
+          <input type="file" class="row-pics-file" accept="image/*" multiple style="display:none" onchange="uploadRowPics(this)" />
+        </div>
+      </div>`;
+    }
+
     // PDF — আপলোড বোতাম, আর দেওয়া থাকলে খুলে দেখার লিংক
     if (sub.type === 'file-url') {
       return `<div class="row-pdf" style="margin-bottom:0.6rem">
@@ -1977,6 +1991,39 @@ function uploadRowVideo(input) {
   xhr.onerror = () => { bar.style.display = 'none'; showToast('Could not upload the video', true); };
   xhr.send(fd);
   input.value = '';
+}
+
+function picThumb(url) {
+  return `<span class="row-pic" data-url="${esc(url)}" style="position:relative;width:74px;height:74px;border:1px solid var(--border);border-radius:4px;overflow:hidden;background:var(--bg3)">
+    <img src="${esc(url)}" alt="" style="width:100%;height:100%;object-fit:cover" />
+    <button type="button" title="Remove this photo" onclick="this.parentElement.remove();markDirty()" style="position:absolute;top:2px;right:2px;width:20px;height:20px;border:0;border-radius:50%;background:rgba(0,0,0,0.7);color:#fff;font-size:12px;line-height:20px;cursor:pointer;padding:0">&times;</button>
+  </span>`;
+}
+
+// একটা একটা করে তুলি, প্রতিটি উঠলেই সারিতে যোগ হয়
+async function uploadRowPics(input) {
+  const files = [...input.files];
+  if(!files.length) return;
+  const wrap = input.closest('.row-pics');
+  const list = wrap.querySelector('.row-pics-list');
+  const note = wrap.querySelector('.row-pics-note');
+  let done = 0, failed = 0;
+  for(const file of files) {
+    note.textContent = 'Uploading ' + (done + failed + 1) + ' of ' + files.length + '…';
+    const fd = new FormData();
+    fd.append('image', file);
+    try {
+      const res = await authFetch(`${API}/content/upload`, {method:'POST', body: fd});
+      const body = await res.json().catch(()=>({}));
+      if(!res.ok) { failed++; continue; }
+      list.insertAdjacentHTML('beforeend', picThumb(body.url));
+      done++;
+    } catch(e) { failed++; }
+  }
+  note.textContent = 'JPG or PNG — pick several at once';
+  input.value = '';
+  if(done) markDirty();
+  showToast(failed ? done + ' uploaded, ' + failed + ' failed — press Save to keep them' : done + ' photo(s) uploaded — press Save to put them on the site', failed > 0);
 }
 
 async function uploadRowPdf(input) {
@@ -2210,6 +2257,11 @@ function collectPage(base) {
         f.item.forEach(sub => {
           const el = rowEl.querySelector(`[data-sub="${sub.key}"]`);
           if(sub.type === 'check') { row[sub.key] = !!(el && el.checked); return; }
+          if(sub.type === 'images') {
+            row[sub.key] = el ? [...el.querySelectorAll('.row-pic')].map(p => p.dataset.url).filter(Boolean) : [];
+            if(row[sub.key].length) any = true;
+            return;
+          }
           if(sub.type === 'pairs') {
             row[sub.key] = el ? [...el.querySelectorAll('.pair-row')].map(r => {
               const l = r.querySelector('.pair-l').value.trim();
