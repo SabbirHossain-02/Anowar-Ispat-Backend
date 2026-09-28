@@ -521,10 +521,7 @@ const PAGES = [
                 key: 'footer.legal', label: 'Footer — second column links, one per line as  Label | link', type: 'lines',
                 now: 'Privacy Policy · Terms of Service',
             },
-            {
-                key: 'footer.social', label: 'Footer — social links at the very bottom, one per line as  Name | link', type: 'lines',
-                now: 'Facebook | # · LinkedIn | # · Twitter | #',
-            },
+            { key: 'footer.social', label: 'Footer — social media icons at the very bottom', type: 'social' },
             { key: 'footer.copyright', label: 'Footer — copyright line (the year is added in front on its own)', type: 'text', now: 'Anwar Ispat. All Rights Reserved.' },
         ],
     },
