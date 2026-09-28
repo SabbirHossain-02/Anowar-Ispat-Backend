@@ -228,6 +228,12 @@ const PAGES = [
             { key: 'chart.eyebrow', label: 'Size chart — small label', type: 'text', now: 'SIZE CHART' },
             { key: 'chart.title', label: 'Size chart — heading', type: 'text', now: 'Available diameters' },
             {
+                key: 'chart.grades',
+                label: 'Size chart — grades shown as columns, one per line. Available: 500CWR, 500DWR, 420DWR. Delete a line to hide that column, add it back to show it',
+                type: 'lines',
+                now: '500DWR / 420DWR',
+            },
+            {
                 key: 'chart.note', label: 'Note under the size chart', type: 'textarea',
                 now: '420DWR is not produced in 8 mm. For any diameter or quantity, send us the requirement and we will confirm availability.',
             },
