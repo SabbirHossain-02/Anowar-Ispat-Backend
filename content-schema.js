@@ -32,24 +32,36 @@ const PAGES = [
         group: 'About',
         url: '/about',
         fields: [
+            { type: 'section', label: "Banner", note: "The picture and the words across the top, and the path under it" },
             ...banner('ABOUT US', 'Forged in Fire, Built for', 'Eternity', '/about-banner.jpeg'),
+            { key: 'crumb', label: 'Path under the banner — this page\'s name (after Home >)', type: 'text', now: 'About us' },
+            { type: 'section', label: "Opening paragraph", note: "The centred paragraph under the banner" },
             {
                 key: 'intro', label: 'Opening paragraph', type: 'textarea',
                 now: 'As a proud concern of the century-old Anwar Group, Anwar Ispat has led the mild steel industry since 1978. We were the first to introduce 60-grade steel to Bangladesh and have consistently upgraded our facilities to bring the world\'s most advanced technology to the local market. From the tallest skyscrapers to complex nuclear power plants, our commitment to quality ensures that every structure built with Anwar Ispat is resilient, durable, and safe.',
             },
+            { type: 'section', label: "Heritage timeline", note: "The wavy line of years that slides sideways" },
+            { type: 'note', label: "These years are also used on the Heritage page (About → Heritage), so a change here shows there too." },
             {
                 key: 'timeline.title', label: 'Heritage timeline — heading', type: 'text',
                 now: 'A legacy to value in the present, and to pass on to future generations',
             },
             {
-                key: 'timeline.items', label: 'Heritage milestones — the years on the line', type: 'list',
+                key: 'timeline.note', label: 'Line under the heading — {count}, {first} and {last} fill in from the years below', type: 'text',
+                now: '{count} milestones from {first} to {last}. Scroll to follow the line.',
+            },
+            {
+                key: 'timeline.items', label: 'Heritage milestones — the years on the line, in order', type: 'list',
                 now: '29 milestones from 1834 to 2022',
                 item: [
                     { key: 'year', label: 'Year', type: 'text' },
                     { key: 'name', label: 'Name', type: 'text' },
                     { key: 'text', label: 'Description', type: 'text' },
+                    { key: 'highlight', label: 'Highlight this year (name and dot in red)', type: 'check' },
+                    { key: 'memoriam', label: 'In memoriam (year and dot in grey)', type: 'check' },
                 ],
             },
+            { type: 'section', label: "Why Anwar Ispat", note: "The numbered reasons at the foot of the page" },
             { key: 'why.eyebrow', label: 'Why Anwar Ispat — small label', type: 'text', now: 'WHY ANWAR ISPAT' },
             { key: 'why.title', label: 'Why Anwar Ispat — heading', type: 'text', now: 'Six reasons builders choose us' },
             {

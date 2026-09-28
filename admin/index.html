@@ -1879,6 +1879,14 @@ function listRow(field, row, i) {
       </div>`;
     }
 
+    // হ্যাঁ/না — যেমন টাইমলাইনের কোনো সাল লাল করে দেখানো
+    if (sub.type === 'check') {
+      return `<label style="display:flex;align-items:center;gap:0.5rem;margin:0.2rem 0 0.6rem;font-size:0.78rem;color:var(--text);cursor:pointer">
+        <input type="checkbox" data-sub="${esc(sub.key)}"${v ? ' checked' : ''} style="width:16px;height:16px;accent-color:var(--accent)" />
+        ${esc(sub.label)}
+      </label>`;
+    }
+
     const tag = sub.type === 'textarea' || sub.type === 'lines'
       ? `<textarea class="form-textarea" style="min-height:70px" data-sub="${esc(sub.key)}">${esc(val)}</textarea>`
       : `<input class="form-input" data-sub="${esc(sub.key)}" value="${esc(val)}" />`;
@@ -2131,6 +2139,7 @@ function collectPage(base) {
         let any = false;
         f.item.forEach(sub => {
           const el = rowEl.querySelector(`[data-sub="${sub.key}"]`);
+          if(sub.type === 'check') { row[sub.key] = !!(el && el.checked); return; }
           const raw = el ? el.value.trim() : '';
           if(raw) any = true;
           row[sub.key] = sub.type === 'lines'
