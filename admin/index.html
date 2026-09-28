@@ -1885,6 +1885,21 @@ function listRow(field, row, i) {
       </div>`;
     }
 
+    // শিরোনাম আর মান আলাদা ঘরে — যেমন নেতার তথ্য "Education | MBA …"।
+    // সংরক্ষণ হয় আগের মতোই "Label | Value" লেখা হিসেবে, তাই সাইট একই থাকে।
+    if (sub.type === 'pairs') {
+      const list = Array.isArray(v) ? v : (v ? String(v).split('\n') : []);
+      const pairs = list.map(line => {
+        const s = String(line); const at = s.indexOf('|');
+        return at < 0 ? { l: '', v: s.trim() } : { l: s.slice(0, at).trim(), v: s.slice(at + 1).trim() };
+      }).filter(p => p.l || p.v);
+      return `<div data-sub="${esc(sub.key)}" style="margin-bottom:0.6rem">
+        <label class="form-label" style="font-size:0.7rem">${esc(sub.label)}</label>
+        <div class="pair-rows">${pairs.map(pairRow).join('')}</div>
+        <button type="button" class="btn-ghost" style="padding:0.3rem 0.75rem;font-size:0.68rem" onclick="addPair(this)">+ ADD FACT</button>
+      </div>`;
+    }
+
     // হ্যাঁ/না — যেমন টাইমলাইনের কোনো সাল লাল করে দেখানো
     if (sub.type === 'check') {
       return `<label style="display:flex;align-items:center;gap:0.5rem;margin:0.2rem 0 0.6rem;font-size:0.78rem;color:var(--text);cursor:pointer">
@@ -2062,6 +2077,21 @@ document.addEventListener('click', (e) => {
   document.querySelectorAll('.social-menu').forEach(m => { m.hidden = true; });
 });
 
+// তথ্যের এক সারি: বাঁয়ে শিরোনাম, ডানে মান
+function pairRow(p) {
+  return `<div class="pair-row" style="display:flex;gap:0.45rem;align-items:center;margin-bottom:0.45rem">
+    <input class="form-input pair-l" style="flex:0 0 30%" value="${esc(p.l)}" placeholder="Label, e.g. Education" />
+    <input class="form-input pair-v" style="flex:1;min-width:0" value="${esc(p.v)}" placeholder="Value, e.g. MBA, University of New Hampshire" />
+    <button type="button" class="btn-danger" style="padding:0.35rem 0.6rem;font-size:0.68rem;flex-shrink:0" onclick="this.closest('.pair-row').remove();markDirty()">DELETE</button>
+  </div>`;
+}
+function addPair(btn) {
+  const box = btn.parentElement.querySelector('.pair-rows');
+  box.insertAdjacentHTML('beforeend', pairRow({ l: '', v: '' }));
+  box.lastElementChild.querySelector('.pair-l').focus();
+  markDirty();
+}
+
 // তালিকার সারি উপরে-নিচে সরানো আর মোছা — সংরক্ষণ হয় Save দিলে
 function renumberRows(box) {
   box.querySelectorAll('.list-row').forEach((r, i) => {
@@ -2146,6 +2176,16 @@ function collectPage(base) {
         f.item.forEach(sub => {
           const el = rowEl.querySelector(`[data-sub="${sub.key}"]`);
           if(sub.type === 'check') { row[sub.key] = !!(el && el.checked); return; }
+          if(sub.type === 'pairs') {
+            row[sub.key] = el ? [...el.querySelectorAll('.pair-row')].map(r => {
+              const l = r.querySelector('.pair-l').value.trim();
+              const v = r.querySelector('.pair-v').value.trim();
+              if(!v) return null;
+              return l ? l + ' | ' + v : v;
+            }).filter(Boolean) : [];
+            if(row[sub.key].length) any = true;
+            return;
+          }
           const raw = el ? el.value.trim() : '';
           if(raw) any = true;
           row[sub.key] = sub.type === 'lines'
