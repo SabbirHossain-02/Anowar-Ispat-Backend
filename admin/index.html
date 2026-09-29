@@ -214,6 +214,18 @@
   .sec.is-shut .sec-caret { transform: rotate(-90deg); }
 
   /* উপরে লাফানোর সারি */
+  .mod-box { margin: 0.2rem 0 1rem; }
+  .mod-bar { display: flex; gap: 0.6rem; align-items: center; flex-wrap: wrap; margin-bottom: 0.8rem; }
+  .mod-bar .pr-hint { margin: 0; flex: 1; min-width: 220px; }
+  .mod-table { width: 100%; border: 1px solid var(--border); border-collapse: collapse; }
+  .mod-table th { text-align: left; font-family: var(--font-mono); font-size: 0.62rem; letter-spacing: 0.12em; color: var(--subtext); padding: 0.55rem 0.7rem; border-bottom: 1px solid var(--border); background: var(--bg3); }
+  .mod-table td { padding: 0.55rem 0.7rem; border-bottom: 1px solid var(--border); font-size: 0.8rem; vertical-align: middle; }
+  .mod-thumb { width: 64px; height: 48px; object-fit: cover; border: 1px solid var(--border); background: var(--bg3); display: block; }
+  .ev-pic { position: relative; width: 84px; height: 64px; border: 1px solid var(--border); overflow: hidden; background: var(--bg3); }
+  .ev-pic img { width: 100%; height: 100%; object-fit: cover; }
+  .ev-pic button { position: absolute; top: 2px; width: 20px; height: 20px; border: 0; border-radius: 50%; background: rgba(0,0,0,0.72); color: #fff; font-size: 11px; line-height: 20px; cursor: pointer; padding: 0; }
+  .ev-pic .ev-x { right: 2px; }
+  .ev-pic .ev-star { left: 2px; }
   .pr-help { display: grid; gap: 0.35rem; margin: -0.8rem 0 1.25rem; padding: 0.85rem 1rem; background: var(--bg2); border: 1px solid var(--border); border-left: 3px solid var(--accent); font-size: 0.8rem; color: var(--subtext); line-height: 1.55; }
   .pr-help b { color: var(--text); }
   .pr-help a { color: var(--accent); }
@@ -1130,6 +1142,77 @@
   </div>
 </div>
 
+<!-- EVENT MODAL (Page Text → Event Gallery) -->
+<div class="modal-overlay" id="ev-modal">
+  <div class="modal pr-modal">
+    <div class="modal-header">
+      <div class="modal-title" id="ev-modal-title">NEW <span>EVENT</span></div>
+      <button class="modal-close" onclick="closeEvModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="ev-index" />
+
+      <div class="pr-step">1 &middot; About the event</div>
+      <div class="form-group">
+        <label class="form-label">EVENT NAME *</label>
+        <input class="form-input" id="ev-title" placeholder="e.g. Scholarship Distribution Ceremony 2026" oninput="evDirty=true" />
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">CATEGORY</label>
+          <input class="form-input" id="ev-cat" list="ev-cats" placeholder="Pick or type, e.g. CSR" oninput="evDirty=true" />
+          <datalist id="ev-cats"></datalist>
+          <div class="pr-hint">Each category becomes a filter button on the page.</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">DATE</label>
+          <div style="display:flex;gap:0.5rem">
+            <input class="form-input" id="ev-date" placeholder="e.g. June 16, 2026 or May 2026" oninput="evDirty=true" style="flex:1;min-width:0" />
+            <input class="form-input" type="date" title="Pick from the calendar" onchange="if(this.value){document.getElementById('ev-date').value=pressDateFromInput(this.value);evDirty=true}" style="width:46px;padding-left:0.55rem;padding-right:0;cursor:pointer;color:transparent" />
+          </div>
+          <div class="pr-hint">Type it, or pick from the calendar.</div>
+        </div>
+      </div>
+
+      <div class="pr-step">2 &middot; Photos</div>
+      <div class="form-group">
+        <label class="form-label">COVER PHOTO</label>
+        <div style="display:flex;gap:1rem;align-items:flex-start;flex-wrap:wrap">
+          <div id="ev-cover-box" style="width:180px;aspect-ratio:4/3;border:1px dashed var(--border);background:var(--bg3);display:flex;align-items:center;justify-content:center;overflow:hidden;cursor:pointer" onclick="document.getElementById('ev-cover-file').click()">
+            <span style="font-size:0.7rem;color:var(--subtext);text-align:center;padding:0.5rem">Click to upload</span>
+          </div>
+          <div>
+            <button type="button" class="btn-ghost" style="padding:0.35rem 0.8rem;font-size:0.7rem" onclick="document.getElementById('ev-cover-file').click()">UPLOAD COVER</button>
+            <button type="button" class="btn-ghost" id="ev-cover-remove" style="display:none;margin-left:0.4rem;padding:0.35rem 0.8rem;font-size:0.7rem" onclick="setEvCover('');evDirty=true">REMOVE</button>
+            <div class="pr-hint" style="max-width:300px">Shown on the event's card, and first when a visitor opens the event.</div>
+          </div>
+        </div>
+        <input type="file" id="ev-cover-file" accept="image/*" style="display:none" onchange="uploadEvCover(this)" />
+        <input type="hidden" id="ev-cover" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">MORE PHOTOS <span id="ev-gal-count" style="text-transform:none;letter-spacing:0;color:var(--subtext);font-weight:400"></span></label>
+        <div id="ev-gallery" style="display:flex;flex-wrap:wrap;gap:0.5rem"></div>
+        <div style="display:flex;gap:0.6rem;align-items:center;margin-top:0.55rem">
+          <button type="button" class="btn-ghost" style="padding:0.35rem 0.8rem;font-size:0.7rem" onclick="document.getElementById('ev-gal-file').click()">+ ADD PHOTOS</button>
+          <span id="ev-gal-note" class="pr-hint" style="margin:0">Pick several at once. Click &times; on a photo to take it out, &#9733; to make it the cover.</span>
+        </div>
+        <input type="file" id="ev-gal-file" accept="image/*" multiple style="display:none" onchange="uploadEvGallery(this)" />
+      </div>
+      <div class="form-group" id="ev-photos-group">
+        <label class="form-label">NUMBER OF PHOTOS TO SHOW <span style="text-transform:none;letter-spacing:0;color:var(--subtext);font-weight:400">— only while no photos are uploaded</span></label>
+        <input class="form-input" id="ev-photos" placeholder="e.g. 24" style="max-width:160px" oninput="evDirty=true" />
+        <div class="pr-hint">Once photos are uploaded, the site counts them itself.</div>
+      </div>
+    </div>
+    <div class="modal-footer pr-footer">
+      <span id="ev-status" style="margin-right:auto;font-size:0.72rem;color:var(--subtext)"></span>
+      <button class="btn-ghost" onclick="closeEvModal()">CANCEL</button>
+      <button class="btn-primary" id="ev-save-btn" onclick="saveEv()">SAVE &amp; PUBLISH</button>
+    </div>
+  </div>
+</div>
+
 <!-- OPEN POSITION MODAL -->
 <div class="modal-overlay" id="job-modal">
   <div class="modal">
@@ -1843,7 +1926,7 @@ function openPage(key) {
             <span class="sec-name">${esc(f.label)}</span>
             ${f.note ? `<span class="sec-note">${esc(f.note)}</span>` : ''}
           </span>
-          <span class="sec-count">${count === 0 ? 'Own menu' : count + ' ' + (count === 1 ? 'box' : 'boxes')}</span>
+          <span class="sec-count">${count < 0 ? 'Add · edit · delete here' : count === 0 ? 'Own menu' : count + ' ' + (count === 1 ? 'box' : 'boxes')}</span>
           <svg class="sec-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
         </button>
         <div class="sec-body">`;
@@ -1903,6 +1986,13 @@ function openPage(key) {
       return;
     }
 
+    // পুরো একটি ব্যবস্থাপক — যেমন ইভেন্ট গ্যালারির অনুষ্ঠানগুলো। নিজে নিজে
+    // সংরক্ষণ করে, পাতার SAVE বোতামের উপর নির্ভর করে না
+    if(f.type === 'module') {
+      html += `<div class="mod-box" data-module="${esc(f.module)}"><div class="loading"><div class="spinner"></div> Loading...</div></div>`;
+      return;
+    }
+
     // সোশ্যাল: বাঁয়ে প্ল্যাটফর্ম, ডানে লিংক; নিচে ADD SOCIAL এ সব প্ল্যাটফর্ম
     if(f.type === 'social') {
       const rows = normSocial(val);
@@ -1953,6 +2043,7 @@ function openPage(key) {
   // নিচে দ্বিতীয় একটি Save ছিল — টপ বারেরটি সবসময় দেখা যায় বলে
   // ওটা কেবল একই কাজের দুটি বোতাম হয়ে দাঁড়িয়েছিল
   box.innerHTML = html;
+  if(box.querySelector('[data-module="events"]')) renderEvModule();
   showPageActions(page.label);
 }
 
@@ -1974,6 +2065,7 @@ function countFields(fields, head) {
     if(f === head) { on = true; continue; }
     if(!on) continue;
     if(f.type === 'section') break;
+    if(f.type === 'module') return -1;
     if(f.type !== 'note') c += 1;
   }
   return c;
@@ -2380,7 +2472,8 @@ function collectPage(base) {
   const out = JSON.parse(JSON.stringify(base || pageValues[currentPageKey] || {}));
 
   page.fields.forEach(f => {
-    if(f.type === 'image' || f.type === 'note' || f.type === 'section') return;
+    // module নিজে সংরক্ষণ করে — এখানে ছুঁলে খালি লেখা দিয়ে তালিকা মুছে যেত
+    if(f.type === 'image' || f.type === 'note' || f.type === 'section' || f.type === 'module') return;
     if(f.type === 'social') {
       const box = document.getElementById('social-' + cssId(f.key));
       const rows = [...box.querySelectorAll('.social-row')].map(r => ({
@@ -2714,6 +2807,213 @@ async function moveProject(i, dir) {
   const items = projectList.slice();
   [items[i], items[j]] = [items[j], items[i]];
   try { await saveProjects(items, 'Order saved'); } catch(e) { showToast('Could not save the order', true); }
+}
+
+// EVENT GALLERY — Page Text এর ভেতরের ব্যবস্থাপক
+// অনুষ্ঠানগুলো media-events.events এ। প্রতিটি বদল সাথে সাথে সংরক্ষিত হয়
+// (শুধু ওই তালিকা, PATCH) — পাতার বাকি লেখা ও SAVE বোতাম আলাদা।
+let evList = [];
+let evDirty = false;
+const evPhotos = (e) => [e && e.cover, ...((e && Array.isArray(e.gallery)) ? e.gallery : [])].filter(Boolean);
+
+function renderEvModule() {
+  const box = document.querySelector('[data-module="events"]');
+  if(!box) return;
+  const saved = pageValues['media-events'] || {};
+  evList = Array.isArray(saved.events) ? saved.events : [];
+  const last = evList.length - 1;
+  const rows = evList.map((e, i) => {
+    const pics = evPhotos(e);
+    return `<tr>
+      <td style="white-space:nowrap">
+        <span style="font-family:var(--font-mono);font-size:0.72rem;color:var(--accent);margin-right:0.35rem">${String(i+1).padStart(2,'0')}</span>
+        <button class="btn-ghost" title="Move up" style="padding:0.15rem 0.45rem" ${i === 0 ? 'disabled' : ''} onclick="moveEv(${i},-1)">&uarr;</button>
+        <button class="btn-ghost" title="Move down" style="padding:0.15rem 0.45rem" ${i === last ? 'disabled' : ''} onclick="moveEv(${i},1)">&darr;</button>
+      </td>
+      <td>${pics[0] ? `<img class="mod-thumb" src="${esc(pics[0])}" alt="" />` : '<div class="mod-thumb"></div>'}</td>
+      <td style="font-weight:600;max-width:320px">${esc(e.title) || '<i style="color:var(--subtext)">No name</i>'}${i === 0 ? '<span class="pr-latest">FEATURED</span>' : ''}</td>
+      <td>${e.cat ? `<span class="badge badge-reviewing">${esc(e.cat)}</span>` : '—'}</td>
+      <td style="font-family:var(--font-mono);font-size:0.72rem;color:var(--subtext);white-space:nowrap">${esc(e.date) || '—'}</td>
+      <td style="font-size:0.75rem;white-space:nowrap">${pics.length ? pics.length + ' uploaded' : '<span style="color:var(--subtext)">none yet</span>'}</td>
+      <td style="white-space:nowrap">
+        <button class="btn-ghost" style="padding:0.3rem 0.7rem" onclick="openEvModal(${i})">EDIT</button>
+        <button class="btn-danger" style="padding:0.3rem 0.7rem" onclick="deleteEv(${i})">DELETE</button>
+      </td>
+    </tr>`;
+  }).join('');
+  box.innerHTML = `
+    <div class="mod-bar">
+      <button type="button" class="btn-primary" style="padding:0.5rem 1.1rem;font-size:0.75rem" onclick="openEvModal(-1)">+ NEW EVENT</button>
+      <a class="btn-ghost" href="/media/events" target="_blank" rel="noopener" style="text-decoration:none;padding:0.5rem 1rem;font-size:0.72rem">VIEW PAGE &#8599;</a>
+      <p class="pr-hint">The event at the top is featured large on the page. Changes here are saved and shown on the site straight away — no need to press the SAVE button at the top.</p>
+    </div>
+    <table class="mod-table">
+      <thead><tr><th>ORDER</th><th>COVER</th><th>EVENT</th><th>CATEGORY</th><th>DATE</th><th>PHOTOS</th><th>ACTIONS</th></tr></thead>
+      <tbody>${rows || '<tr><td colspan="7" style="text-align:center;color:var(--subtext);padding:1.4rem">No events yet — press NEW EVENT to add the first one.</td></tr>'}</tbody>
+    </table>`;
+}
+
+async function saveEvList(items, okMsg) {
+  const res = await authFetch(`${API}/content/media-events`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ path: 'events', value: items })
+  });
+  if(!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    showToast(err.error || 'Could not save', true);
+    return false;
+  }
+  const body = await res.json().catch(() => ({}));
+  if(body.data) pageValues['media-events'] = body.data;
+  else pageValues['media-events'] = Object.assign({}, pageValues['media-events'], { events: items });
+  renderEvModule();
+  showToast(okMsg);
+  return true;
+}
+
+function setEvCover(url) {
+  document.getElementById('ev-cover').value = url || '';
+  const box = document.getElementById('ev-cover-box');
+  box.innerHTML = url
+    ? `<img src="${esc(url)}" alt="" style="width:100%;height:100%;object-fit:cover" />`
+    : '<span style="font-size:0.7rem;color:var(--subtext);text-align:center;padding:0.5rem">Click to upload</span>';
+  document.getElementById('ev-cover-remove').style.display = url ? 'inline-block' : 'none';
+  syncEvPhotosField();
+}
+
+function evGalleryUrls() {
+  return [...document.querySelectorAll('#ev-gallery .ev-pic')].map(p => p.dataset.url).filter(Boolean);
+}
+function evPicHtml(url) {
+  return `<span class="ev-pic" data-url="${esc(url)}"><img src="${esc(url)}" alt="" />
+    <button type="button" class="ev-star" title="Make this the cover" onclick="evMakeCover(this)">&#9733;</button>
+    <button type="button" class="ev-x" title="Take this photo out" onclick="this.parentElement.remove();evDirty=true;syncEvPhotosField()">&times;</button></span>`;
+}
+function setEvGallery(urls) {
+  document.getElementById('ev-gallery').innerHTML = (urls || []).filter(Boolean).map(evPicHtml).join('');
+  syncEvPhotosField();
+}
+// ★: এই ছবিটি প্রচ্ছদ হয়, আগের প্রচ্ছদ গ্যালারিতে নামে
+function evMakeCover(btn) {
+  const pic = btn.parentElement;
+  const url = pic.dataset.url;
+  const old = document.getElementById('ev-cover').value;
+  if(old) pic.insertAdjacentHTML('beforebegin', evPicHtml(old));
+  pic.remove();
+  setEvCover(url);
+  evDirty = true;
+}
+function syncEvPhotosField() {
+  const n = evGalleryUrls().length + (document.getElementById('ev-cover').value ? 1 : 0);
+  document.getElementById('ev-gal-count').textContent = n ? '— ' + n + ' photo' + (n === 1 ? '' : 's') + ' in all, cover included' : '';
+  document.getElementById('ev-photos-group').style.display = n ? 'none' : '';
+}
+
+function openEvModal(i) {
+  const e = i >= 0 ? evList[i] : null;
+  document.getElementById('ev-index').value = String(i);
+  document.getElementById('ev-title').value = e ? (e.title || '') : '';
+  document.getElementById('ev-cat').value = e ? (e.cat || '') : '';
+  document.getElementById('ev-date').value = e ? (e.date || '') : pressDateFromInput(pressDateToInput(new Date().toDateString()));
+  document.getElementById('ev-photos').value = e ? (e.photos ?? '') : '';
+  setEvCover(e ? e.cover : '');
+  setEvGallery(e && Array.isArray(e.gallery) ? e.gallery : []);
+  document.getElementById('ev-cats').innerHTML = [...new Set(evList.map(x => x.cat).filter(Boolean))].map(c => `<option value="${esc(c)}">`).join('');
+  document.getElementById('ev-status').textContent = e ? (i === 0 ? 'This is the featured event at the top of the page.' : 'Event ' + (i + 1) + ' of ' + evList.length) : 'The new event is added at the top, as the featured one.';
+  document.getElementById('ev-modal-title').innerHTML = e ? 'EDIT <span>EVENT</span>' : 'NEW <span>EVENT</span>';
+  document.getElementById('ev-save-btn').disabled = false;
+  evDirty = false;
+  document.getElementById('ev-modal').classList.add('open');
+  setTimeout(() => document.getElementById('ev-title').focus(), 50);
+}
+
+function closeEvModal() {
+  if(evDirty && !confirm('Close without saving this event?')) return;
+  evDirty = false;
+  closeModal('ev-modal');
+}
+
+async function evUpload(file) {
+  const fd = new FormData(); fd.append('image', file);
+  const res = await authFetch(`${API}/content/upload`, {method:'POST', body: fd});
+  const body = await res.json().catch(() => ({}));
+  if(!res.ok) throw new Error(body.error || 'Could not upload');
+  return body.url;
+}
+
+async function uploadEvCover(input) {
+  const file = input.files[0];
+  if(!file) return;
+  document.getElementById('ev-cover-box').innerHTML = '<span style="font-size:0.7rem;color:var(--subtext)">Uploading…</span>';
+  try { setEvCover(await evUpload(file)); evDirty = true; showToast('Cover uploaded — press SAVE & PUBLISH to keep it'); }
+  catch(e) { setEvCover(document.getElementById('ev-cover').value); showToast(e.message, true); }
+  finally { input.value = ''; }
+}
+
+async function uploadEvGallery(input) {
+  const files = [...input.files];
+  if(!files.length) return;
+  const note = document.getElementById('ev-gal-note');
+  const oldNote = note.innerHTML;
+  const btn = document.getElementById('ev-save-btn');
+  btn.disabled = true;
+  let done = 0, failed = 0;
+  for(const file of files) {
+    note.textContent = 'Uploading ' + (done + failed + 1) + ' of ' + files.length + '…';
+    try {
+      const url = await evUpload(file);
+      document.getElementById('ev-gallery').insertAdjacentHTML('beforeend', evPicHtml(url));
+      // প্রচ্ছদ না থাকলে প্রথম ছবিটিই প্রচ্ছদ
+      if(!document.getElementById('ev-cover').value) evMakeCover(document.querySelector('#ev-gallery .ev-pic:last-child .ev-star'));
+      done++;
+    } catch(e) { failed++; }
+  }
+  note.innerHTML = oldNote;
+  btn.disabled = false;
+  input.value = '';
+  if(done) evDirty = true;
+  syncEvPhotosField();
+  showToast(failed ? done + ' uploaded, ' + failed + ' failed' : done + ' photo(s) added — press SAVE & PUBLISH to put them on the site', failed > 0);
+}
+
+async function saveEv() {
+  const i = Number(document.getElementById('ev-index').value);
+  const title = document.getElementById('ev-title').value.trim();
+  if(!title) { document.getElementById('ev-title').focus(); return showToast('Please write the event name', true); }
+  const old = i >= 0 ? evList[i] : {};
+  // আগের সারির অন্য ঘরগুলো (id, slug …) রেখে দিই
+  const row = Object.assign({}, old, {
+    title,
+    cat: document.getElementById('ev-cat').value.trim(),
+    date: document.getElementById('ev-date').value.trim(),
+    cover: document.getElementById('ev-cover').value.trim(),
+    gallery: evGalleryUrls(),
+    photos: document.getElementById('ev-photos').value.trim(),
+  });
+  const items = evList.slice();
+  if(i >= 0 && i < items.length) items[i] = row; else items.unshift(row);
+  const btn = document.getElementById('ev-save-btn');
+  btn.disabled = true; btn.textContent = 'SAVING…';
+  try {
+    const ok = await saveEvList(items, i >= 0 ? 'Event updated — live on the site now' : 'Event published — live on the site now');
+    if(ok) { evDirty = false; closeModal('ev-modal'); }
+  } catch(e) { showToast('Could not save', true); }
+  finally { btn.disabled = false; btn.textContent = 'SAVE & PUBLISH'; }
+}
+
+async function deleteEv(i) {
+  const e = evList[i];
+  if(!e || !confirm('Delete this event from the site?\n\n"' + (e.title || 'Untitled') + '"\n\nThis cannot be undone.')) return;
+  try { await saveEvList(evList.filter((_, k) => k !== i), 'Event deleted'); } catch(err) { showToast('Could not delete', true); }
+}
+
+async function moveEv(i, dir) {
+  const j = i + dir;
+  if(j < 0 || j >= evList.length) return;
+  const items = evList.slice();
+  [items[i], items[j]] = [items[j], items[i]];
+  try { await saveEvList(items, j === 0 || i === 0 ? 'Order saved — the top one is now featured' : 'Order saved'); } catch(e) { showToast('Could not save the order', true); }
 }
 
 // PRESS RELEASES
