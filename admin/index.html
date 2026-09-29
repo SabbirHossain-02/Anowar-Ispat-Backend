@@ -806,15 +806,15 @@
     <div class="modal-body">
       <input type="hidden" id="hero-id" />
       <div class="form-group">
-        <label class="form-label">TITLE — WHITE PART</label>
+        <label class="form-label">TITLE — WHITE PART <span style="text-transform:none;letter-spacing:0;color:var(--subtext);font-weight:400">— optional; leave both title boxes empty to show only the logo</span></label>
         <input class="form-input" id="hero-prefix" placeholder="e.g. ENGINEERED FOR" />
       </div>
       <div class="form-group">
-        <label class="form-label">TITLE — RED PART</label>
+        <label class="form-label">TITLE — RED PART <span style="text-transform:none;letter-spacing:0;color:var(--subtext);font-weight:400">— optional</span></label>
         <input class="form-input" id="hero-accent" placeholder="e.g. ENDURANCE" />
       </div>
       <div class="form-group">
-        <label class="form-label">SUBTITLE</label>
+        <label class="form-label">SUBTITLE <span style="text-transform:none;letter-spacing:0;color:var(--subtext);font-weight:400">— optional</span></label>
         <textarea class="form-textarea" id="hero-subtitle" placeholder="Short line below the title..."></textarea>
       </div>
       <div class="form-group">
@@ -828,6 +828,11 @@
           <p id="hero-file-label">CLICK TO UPLOAD VIDEO OR IMAGE</p>
         </div>
         <input type="file" id="hero-file" accept="video/*,image/*" style="display:none" onchange="heroFilePicked(this)" />
+        <!-- এখন কী দেখাচ্ছে, বা নতুন বাছা ফাইলটি — সংরক্ষণের আগেই দেখা যায় -->
+        <div id="hero-media-preview" style="display:none;margin-top:0.7rem">
+          <div id="hero-media-note" style="font-family:var(--font-mono);font-size:0.66rem;letter-spacing:0.1em;color:var(--subtext);margin-bottom:0.4rem"></div>
+          <div id="hero-media-box" style="border:1px solid var(--border);background:#000;border-radius:4px;overflow:hidden"></div>
+        </div>
       </div>
       <div class="form-group">
         <label class="form-label">POSTER IMAGE — shown while video loads (optional)</label>
@@ -3463,10 +3468,32 @@ async function loadHero() {
   } catch(e) { tbody.innerHTML = '<tr><td colspan="6" style="color:var(--accent);font-family:var(--font-mono);font-size:0.75rem;padding:2rem">ERROR LOADING DATA</td></tr>'; }
 }
 
+// ব্যানারের ভিডিও বা ছবি ফর্মের ভেতরেই দেখানো
+let heroPreviewUrl = null;
+function showHeroMedia(url, type, note) {
+  const wrap = document.getElementById('hero-media-preview');
+  const box = document.getElementById('hero-media-box');
+  if(!url) { wrap.style.display = 'none'; box.innerHTML = ''; return; }
+  box.innerHTML = type === 'video'
+    ? `<video src="${esc(url)}${/^blob:/.test(url) ? "" : "#t=0.1"}" muted playsinline controls preload="metadata" style="display:block;width:100%;max-height:240px;background:#000"></video>`
+    : `<img src="${esc(url)}" alt="" style="display:block;width:100%;max-height:240px;object-fit:contain;background:#000" />`;
+  document.getElementById('hero-media-note').textContent = note;
+  wrap.style.display = 'block';
+}
+
 function heroFilePicked(input) {
   const f = input.files[0];
   document.getElementById('hero-file-label').textContent =
     f ? `${f.name} (${(f.size/1024/1024).toFixed(1)} MB)` : 'CLICK TO UPLOAD VIDEO OR IMAGE';
+  if(heroPreviewUrl) { URL.revokeObjectURL(heroPreviewUrl); heroPreviewUrl = null; }
+  if(f) {
+    heroPreviewUrl = URL.createObjectURL(f);
+    showHeroMedia(heroPreviewUrl, /^video\//.test(f.type) ? 'video' : 'image',
+      document.getElementById('hero-id').value ? 'NEW FILE — REPLACES THE CURRENT ONE WHEN YOU SAVE' : 'NEW FILE — PREVIEW');
+  } else {
+    const h = heroList.find(x => String(x.id) === document.getElementById('hero-id').value);
+    showHeroMedia(h ? h.media_url : '', h ? h.media_type : '', 'NOW SHOWING ON THE SITE');
+  }
 }
 
 function openHeroModal(h) {
@@ -3482,6 +3509,8 @@ function openHeroModal(h) {
   const prev = document.getElementById('hero-poster-preview');
   if(h && h.poster_url) { prev.src = h.poster_url; prev.style.display = 'block'; }
   else { prev.style.display = 'none'; }
+  if(heroPreviewUrl) { URL.revokeObjectURL(heroPreviewUrl); heroPreviewUrl = null; }
+  showHeroMedia(h ? h.media_url : '', h ? h.media_type : '', 'NOW SHOWING ON THE SITE');
   document.getElementById('hero-progress').style.display = 'none';
   document.getElementById('hero-modal').classList.add('open');
 }
