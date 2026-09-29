@@ -40,23 +40,23 @@ const PAGES = [
                 key: 'intro', label: 'Opening paragraph', type: 'textarea',
                 now: 'As a proud concern of the century-old Anwar Group, Anwar Ispat has led the mild steel industry since 1978. We were the first to introduce 60-grade steel to Bangladesh and have consistently upgraded our facilities to bring the world\'s most advanced technology to the local market. From the tallest skyscrapers to complex nuclear power plants, our commitment to quality ensures that every structure built with Anwar Ispat is resilient, durable, and safe.',
             },
-            { type: 'section', label: "Heritage timeline", note: "The wavy line of years that slides sideways" },
-            { type: 'note', label: "These years are also used on the Heritage page (About → Heritage), so a change here shows there too. Which years go into which era is set on the Heritage page.", goto: 'page:about-heritage', button: 'Open Heritage eras' },
+            { type: 'section', label: "A Legacy Value timeline", note: "Anwar Ispat's own milestones on the wavy line, revealed one by one as the page scrolls" },
+            { type: 'note', label: "The Anwar Group history (1834 onwards) has its own list on the Heritage page, so changing these years does not change that page.", goto: 'page:about-heritage', button: 'Open Heritage page' },
             {
-                key: 'timeline.title', label: 'Heritage timeline — heading', type: 'text',
-                now: 'A legacy to value in the present, and to pass on to future generations',
+                key: 'timeline.title', label: 'Timeline — heading', type: 'text',
+                now: 'A Legacy Value',
             },
             {
-                key: 'timeline.note', label: 'Line under the heading — {count}, {first} and {last} fill in from the years below', type: 'text',
-                now: '{count} milestones from {first} to {last}. Scroll to follow the line.',
+                key: 'timeline.note', label: 'Line under the heading (optional) — {count}, {first} and {last} fill in from the years below', type: 'text',
+                now: '',
             },
             {
-                key: 'timeline.items', label: 'Heritage milestones — the years on the line, in order', type: 'list',
-                now: '29 milestones from 1834 to 2022',
+                key: 'timeline.items', label: 'Milestones — the years on the line, left to right', type: 'list',
+                now: '6 milestones from 1978 to 2020',
                 item: [
                     { key: 'year', label: 'Year', type: 'text' },
-                    { key: 'name', label: 'Name', type: 'text' },
-                    { key: 'text', label: 'Description', type: 'text' },
+                    { key: 'name', label: 'Milestone (bold line)', type: 'text' },
+                    { key: 'text', label: 'Extra line under it (optional)', type: 'text' },
                     { key: 'highlight', label: 'Highlight this year (name and dot in red)', type: 'check' },
                     { key: 'memoriam', label: 'In memoriam (year and dot in grey)', type: 'check' },
                 ],
@@ -160,10 +160,8 @@ const PAGES = [
                 now: 'A legacy to value and enjoy in the present, and to preserve and pass on to future generations.',
             },
             { type: 'section', label: "Eras", note: "The pinned timelines that slide sideways as the page scrolls" },
-            { type: 'note', label: "The years themselves (year, name, description, highlight) are kept once, on About Us → Heritage timeline, and shared by both pages. Here you only set how they are grouped: every year between an era's first and last year shows in that era. An era with no years in its range is not shown.", goto: 'page:about', button: 'Edit the years on About Us' },
+            { type: 'note', label: "Every year in the Milestones list below that falls between an era's first and last year shows in that era. An era with no years in its range is not shown." },
             {
-                // মাইলফলকগুলো About Us পাতায় একবারই রাখা আছে; এখানে
-                // কেবল যুগের সীমা, তাই একটি সাল বদলালে দুই পাতাতেই বদলায়
                 key: 'eras', label: 'Eras, in order — each one becomes its own sliding timeline', type: 'list',
                 now: '1834–1946 · 1965–1983 · 1995–2001 · 2004–2022',
                 item: [
@@ -172,6 +170,19 @@ const PAGES = [
                     { key: 'note', label: 'Era description', type: 'textarea' },
                     { key: 'from', label: 'First year in this era', type: 'text' },
                     { key: 'to', label: 'Last year in this era', type: 'text' },
+                ],
+            },
+            { type: 'section', label: "Milestones", note: "The Anwar Group years shared out among the eras above" },
+            {
+                // আগে About Us পাতার সাথে ভাগ করা ছিল; এখন এই পাতার নিজস্ব
+                key: 'milestones', label: 'Milestones — every year, in order', type: 'list',
+                now: '29 milestones from 1834 to 2022',
+                item: [
+                    { key: 'year', label: 'Year', type: 'text' },
+                    { key: 'name', label: 'Name', type: 'text' },
+                    { key: 'text', label: 'Description', type: 'text' },
+                    { key: 'highlight', label: 'Highlight this year (name and dot in red)', type: 'check' },
+                    { key: 'memoriam', label: 'In memoriam (year and dot in grey)', type: 'check' },
                 ],
             },
         ],
