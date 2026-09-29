@@ -1073,6 +1073,22 @@
   </div>
 </div>
 
+<!-- LIST MANAGER MODAL (Page Text, any list) — the form is built from the schema -->
+<div class="modal-overlay" id="lm-modal">
+  <div class="modal pr-modal">
+    <div class="modal-header">
+      <div class="modal-title" id="lm-title">NEW <span>ITEM</span></div>
+      <button class="modal-close" onclick="closeLmModal()">✕</button>
+    </div>
+    <div class="modal-body" id="lm-body"></div>
+    <div class="modal-footer pr-footer">
+      <span id="lm-status" style="margin-right:auto;font-size:0.72rem;color:var(--subtext)"></span>
+      <button class="btn-ghost" onclick="closeLmModal()">CANCEL</button>
+      <button class="btn-primary" id="lm-save-btn" onclick="saveLm()">SAVE &amp; PUBLISH</button>
+    </div>
+  </div>
+</div>
+
 <!-- EVENT MODAL (Page Text → Event Gallery) -->
 <div class="modal-overlay" id="ev-modal">
   <div class="modal pr-modal">
@@ -1942,7 +1958,7 @@ function openPage(key) {
     // পুরো একটি ব্যবস্থাপক — যেমন ইভেন্ট গ্যালারির অনুষ্ঠানগুলো। নিজে নিজে
     // সংরক্ষণ করে, পাতার SAVE বোতামের উপর নির্ভর করে না
     if(f.type === 'module') {
-      html += `<div class="mod-box" data-module="${esc(f.module)}"><div class="loading"><div class="spinner"></div> Loading...</div></div>`;
+      html += `<div class="mod-box" data-module="${esc(f.module)}" data-key="${esc(f.key)}"><div class="loading"><div class="spinner"></div> Loading...</div></div>`;
       return;
     }
 
@@ -1999,6 +2015,7 @@ function openPage(key) {
   if(box.querySelector('[data-module="events"]')) renderEvModule();
   if(box.querySelector('[data-module="press"]')) mountPressModule();
   if(box.querySelector('[data-module="jobs"]')) mountJobsModule();
+  box.querySelectorAll('[data-module="list"]').forEach(mountListModule);
   showPageActions(page.label);
 }
 
@@ -2762,6 +2779,182 @@ async function moveProject(i, dir) {
   const items = projectList.slice();
   [items[i], items[j]] = [items[j], items[i]];
   try { await saveProjects(items, 'Order saved'); } catch(e) { showToast('Could not save the order', true); }
+}
+
+// LIST MANAGER — Page Text এর যেকোনো তালিকার জন্য একই ব্যবস্থাপক।
+// স্কিমায় { type:'module', module:'list', key, item:[...] } দিলেই চলে:
+// তালিকা, উপরে-নিচে সরানো, মোছা, আর item থেকে তৈরি ফর্ম। প্রতিটি বদল
+// সাথে সাথে সেই পাতার ওই তালিকাটুকুতে (PATCH) সংরক্ষিত হয়।
+let lmCtx = null;   // { el, field, index }
+let lmDirty = false;
+
+function lmField(el) {
+  const page = pageSchema.find(p => p.key === currentPageKey);
+  return page && page.fields.find(f => f.key === el.dataset.key);
+}
+function lmItems(el) {
+  const v = getAt(pageValues[currentPageKey] || {}, el.dataset.key);
+  return Array.isArray(v) ? v : [];
+}
+
+function mountListModule(el) {
+  const f = lmField(el);
+  if(!f) return;
+  const items = lmItems(el);
+  const one = f.singular || 'item';
+  const img = f.item.find(x => x.type === 'image-url');
+  const main = f.item.find(x => x.type === 'text') || f.item[0];
+  const metaKeys = f.meta || f.item.filter(x => x !== main && x !== img).slice(0, 1).map(x => x.key);
+  const last = items.length - 1;
+  const rows = items.map((r, i) => `<tr>
+      <td style="white-space:nowrap;width:1%">
+        <span style="font-family:var(--font-mono);font-size:0.72rem;color:var(--accent);margin-right:0.35rem">${String(i+1).padStart(2,'0')}</span>
+        <button class="btn-ghost" title="Move up" style="padding:0.15rem 0.45rem" ${i === 0 ? 'disabled' : ''} onclick="moveLm(this,${i},-1)">&uarr;</button>
+        <button class="btn-ghost" title="Move down" style="padding:0.15rem 0.45rem" ${i === last ? 'disabled' : ''} onclick="moveLm(this,${i},1)">&darr;</button>
+      </td>
+      ${img ? `<td style="width:1%">${r[img.key] ? `<img class="mod-thumb" src="${esc(r[img.key])}" alt="" />` : '<div class="mod-thumb"></div>'}</td>` : ''}
+      <td><div style="font-weight:600">${esc(r[main.key]) || '<i style="color:var(--subtext)">Empty</i>'}</div>
+        <div style="font-size:0.74rem;color:var(--subtext);margin-top:0.15rem;max-width:560px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(metaKeys.map(k => r[k]).filter(Boolean).join(' · '))}</div></td>
+      <td style="white-space:nowrap;width:1%">
+        <button class="btn-ghost" style="padding:0.3rem 0.7rem" onclick="openLmModal(this,${i})">EDIT</button>
+        <button class="btn-danger" style="padding:0.3rem 0.7rem" onclick="deleteLm(this,${i})">DELETE</button>
+      </td>
+    </tr>`).join('');
+  el.innerHTML = `
+    <div class="mod-bar">
+      <button type="button" class="btn-primary" style="padding:0.5rem 1.1rem;font-size:0.75rem" onclick="openLmModal(this,-1)">+ ADD ${esc(one.toUpperCase())}</button>
+      <p class="pr-hint">${f.help ? esc(f.help) + ' ' : ''}Changes here are saved and shown on the site straight away — no need to press the SAVE button at the top.</p>
+    </div>
+    <table class="mod-table">
+      <thead><tr><th>ORDER</th>${img ? '<th>' + esc(img.label.split(' ')[0].toUpperCase()) + '</th>' : ''}<th>${esc((f.label || 'Items').toUpperCase())}</th><th>ACTIONS</th></tr></thead>
+      <tbody>${rows || `<tr><td colspan="${img ? 4 : 3}" style="text-align:center;color:var(--subtext);padding:1.4rem">Nothing here yet — press ADD ${esc(one.toUpperCase())}. With none, this part is hidden on the site.</td></tr>`}</tbody>
+    </table>`;
+}
+
+async function saveLmList(el, items, okMsg) {
+  const key = el.dataset.key;
+  const res = await authFetch(`${API}/content/${currentPageKey}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ path: key, value: items })
+  });
+  if(!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    showToast(err.error || 'Could not save', true);
+    return false;
+  }
+  const body = await res.json().catch(() => ({}));
+  if(body.data) pageValues[currentPageKey] = body.data;
+  else { pageValues[currentPageKey] = pageValues[currentPageKey] || {}; setAt(pageValues[currentPageKey], key, items); }
+  mountListModule(el);
+  showToast(okMsg);
+  return true;
+}
+
+function openLmModal(btn, i) {
+  const el = btn.closest('[data-module="list"]');
+  const f = lmField(el);
+  const items = lmItems(el);
+  const r = i >= 0 ? items[i] : null;
+  const one = f.singular || 'item';
+  lmCtx = { el, field: f, index: i };
+  document.getElementById('lm-body').innerHTML = f.item.map(sub => {
+    const v = r ? (r[sub.key] ?? '') : '';
+    const id = 'lm-f-' + cssId(sub.key);
+    const hint = sub.hint ? `<div class="pr-hint">${esc(sub.hint)}</div>` : '';
+    if(sub.type === 'image-url') {
+      return `<div class="form-group lm-img">
+        <label class="form-label">${esc(sub.label.toUpperCase())}</label>
+        <div style="display:flex;gap:1rem;align-items:flex-start;flex-wrap:wrap">
+          <div class="lm-img-box" style="width:150px;aspect-ratio:1;border:1px dashed var(--border);background:var(--bg3);display:flex;align-items:center;justify-content:center;overflow:hidden;cursor:pointer" onclick="this.parentElement.querySelector('.lm-img-file').click()">${v ? `<img src="${esc(v)}" alt="" style="width:100%;height:100%;object-fit:cover" />` : '<span style="font-size:0.7rem;color:var(--subtext)">Click to upload</span>'}</div>
+          <div>
+            <button type="button" class="btn-ghost" style="padding:0.35rem 0.8rem;font-size:0.7rem" onclick="this.closest('.lm-img').querySelector('.lm-img-file').click()">UPLOAD</button>
+            <button type="button" class="btn-ghost" style="margin-left:0.4rem;padding:0.35rem 0.8rem;font-size:0.7rem" onclick="lmSetImg(this.closest('.lm-img'),'');lmDirty=true">REMOVE</button>
+            ${hint}
+          </div>
+        </div>
+        <input type="file" class="lm-img-file" accept="image/*" style="display:none" onchange="lmUploadImg(this)" />
+        <input type="hidden" id="${id}" data-lm="${esc(sub.key)}" value="${esc(v)}" />
+      </div>`;
+    }
+    const tag = sub.type === 'textarea'
+      ? `<textarea class="form-textarea" id="${id}" data-lm="${esc(sub.key)}" style="min-height:${sub.tall ? 180 : 90}px" oninput="lmDirty=true">${esc(v)}</textarea>`
+      : `<input class="form-input" id="${id}" data-lm="${esc(sub.key)}" value="${esc(v)}" oninput="lmDirty=true" />`;
+    return `<div class="form-group"><label class="form-label">${esc(sub.label.toUpperCase())}</label>${tag}${hint}</div>`;
+  }).join('');
+  document.getElementById('lm-title').innerHTML = (r ? 'EDIT ' : 'NEW ') + '<span>' + esc(one.toUpperCase()) + '</span>';
+  document.getElementById('lm-status').textContent = r ? esc(one.charAt(0).toUpperCase() + one.slice(1)) + ' ' + (i + 1) + ' of ' + items.length : 'Added at the end of the list — move it with the arrows.';
+  document.getElementById('lm-save-btn').disabled = false;
+  lmDirty = false;
+  document.getElementById('lm-modal').classList.add('open');
+  setTimeout(() => { const first = document.querySelector('#lm-body input.form-input, #lm-body textarea'); if(first) first.focus(); }, 50);
+}
+
+function lmSetImg(wrap, url) {
+  wrap.querySelector('input[type=hidden]').value = url || '';
+  wrap.querySelector('.lm-img-box').innerHTML = url
+    ? `<img src="${esc(url)}" alt="" style="width:100%;height:100%;object-fit:cover" />`
+    : '<span style="font-size:0.7rem;color:var(--subtext)">Click to upload</span>';
+}
+async function lmUploadImg(input) {
+  const file = input.files[0];
+  if(!file) return;
+  const wrap = input.closest('.lm-img');
+  wrap.querySelector('.lm-img-box').innerHTML = '<span style="font-size:0.7rem;color:var(--subtext)">Uploading…</span>';
+  try {
+    const fd = new FormData(); fd.append('image', file);
+    const res = await authFetch(`${API}/content/upload`, {method:'POST', body: fd});
+    const body = await res.json().catch(() => ({}));
+    if(!res.ok) throw new Error(body.error || 'Could not upload');
+    lmSetImg(wrap, body.url); lmDirty = true;
+    showToast('Uploaded — press SAVE & PUBLISH to keep it');
+  } catch(e) { lmSetImg(wrap, wrap.querySelector('input[type=hidden]').value); showToast(e.message, true); }
+  finally { input.value = ''; }
+}
+
+function closeLmModal() {
+  if(lmDirty && !confirm('Close without saving?')) return;
+  lmDirty = false;
+  closeModal('lm-modal');
+}
+
+async function saveLm() {
+  if(!lmCtx) return;
+  const { el, field, index } = lmCtx;
+  const items = lmItems(el).slice();
+  const row = Object.assign({}, index >= 0 ? items[index] : {});
+  document.querySelectorAll('#lm-body [data-lm]').forEach(inp => { row[inp.dataset.lm] = inp.value.trim(); });
+  const main = field.item.find(x => x.type === 'text') || field.item[0];
+  if(!String(row[main.key] || '').trim()) {
+    const e = document.getElementById('lm-f-' + cssId(main.key)); if(e) e.focus();
+    return showToast('Please fill in ' + main.label.toLowerCase(), true);
+  }
+  if(index >= 0 && index < items.length) items[index] = row; else items.push(row);
+  const btn = document.getElementById('lm-save-btn');
+  btn.disabled = true; btn.textContent = 'SAVING…';
+  try {
+    const ok = await saveLmList(el, items, (index >= 0 ? 'Updated' : 'Added') + ' — live on the site now');
+    if(ok) { lmDirty = false; closeModal('lm-modal'); }
+  } catch(e) { showToast('Could not save', true); }
+  finally { btn.disabled = false; btn.textContent = 'SAVE & PUBLISH'; }
+}
+
+async function deleteLm(btn, i) {
+  const el = btn.closest('[data-module="list"]');
+  const f = lmField(el);
+  const items = lmItems(el);
+  const main = f.item.find(x => x.type === 'text') || f.item[0];
+  if(!confirm('Delete this ' + (f.singular || 'item') + ' from the site?\n\n"' + (items[i][main.key] || '') + '"')) return;
+  try { await saveLmList(el, items.filter((_, k) => k !== i), 'Deleted'); } catch(e) { showToast('Could not delete', true); }
+}
+
+async function moveLm(btn, i, dir) {
+  const el = btn.closest('[data-module="list"]');
+  const items = lmItems(el).slice();
+  const j = i + dir;
+  if(j < 0 || j >= items.length) return;
+  [items[i], items[j]] = [items[j], items[i]];
+  try { await saveLmList(el, items, 'Order saved'); } catch(e) { showToast('Could not save the order', true); }
 }
 
 // EVENT GALLERY — Page Text এর ভেতরের ব্যবস্থাপক
