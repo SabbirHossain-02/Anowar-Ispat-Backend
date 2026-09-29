@@ -706,8 +706,8 @@ const PAGES = [
             { key: 'mediaPhone', label: 'Contact box — telephone', type: 'text', now: '+880 2223 384037' },
             { key: 'notFound', label: 'Shown when the release is gone', type: 'text', now: 'Press release not found' },
             { key: 'backShort', label: 'Button under that message', type: 'text', now: 'Back to Press' },
-            { type: 'section', label: "The releases", note: "Added, edited, reordered and deleted in their own menu" },
-            { type: 'note', label: "The releases themselves — headline, category, date, text, picture and PDF — have their own menu, Press Releases, in the left sidebar. It has a simple form for each release, and every change is live straight away.", goto: 'press', button: 'Open Press Releases' },
+            { type: 'section', label: "The releases", note: "Add, edit, reorder and delete the press releases — right here" },
+            { key: 'releases', label: 'Press releases', type: 'module', module: 'press' },
         ],
     },
     {
