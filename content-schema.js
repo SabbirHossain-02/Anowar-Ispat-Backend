@@ -768,7 +768,7 @@ const PAGES = [
                 now: 'Engineering · Production · Quality control · Operations · Sales · Finance · Human resources',
             },
             { type: 'section', label: "Vacancies", note: "Wording around the jobs posted from Open Positions" },
-            { type: 'note', label: "The vacancies themselves — title, department, location, type, experience, education, deadline and description — are posted, edited and deleted in Open Positions in the left menu, and show here straight away. With none posted, the page invites open applications instead.", goto: 'jobs', button: 'Open Positions menu' },
+            { key: 'vacancies', label: 'Vacancies', type: 'module', module: 'jobs' },
             {
                 key: 'email', label: 'Address applications are sent to', type: 'text',
                 now: 'careers@anwarispat.com',

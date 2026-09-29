@@ -542,10 +542,6 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"/><path d="M5 21V9l7-5 7 5v12"/><path d="M9 21v-6h6v6"/></svg>
           Mega Projects
         </div>
-        <div class="nav-item" onclick="showPage('jobs',this)">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-          Open Positions
-        </div>
         <div class="nav-item" onclick="showPage('pages',this)">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
           Page Text
@@ -714,31 +710,6 @@
           <table>
             <thead><tr><th>ORDER</th><th>PREVIEW</th><th>NAME</th><th>DESCRIPTION</th><th>VIDEO</th><th>ACTIONS</th></tr></thead>
             <tbody id="projects-body"><tr><td colspan="6"><div class="loading"><div class="spinner"></div> Loading...</div></td></tr></tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- OPEN POSITIONS -->
-      <div class="page" id="page-jobs">
-        <div class="page-header">
-          <div class="page-header-top">
-            <div>
-              <div class="page-title">OPEN <span>POSITIONS</span></div>
-              <div class="page-subtitle">CAREERS PAGE — LIVE VACANCIES</div>
-            </div>
-            <button class="btn-primary" onclick="openJobModal()">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-              POST VACANCY
-            </button>
-          </div>
-        </div>
-        <div class="data-grid">
-          <div class="data-grid-header">
-            <div class="data-grid-title">All Vacancies</div>
-          </div>
-          <table>
-            <thead><tr><th>POSITION</th><th>DEPARTMENT</th><th>LOCATION</th><th>TYPE</th><th>DEADLINE</th><th>ACTIONS</th></tr></thead>
-            <tbody id="jobs-body"><tr><td colspan="6"><div class="loading"><div class="spinner"></div> Loading...</div></td></tr></tbody>
           </table>
         </div>
       </div>
@@ -1447,7 +1418,6 @@ function showPage(name, el) {
   if(name === 'messages') loadMessages();
   if(name === 'hero') loadHero();
   if(name === 'projects') loadProjects();
-  if(name === 'jobs') loadJobs();
   if(name === 'pages') loadPages();
   if(name === 'settings') loadCurrentTheme();
   // Save ও Cancel কেবল Page Text এ অর্থবহ — অন্য সেকশনগুলো
@@ -1699,10 +1669,34 @@ async function deleteMedia(id) {
 // সম্পাদনার সময় কোন পদটি খোলা আছে; নতুন পোস্টের সময় null
 let editingJobId = null;
 
+// Page Text → Open Positions → Vacancies এর ভেতরে শূন্যপদের তালিকা। পদগুলো
+// jobs টেবিলে থাকে (Page Text এ নয়) — তাই নিজেই সংরক্ষণ করে, উপরের SAVE এর
+// উপর নির্ভর করে না। ফর্ম, সংরক্ষণ, মোছা আগের openJobModal/saveJob/deleteJob।
+function mountJobsModule() {
+  const box = document.querySelector('[data-module="jobs"]');
+  if(!box) return;
+  const email = String((pageValues['careers-positions'] || {}).email || '').trim();
+  box.innerHTML = `
+    <div class="mod-bar">
+      <button type="button" class="btn-primary" style="padding:0.5rem 1.1rem;font-size:0.75rem" onclick="openJobModal()">+ POST VACANCY</button>
+      <a class="btn-ghost" href="/careers/positions" target="_blank" rel="noopener" style="text-decoration:none;padding:0.5rem 1rem;font-size:0.72rem">VIEW PAGE &#8599;</a>
+      <p class="pr-hint">Vacancies posted here show on the page straight away — no need to press the SAVE button at the top. With none posted, the page invites open applications instead.</p>
+    </div>
+    ${email
+      ? `<p class="pr-hint" style="margin:0 0 0.7rem">Apply buttons send an email to <b style="color:var(--text)">${esc(email)}</b> — change it in the box "Address applications are sent to" just below.</p>`
+      : `<p class="pr-hint is-warn" style="margin:0 0 0.7rem;padding:0.55rem 0.75rem;border:1px solid rgba(245,158,11,0.35);background:rgba(245,158,11,0.08)">&#9888; No email address is set, so the Apply buttons open an email with no one to send it to. Fill in "Address applications are sent to" just below and press SAVE.</p>`}
+    <table class="mod-table">
+      <thead><tr><th>POSITION</th><th>DEPARTMENT</th><th>LOCATION</th><th>TYPE</th><th>DEADLINE</th><th>ACTIONS</th></tr></thead>
+      <tbody id="jobs-body"><tr><td colspan="6"><div class="loading"><div class="spinner"></div> Loading...</div></td></tr></tbody>
+    </table>`;
+  loadJobs();
+}
+
 async function loadJobs() {
   const tbody = document.getElementById('jobs-body');
+  if(!tbody) return;
   try {
-    const data = await fetch(`${API}/jobs`).then(r=>r.json());
+    const data = await fetch(`${API}/jobs`, {cache:'no-store'}).then(r=>r.json());
     if(!Array.isArray(data) || data.length === 0) {
       tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><div class="empty-state-icon">📋</div><p>NO VACANCIES POSTED — THE CAREERS PAGE INVITES OPEN APPLICATIONS UNTIL YOU ADD ONE</p></div></td></tr>';
       return;
@@ -2004,6 +1998,7 @@ function openPage(key) {
   box.innerHTML = html;
   if(box.querySelector('[data-module="events"]')) renderEvModule();
   if(box.querySelector('[data-module="press"]')) mountPressModule();
+  if(box.querySelector('[data-module="jobs"]')) mountJobsModule();
   showPageActions(page.label);
 }
 
