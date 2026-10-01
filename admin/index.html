@@ -427,6 +427,9 @@
   .file-upload-area:hover { border-color: var(--accent); background: var(--accent-dim); }
   .file-upload-area p { font-family: var(--font-mono); font-size: 0.75rem; color: var(--subtext); margin-top: 0.5rem; }
   .file-preview { max-width: 100%; max-height: 150px; margin-top: 1rem; border: 1px solid var(--border); }
+  /* ছবি বা ভিডিওর কোণে মোছার X */
+  .media-x { position: absolute; top: 6px; right: 6px; width: 28px; height: 28px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.7); background: rgba(0,0,0,0.65); color: #fff; font-size: 13px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; z-index: 2; transition: background 0.2s; }
+  .media-x:hover { background: var(--accent); border-color: var(--accent); }
   .modal-footer { padding: 1rem 1.5rem; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 1rem; }
 
   /* QUOTATION DETAIL */
@@ -844,8 +847,10 @@
         <input type="hidden" id="hero-mobile-remove" value="" />
         <div id="hero-mobile-preview" style="display:none;margin-top:0.7rem">
           <div id="hero-mobile-note" style="font-family:var(--font-mono);font-size:0.66rem;letter-spacing:0.1em;color:var(--subtext);margin-bottom:0.4rem"></div>
-          <div id="hero-mobile-box" style="border:1px solid var(--border);background:#000;border-radius:4px;overflow:hidden;max-width:220px"></div>
-          <button type="button" class="btn-ghost" id="hero-mobile-remove-btn" style="margin-top:0.6rem" onclick="removeHeroMobile()">REMOVE MOBILE VERSION</button>
+          <div style="position:relative;max-width:220px">
+            <div id="hero-mobile-box" style="border:1px solid var(--border);background:#000;border-radius:4px;overflow:hidden"></div>
+            <button type="button" class="media-x" title="Delete mobile version" aria-label="Delete mobile version" onclick="removeHeroMobile()">✕</button>
+          </div>
         </div>
       </div>
       <div class="form-group">
@@ -854,8 +859,12 @@
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="opacity:0.4"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
           <p>CLICK TO UPLOAD POSTER</p>
         </div>
-        <input type="file" id="hero-poster" accept="image/*,.heic,.heif,.avif,.jfif,.tif,.tiff,.bmp,.webp,.svg,.ico" style="display:none" onchange="previewFile(this,'hero-poster-preview')" />
-        <img id="hero-poster-preview" class="file-preview" style="display:none" />
+        <input type="file" id="hero-poster" accept="image/*,.heic,.heif,.avif,.jfif,.tif,.tiff,.bmp,.webp,.svg,.ico" style="display:none" onchange="heroPosterPicked(this)" />
+        <input type="hidden" id="hero-poster-remove" value="" />
+        <div id="hero-poster-wrap" style="position:relative;display:none;width:max-content;max-width:100%;margin-top:1rem">
+          <img id="hero-poster-preview" class="file-preview" style="display:block;margin-top:0" />
+          <button type="button" class="media-x" title="Delete poster" aria-label="Delete poster" onclick="removeHeroPoster()">✕</button>
+        </div>
       </div>
       <div id="hero-progress" style="display:none;margin-top:0.5rem">
         <div style="height:6px;background:var(--bg3);border:1px solid var(--border)">
@@ -3531,6 +3540,31 @@ function removeHeroMobile() {
   if(document.getElementById('hero-id').value) showToast('Mobile version will be removed when you press SAVE SLIDE');
 }
 
+// পোস্টার বাছলে প্রিভিউ আর X দেখায়
+function heroPosterPicked(input) {
+  const f = input.files[0];
+  if(!f) return;
+  document.getElementById('hero-poster-remove').value = '';
+  const reader = new FileReader();
+  reader.onload = e => {
+    document.getElementById('hero-poster-preview').src = e.target.result;
+    document.getElementById('hero-poster-wrap').style.display = 'block';
+  };
+  reader.readAsDataURL(f);
+}
+
+// X চাপলে প্রিভিউ সরে; সাইট থেকে মোছে SAVE SLIDE চাপলে
+function removeHeroPoster() {
+  document.getElementById('hero-poster').value = '';
+  const prev = document.getElementById('hero-poster-preview');
+  prev.removeAttribute('src');
+  document.getElementById('hero-poster-wrap').style.display = 'none';
+  const id = document.getElementById('hero-id').value;
+  const h = heroList.find(x => String(x.id) === id);
+  document.getElementById('hero-poster-remove').value = h && h.poster_url ? '1' : '';
+  if(h && h.poster_url) showToast('Poster will be deleted when you press SAVE SLIDE');
+}
+
 function heroFilePicked(input) {
   const f = input.files[0];
   document.getElementById('hero-file-label').textContent =
@@ -3556,9 +3590,11 @@ function openHeroModal(h) {
   document.getElementById('hero-poster').value   = '';
   document.getElementById('hero-file-label').textContent =
     h ? 'CLICK TO REPLACE VIDEO OR IMAGE (optional)' : 'CLICK TO UPLOAD VIDEO OR IMAGE';
+  document.getElementById('hero-poster-remove').value = '';
   const prev = document.getElementById('hero-poster-preview');
-  if(h && h.poster_url) { prev.src = h.poster_url; prev.style.display = 'block'; }
-  else { prev.style.display = 'none'; }
+  const posterWrap = document.getElementById('hero-poster-wrap');
+  if(h && h.poster_url) { prev.src = h.poster_url; posterWrap.style.display = 'block'; }
+  else { prev.removeAttribute('src'); posterWrap.style.display = 'none'; }
   if(heroPreviewUrl) { URL.revokeObjectURL(heroPreviewUrl); heroPreviewUrl = null; }
   showHeroMedia(h ? h.media_url : '', h ? h.media_type : '', 'NOW SHOWING ON THE SITE');
   document.getElementById('hero-mobile-file').value = '';
@@ -3589,6 +3625,7 @@ function saveHero() {
   fd.append('sort_order',   document.getElementById('hero-order').value || 0);
   if(file)   fd.append('media',  file);
   if(poster) fd.append('poster', poster);
+  else if(document.getElementById('hero-poster-remove').value === '1') fd.append('remove_poster', '1');
   const mobileFile = document.getElementById('hero-mobile-file').files[0];
   if(mobileFile) fd.append('mobile', mobileFile);
   else if(document.getElementById('hero-mobile-remove').value === '1') fd.append('remove_mobile', '1');
