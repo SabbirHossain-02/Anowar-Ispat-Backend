@@ -835,6 +835,20 @@
         </div>
       </div>
       <div class="form-group">
+        <label class="form-label">MOBILE VERSION — VIDEO OR IMAGE <span style="text-transform:none;letter-spacing:0;color:var(--subtext);font-weight:400">— optional; shown only on phones, never on computers. Phones show the banner above when this is empty</span></label>
+        <div class="file-upload-area" onclick="document.getElementById('hero-mobile-file').click()">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="opacity:0.4"><rect x="6" y="2" width="12" height="20" rx="2"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
+          <p id="hero-mobile-label">CLICK TO UPLOAD MOBILE VIDEO OR IMAGE</p>
+        </div>
+        <input type="file" id="hero-mobile-file" accept="video/*,image/*,.heic,.heif,.avif,.jfif,.tif,.tiff,.bmp,.webp,.svg,.ico" style="display:none" onchange="heroMobilePicked(this)" />
+        <input type="hidden" id="hero-mobile-remove" value="" />
+        <div id="hero-mobile-preview" style="display:none;margin-top:0.7rem">
+          <div id="hero-mobile-note" style="font-family:var(--font-mono);font-size:0.66rem;letter-spacing:0.1em;color:var(--subtext);margin-bottom:0.4rem"></div>
+          <div id="hero-mobile-box" style="border:1px solid var(--border);background:#000;border-radius:4px;overflow:hidden;max-width:220px"></div>
+          <button type="button" class="btn-ghost" id="hero-mobile-remove-btn" style="margin-top:0.6rem" onclick="removeHeroMobile()">REMOVE MOBILE VERSION</button>
+        </div>
+      </div>
+      <div class="form-group">
         <label class="form-label">POSTER IMAGE — shown while video loads (optional)</label>
         <div class="file-upload-area" onclick="document.getElementById('hero-poster').click()">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="opacity:0.4"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
@@ -3456,7 +3470,7 @@ async function loadHero() {
               : `<img class="td-img" src="${esc(h.media_url)}" />`}</td>
         <td style="font-weight:600">${esc(h.title_prefix)} <span style="color:var(--accent)">${esc(h.title_accent)}</span></td>
         <td style="color:var(--subtext);max-width:280px;font-size:0.8rem">${esc(h.subtitle) || '—'}</td>
-        <td><span class="badge badge-${h.media_type === 'video' ? 'reviewing' : 'completed'}">${esc(h.media_type).toUpperCase()}</span></td>
+        <td><span class="badge badge-${h.media_type === 'video' ? 'reviewing' : 'completed'}">${esc(h.media_type).toUpperCase()}</span>${h.mobile_media_url ? `<div style="font-family:var(--font-mono);font-size:0.62rem;letter-spacing:0.08em;color:var(--subtext);margin-top:0.35rem">+ MOBILE ${esc(h.mobile_media_type).toUpperCase()}</div>` : ''}</td>
         <td style="font-family:var(--font-mono);font-size:0.8rem">${esc(h.sort_order)}</td>
         <td>
           <div style="display:flex;gap:0.5rem">
@@ -3479,6 +3493,42 @@ function showHeroMedia(url, type, note) {
     : `<img src="${esc(url)}" alt="" style="display:block;width:100%;max-height:240px;object-fit:contain;background:#000" />`;
   document.getElementById('hero-media-note').textContent = note;
   wrap.style.display = 'block';
+}
+
+// মোবাইল ভার্সনের প্রিভিউ — ফোনের মতো লম্বাটে ছোট বাক্সে
+let heroMobileUrl = null;
+function showHeroMobile(url, type, note) {
+  const wrap = document.getElementById('hero-mobile-preview');
+  const box = document.getElementById('hero-mobile-box');
+  if(!url) { wrap.style.display = 'none'; box.innerHTML = ''; return; }
+  box.innerHTML = type === 'video'
+    ? `<video src="${esc(url)}${/^blob:/.test(url) ? "" : "#t=0.1"}" muted playsinline controls preload="metadata" style="display:block;width:100%;max-height:320px;background:#000"></video>`
+    : `<img src="${esc(url)}" alt="" style="display:block;width:100%;max-height:320px;object-fit:contain;background:#000" />`;
+  document.getElementById('hero-mobile-note').textContent = note;
+  wrap.style.display = 'block';
+}
+
+function heroMobilePicked(input) {
+  const f = input.files[0];
+  document.getElementById('hero-mobile-label').textContent =
+    f ? `${f.name} (${(f.size/1024/1024).toFixed(1)} MB)` : 'CLICK TO UPLOAD MOBILE VIDEO OR IMAGE';
+  if(heroMobileUrl) { URL.revokeObjectURL(heroMobileUrl); heroMobileUrl = null; }
+  if(f) {
+    document.getElementById('hero-mobile-remove').value = '';
+    heroMobileUrl = URL.createObjectURL(f);
+    showHeroMobile(heroMobileUrl, /^video\//.test(f.type) ? 'video' : 'image', 'NEW MOBILE FILE — SAVED WHEN YOU PRESS SAVE SLIDE');
+  }
+}
+
+// সংরক্ষণের সময় মোছে; তার আগে CANCEL চাপলে কিছুই বদলায় না
+function removeHeroMobile() {
+  const input = document.getElementById('hero-mobile-file');
+  input.value = '';
+  if(heroMobileUrl) { URL.revokeObjectURL(heroMobileUrl); heroMobileUrl = null; }
+  document.getElementById('hero-mobile-label').textContent = 'CLICK TO UPLOAD MOBILE VIDEO OR IMAGE';
+  document.getElementById('hero-mobile-remove').value = document.getElementById('hero-id').value ? '1' : '';
+  showHeroMobile('', '', '');
+  if(document.getElementById('hero-id').value) showToast('Mobile version will be removed when you press SAVE SLIDE');
 }
 
 function heroFilePicked(input) {
@@ -3511,6 +3561,12 @@ function openHeroModal(h) {
   else { prev.style.display = 'none'; }
   if(heroPreviewUrl) { URL.revokeObjectURL(heroPreviewUrl); heroPreviewUrl = null; }
   showHeroMedia(h ? h.media_url : '', h ? h.media_type : '', 'NOW SHOWING ON THE SITE');
+  document.getElementById('hero-mobile-file').value = '';
+  document.getElementById('hero-mobile-remove').value = '';
+  if(heroMobileUrl) { URL.revokeObjectURL(heroMobileUrl); heroMobileUrl = null; }
+  document.getElementById('hero-mobile-label').textContent = h && h.mobile_media_url
+    ? 'CLICK TO REPLACE MOBILE VIDEO OR IMAGE (optional)' : 'CLICK TO UPLOAD MOBILE VIDEO OR IMAGE';
+  showHeroMobile(h ? h.mobile_media_url : '', h ? h.mobile_media_type : '', 'NOW SHOWING ON PHONES');
   document.getElementById('hero-progress').style.display = 'none';
   document.getElementById('hero-modal').classList.add('open');
 }
@@ -3533,6 +3589,9 @@ function saveHero() {
   fd.append('sort_order',   document.getElementById('hero-order').value || 0);
   if(file)   fd.append('media',  file);
   if(poster) fd.append('poster', poster);
+  const mobileFile = document.getElementById('hero-mobile-file').files[0];
+  if(mobileFile) fd.append('mobile', mobileFile);
+  else if(document.getElementById('hero-mobile-remove').value === '1') fd.append('remove_mobile', '1');
 
   // ভিডিও বড় হয় — তাই fetch এর বদলে XHR, যাতে প্রগ্রেস দেখানো যায়
   const xhr = new XMLHttpRequest();
