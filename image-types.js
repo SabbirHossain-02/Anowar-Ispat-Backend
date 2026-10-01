@@ -30,12 +30,22 @@ const toWebImage = async (file) => {
     return file;
   }
 
+  // HEIC শুধু খোলা হয় heic-decode দিয়ে; JPEG বানায় sharp — এটা দ্রুত,
+  // মেমরি কম নেয় আর API কে আটকে রাখে না (বড় iPhone ছবিতেও)
+  const sharp = require('sharp');
   let buffer;
   if (isHeic) {
-    const convert = require('heic-convert');
-    buffer = Buffer.from(await convert({ buffer: file.buffer, format: 'JPEG', quality: 0.9 }));
+    try {
+      const decode = require('heic-decode');
+      const { width, height, data } = await decode({ buffer: file.buffer });
+      buffer = await sharp(Buffer.from(data.buffer, data.byteOffset, data.byteLength), {
+        raw: { width, height, channels: 4 },
+      }).jpeg({ quality: 90 }).toBuffer();
+    } catch {
+      // কিছু Android ফোনের HEIF ভেতরে AV1 — ওটা sharp নিজেই পড়তে পারে
+      buffer = await sharp(file.buffer).rotate().jpeg({ quality: 90 }).toBuffer();
+    }
   } else {
-    const sharp = require('sharp');
     buffer = await sharp(file.buffer).rotate().jpeg({ quality: 90 }).toBuffer();
   }
   // নামের শেষাংশ যেমন লেখা ছিল (.HEIC বড় হাতেও হয়) তেমনই কেটে .jpg বসাই
