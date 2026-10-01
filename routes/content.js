@@ -2,6 +2,7 @@ const router = require('express').Router();
 const pool = require('../db');
 const jwt = require('jsonwebtoken');
 const multer = require('multer');
+const { isImageFile } = require('../image-types');
 const { uploadToR2 } = require('../r2');
 const { PAGES } = require('../content-schema');
 
@@ -9,7 +10,7 @@ const upload = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: 20 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
-    const ok = /^image\//.test(file.mimetype);
+    const ok = isImageFile(file);
     cb(ok ? null : new Error('Only image files are allowed'), ok);
   },
 });
@@ -151,7 +152,7 @@ router.post('/upload', auth, uploadBanner, async (req, res) => {
     const url = await uploadToR2(req.file, 'content');
     res.json({ url });
   } catch (err) {
-    res.status(500).json({ error: 'Could not upload the image' });
+    res.status(err.status || 500).json({ error: err.expose ? err.message : 'Could not upload the image' });
   }
 });
 

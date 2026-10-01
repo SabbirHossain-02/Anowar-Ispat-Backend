@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const pool = require('../db');
 const multer = require('multer');
+const { isImageFile } = require('../image-types');
 const jwt = require('jsonwebtoken');
 const { uploadToR2 } = require('../r2');
 
@@ -9,7 +10,7 @@ const upload = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: 20 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
-    const ok = /^image\//.test(file.mimetype);
+    const ok = isImageFile(file);
     cb(ok ? null : new Error('Only image files are allowed'), ok);
   }
 });

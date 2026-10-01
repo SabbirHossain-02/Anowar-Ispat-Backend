@@ -827,7 +827,7 @@
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="opacity:0.4"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
           <p id="hero-file-label">CLICK TO UPLOAD VIDEO OR IMAGE</p>
         </div>
-        <input type="file" id="hero-file" accept="video/*,image/*" style="display:none" onchange="heroFilePicked(this)" />
+        <input type="file" id="hero-file" accept="video/*,image/*,.heic,.heif,.avif,.jfif,.tif,.tiff,.bmp,.webp,.svg,.ico" style="display:none" onchange="heroFilePicked(this)" />
         <!-- এখন কী দেখাচ্ছে, বা নতুন বাছা ফাইলটি — সংরক্ষণের আগেই দেখা যায় -->
         <div id="hero-media-preview" style="display:none;margin-top:0.7rem">
           <div id="hero-media-note" style="font-family:var(--font-mono);font-size:0.66rem;letter-spacing:0.1em;color:var(--subtext);margin-bottom:0.4rem"></div>
@@ -840,7 +840,7 @@
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="opacity:0.4"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
           <p>CLICK TO UPLOAD POSTER</p>
         </div>
-        <input type="file" id="hero-poster" accept="image/*" style="display:none" onchange="previewFile(this,'hero-poster-preview')" />
+        <input type="file" id="hero-poster" accept="image/*,.heic,.heif,.avif,.jfif,.tif,.tiff,.bmp,.webp,.svg,.ico" style="display:none" onchange="previewFile(this,'hero-poster-preview')" />
         <img id="hero-poster-preview" class="file-preview" style="display:none" />
       </div>
       <div id="hero-progress" style="display:none;margin-top:0.5rem">
@@ -879,7 +879,7 @@
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="opacity:0.4"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
           <p>CLICK TO UPLOAD IMAGE</p>
         </div>
-        <input type="file" id="product-file" accept="image/*" style="display:none" onchange="previewFile(this,'product-preview')" />
+        <input type="file" id="product-file" accept="image/*,.heic,.heif,.avif,.jfif,.tif,.tiff,.bmp,.webp,.svg,.ico" style="display:none" onchange="previewFile(this,'product-preview')" />
         <img id="product-preview" class="file-preview" style="display:none" />
       </div>
     </div>
@@ -928,7 +928,7 @@
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="opacity:0.4"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
           <p>CLICK TO UPLOAD IMAGE</p>
         </div>
-        <input type="file" id="media-file" accept="image/*" style="display:none" onchange="previewFile(this,'media-preview')" />
+        <input type="file" id="media-file" accept="image/*,.heic,.heif,.avif,.jfif,.tif,.tiff,.bmp,.webp,.svg,.ico" style="display:none" onchange="previewFile(this,'media-preview')" />
         <img id="media-preview" class="file-preview" style="display:none" />
       </div>
     </div>
@@ -976,7 +976,7 @@
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="opacity:0.4"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
           <p>CLICK TO UPLOAD PICTURE</p>
         </div>
-        <input type="file" id="project-pfile" accept="image/*" style="display:none" onchange="uploadProjectPoster(this)" />
+        <input type="file" id="project-pfile" accept="image/*,.heic,.heif,.avif,.jfif,.tif,.tiff,.bmp,.webp,.svg,.ico" style="display:none" onchange="uploadProjectPoster(this)" />
         <input type="hidden" id="project-poster" />
         <img id="project-poster-preview" class="file-preview" style="display:none" />
         <button class="btn-ghost" id="project-poster-remove" style="display:none;margin-top:0.45rem;padding:0.35rem 0.8rem;font-size:0.7rem" onclick="setProjectPoster('')">REMOVE PICTURE</button>
@@ -1049,7 +1049,7 @@
           <div class="file-upload-area" style="padding:1.1rem" onclick="document.getElementById('press-img-file').click()">
             <p id="press-img-label" style="font-size:0.72rem">CLICK TO UPLOAD A PICTURE</p>
           </div>
-          <input type="file" id="press-img-file" accept="image/*" style="display:none" onchange="uploadPressImg(this)" />
+          <input type="file" id="press-img-file" accept="image/*,.heic,.heif,.avif,.jfif,.tif,.tiff,.bmp,.webp,.svg,.ico" style="display:none" onchange="uploadPressImg(this)" />
           <input type="hidden" id="press-img" />
           <img id="press-img-preview" class="file-preview" style="display:none" />
           <button type="button" class="btn-ghost" id="press-img-remove" style="display:none;margin-top:0.45rem;padding:0.3rem 0.75rem;font-size:0.68rem" onclick="setPressImg('');pressDirty=true">REMOVE PICTURE</button>
@@ -1139,7 +1139,7 @@
             <div class="pr-hint" style="max-width:300px">Shown on the event's card, and first when a visitor opens the event.</div>
           </div>
         </div>
-        <input type="file" id="ev-cover-file" accept="image/*" style="display:none" onchange="uploadEvCover(this)" />
+        <input type="file" id="ev-cover-file" accept="image/*,.heic,.heif,.avif,.jfif,.tif,.tiff,.bmp,.webp,.svg,.ico" style="display:none" onchange="uploadEvCover(this)" />
         <input type="hidden" id="ev-cover" />
       </div>
       <div class="form-group">
@@ -1149,7 +1149,7 @@
           <button type="button" class="btn-ghost" style="padding:0.35rem 0.8rem;font-size:0.7rem" onclick="document.getElementById('ev-gal-file').click()">+ ADD PHOTOS</button>
           <span id="ev-gal-note" class="pr-hint" style="margin:0">Pick several at once. Click &times; on a photo to take it out, &#9733; to make it the cover.</span>
         </div>
-        <input type="file" id="ev-gal-file" accept="image/*" multiple style="display:none" onchange="uploadEvGallery(this)" />
+        <input type="file" id="ev-gal-file" accept="image/*,.heic,.heif,.avif,.jfif,.tif,.tiff,.bmp,.webp,.svg,.ico" multiple style="display:none" onchange="uploadEvGallery(this)" />
       </div>
       <div class="form-group" id="ev-photos-group">
         <label class="form-label">NUMBER OF PHOTOS TO SHOW <span style="text-transform:none;letter-spacing:0;color:var(--subtext);font-weight:400">— only while no photos are uploaded</span></label>
@@ -1933,7 +1933,7 @@ function openPage(key) {
             </p>
           </div>
         </div>
-        <input type="file" id="banner-file" accept="image/*" style="display:none" onchange="uploadBanner(this)" />
+        <input type="file" id="banner-file" accept="image/*,.heic,.heif,.avif,.jfif,.tif,.tiff,.bmp,.webp,.svg,.ico" style="display:none" onchange="uploadBanner(this)" />
       </div>`;
       return;
     }
@@ -1953,7 +1953,7 @@ function openPage(key) {
                    oninput="const p=this.closest('.row-img').querySelector('.row-img-preview');p.src=this.value;p.style.visibility='visible'" />
             <button class="btn-ghost" style="margin-top:0.45rem;padding:0.35rem 0.8rem;font-size:0.7rem"
                     onclick="this.parentElement.querySelector('.row-file').click()">UPLOAD IMAGE</button>
-            <input type="file" class="row-file" accept="image/*" style="display:none" onchange="uploadRowImage(this)" />
+            <input type="file" class="row-file" accept="image/*,.heic,.heif,.avif,.jfif,.tif,.tiff,.bmp,.webp,.svg,.ico" style="display:none" onchange="uploadRowImage(this)" />
           </div>
         </div>
       </div>`;
@@ -2092,7 +2092,7 @@ function listRow(field, row, i) {
                    oninput="const p=this.closest('.row-img').querySelector('.row-img-preview');p.src=this.value;p.style.visibility='visible'" />
             <button class="btn-ghost" style="margin-top:0.4rem;padding:0.35rem 0.8rem;font-size:0.7rem"
                     onclick="this.parentElement.querySelector('.row-file').click()">UPLOAD IMAGE</button>
-            <input type="file" class="row-file" accept="image/*" style="display:none" onchange="uploadRowImage(this)" />
+            <input type="file" class="row-file" accept="image/*,.heic,.heif,.avif,.jfif,.tif,.tiff,.bmp,.webp,.svg,.ico" style="display:none" onchange="uploadRowImage(this)" />
           </div>
         </div>
       </div>`;
@@ -2122,7 +2122,7 @@ function listRow(field, row, i) {
         <div style="display:flex;gap:0.6rem;align-items:center;margin-top:0.45rem">
           <button type="button" class="btn-ghost" style="padding:0.35rem 0.8rem;font-size:0.7rem" onclick="this.parentElement.querySelector('.row-pics-file').click()">UPLOAD PHOTOS</button>
           <span class="row-pics-note" style="color:var(--subtext);font-size:0.68rem">JPG or PNG — pick several at once</span>
-          <input type="file" class="row-pics-file" accept="image/*" multiple style="display:none" onchange="uploadRowPics(this)" />
+          <input type="file" class="row-pics-file" accept="image/*,.heic,.heif,.avif,.jfif,.tif,.tiff,.bmp,.webp,.svg,.ico" multiple style="display:none" onchange="uploadRowPics(this)" />
         </div>
       </div>`;
     }
@@ -2878,7 +2878,7 @@ function openLmModal(btn, i) {
             ${hint}
           </div>
         </div>
-        <input type="file" class="lm-img-file" accept="image/*" style="display:none" onchange="lmUploadImg(this)" />
+        <input type="file" class="lm-img-file" accept="image/*,.heic,.heif,.avif,.jfif,.tif,.tiff,.bmp,.webp,.svg,.ico" style="display:none" onchange="lmUploadImg(this)" />
         <input type="hidden" id="${id}" data-lm="${esc(sub.key)}" value="${esc(v)}" />
       </div>`;
     }

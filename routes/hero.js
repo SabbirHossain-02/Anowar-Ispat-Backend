@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const pool = require('../db');
 const multer = require('multer');
+const { isImageFile } = require('../image-types');
 const jwt = require('jsonwebtoken');
 const { uploadToR2, deleteFromR2 } = require('../r2');
 
@@ -10,8 +11,8 @@ const upload = multer({
   limits: { fileSize: 200 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
     const ok = file.fieldname === 'poster'
-      ? /^image\//.test(file.mimetype)
-      : /^(video|image)\//.test(file.mimetype);
+      ? isImageFile(file)
+      : /^video\//.test(file.mimetype) || isImageFile(file);
     cb(ok ? null : new Error('Only video or image files are allowed'), ok);
   }
 });

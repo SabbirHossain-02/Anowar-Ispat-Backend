@@ -2,6 +2,7 @@ const { S3Client, PutObjectCommand, DeleteObjectCommand } = require('@aws-sdk/cl
 const path = require('path');
 const crypto = require('crypto');
 require('dotenv').config();
+const { toWebImage } = require('./image-types');
 
 // Cloudflare R2 — S3 কম্প্যাটিবল, তাই AWS এর SDK ব্যবহার করা যায়
 const s3 = new S3Client({
@@ -32,6 +33,14 @@ const buildKey = (folder, originalName) => {
 // multer এর memoryStorage থেকে পাওয়া ফাইল R2 তে পাঠায়, পাবলিক URL ফেরত দেয়
 const uploadToR2 = async (file, folder) => {
   if (!isConfigured) throw new Error('R2 is not configured');
+  // iPhone এর HEIC বা TIFF হলে JPEG বানিয়ে নিই, যাতে সাইটে দেখা যায়
+  try { file = await toWebImage(file); }
+  catch {
+    const err = new Error('This picture could not be read — please save it as JPG or PNG and try again');
+    err.status = 400;
+    err.expose = true; // অ্যাডমিনকে এই বার্তাটাই দেখানো যায়
+    throw err;
+  }
   const key = buildKey(folder, file.originalname);
   await s3.send(new PutObjectCommand({
     Bucket: BUCKET,

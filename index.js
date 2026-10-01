@@ -24,6 +24,14 @@ app.use('/api/jobs', require('./routes/jobs'));
 app.use('/api/content', require('./routes/content'));
 app.use('/api/messages', require('./routes/messages'));
 
+// কোনো রুটে ধরা না পড়া এরর HTML পাতা না হয়ে JSON আসে, যাতে প্যানেল
+// কারণটা দেখাতে পারে (যেমন পড়া যায় না এমন ছবি)
+app.use((err, req, res, next) => {
+  if (res.headersSent) return next(err);
+  console.error(err);
+  res.status(err.status || 500).json({ error: err.expose ? err.message : 'Something went wrong' });
+});
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Anwar Ispat Backend running on port ${PORT}`);
